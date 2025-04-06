@@ -1,0 +1,6 @@
+trailingComma: 'es5'
+semi: true
+singleQuote: true
+bracketSameLine: true
+cssDeclarationSorterOrder: 'alphabetical'
+plugins: ['prettier-plugin-css-order', 'prettier-plugin-organize-imports']
