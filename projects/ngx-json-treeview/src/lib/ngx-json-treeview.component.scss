@@ -50,8 +50,8 @@ $type-colors: (
       }
 
       .segment-label {
-        font-style: italic;
         color: var(--ngx-json-label, #656e77);
+        font-style: italic;
       }
 
       .segment-value {

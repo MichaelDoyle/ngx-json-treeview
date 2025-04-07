@@ -20,7 +20,6 @@ export class NgxJsonTreeviewComponent implements OnChanges {
   @Input() json: any;
   @Input() expanded = true;
   @Input() depth = -1;
-
   @Input() _currentDepth = 0;
 
   segments: Segment[] = [];
@@ -43,7 +42,10 @@ export class NgxJsonTreeviewComponent implements OnChanges {
   }
 
   isExpandable(segment: Segment) {
-    return segment.type === 'object' || segment.type === 'array';
+    return (
+      (segment.type === 'object' && Object.keys(segment.value).length > 0) ||
+      (segment.type === 'array' && segment.value.length > 0)
+    );
   }
 
   toggle(segment: Segment) {

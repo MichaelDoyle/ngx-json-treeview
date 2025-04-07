@@ -1,30 +1,34 @@
 <section class="ngx-json-treeview">
-  <section
-    *ngFor="let segment of segments"
-    [ngClass]="['segment', 'segment-type-' + segment.type]">
-    @let expandable = isExpandable(segment);
-    <section
-      (click)="toggle(segment)"
-      [ngClass]="{
-        'segment-main': true,
-        expandable: expandable,
-        expanded: segment.expanded,
-      }">
-      <div *ngIf="expandable" class="toggler"></div>
-      <span class="segment-key">{{ segment.key }}</span>
-      <span class="segment-separator">: </span>
-      <span
-        *ngIf="!segment.expanded || !expandable"
-        [class]="expandable ? 'segment-label' : 'segment-value'"
-        >{{ segment.description }}
-      </span>
+  @for (segment of segments; track segment) {
+    <section [class]="'segment segment-type-' + segment.type">
+      @let expandable = isExpandable(segment);
+      <section
+        (click)="toggle(segment)"
+        [ngClass]="{
+          'segment-main': true,
+          expandable: expandable,
+          expanded: segment.expanded,
+        }">
+        @if (expandable) {
+          <div class="toggler"></div>
+        }
+        <span class="segment-key">{{ segment.key }}</span>
+        <span class="segment-separator">: </span>
+        @if (!expandable || !segment.expanded) {
+          <span [class]="expandable ? 'segment-label' : 'segment-value'">{{
+            segment.description
+          }}</span>
+        }
+      </section>
+      @if (expandable && segment.expanded) {
+        <section class="children">
+          <ngx-json-treeview
+            [json]="segment.value"
+            [expanded]="expanded"
+            [depth]="depth"
+            [_currentDepth]="_currentDepth + 1" />
+        </section>
+      }
     </section>
-    <section *ngIf="segment.expanded && expandable" class="children">
-      <ngx-json-treeview
-        [json]="segment.value"
-        [expanded]="expanded"
-        [depth]="depth"
-        [_currentDepth]="_currentDepth + 1"></ngx-json-treeview>
-    </section>
-  </section>
+  }
 </section>
