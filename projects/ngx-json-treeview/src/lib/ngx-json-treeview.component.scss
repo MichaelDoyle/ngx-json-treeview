@@ -1,54 +1,57 @@
 $type-colors: (
-  string: var(--ngx-json-string, #FF6B6B),
-  number: var(--ngx-json-number, #009688),
-  boolean: var(--ngx-json-boolean, #B938A4),
-  date: var(--ngx-json-date, #05668D),
-
-  array: var(--ngx-json-array, #999),
-  object: var(--ngx-json-object, #999),
-  function: var(--ngx-json-function, #999),
-
+  string: var(--ngx-json-string, #0451a5),
+  number: var(--ngx-json-number, #098658),
+  boolean: var(--ngx-json-boolean, #a31515),
+  date: var(--ngx-json-date, #05668d),
+  array: var(--ngx-json-array, #656e77),
+  object: var(--ngx-json-object, #656e77),
+  function: var(--ngx-json-function, #656e77),
   'null': var(--ngx-json-null, #fff),
-  undefined: var(--ngx-json-undefined, #fff)
+  undefined: var(--ngx-json-undefined, #fff),
 );
 
 .ngx-json-treeview {
   font-family: var(--ngx-json-font-family, monospace);
   font-size: var(--ngx-json-font-size, 1em);
-  width: 100%;
   height: 100%;
   overflow: hidden;
   position: relative;
+  width: 100%;
 
   .segment {
-    padding: 2px;
     margin: 1px 1px 1px 12px;
+    padding: 2px;
 
     .segment-main {
       word-wrap: break-word;
 
       .toggler {
-        position: absolute;
+        color: var(--ngx-json-toggler, #787878);
+        font-size: 0.8em;
+        line-height: 1.2em;
         margin-left: -14px;
         margin-top: 3px;
-        font-size: .8em;
-        line-height: 1.2em;
+        position: absolute;
         vertical-align: middle;
-        color: var(--ngx-json-toggler, #787878);
 
         &::after {
+          content: '\25B6';
           display: inline-block;
-          content: "►";
           transition: transform 0.1s ease-in;
         }
       }
 
       .segment-key {
-        color: var(--ngx-json-key, #4E187C);
+        color: var(--ngx-json-key, #a31515);
       }
 
       .segment-separator {
-        color: var(--ngx-json-separator, #999);
+        color: var(--ngx-json-separator, #656e77);
+      }
+
+      .segment-label {
+        font-style: italic;
+        color: var(--ngx-json-label, #656e77);
       }
 
       .segment-value {
@@ -67,16 +70,16 @@ $type-colors: (
     }
   }
 
-  // special cases need highlighted
+  // special cases that need highlighting
   .segment-type-null > .segment-main > .segment-value {
     background-color: var(--ngx-json-null-bg, red);
   }
   .segment-type-undefined > .segment-main {
     & > .segment-key {
-      color: var(--ngx-json-undefined-key, #999);
+      color: var(--ngx-json-undefined-key, #a31515);
     }
     & > .segment-value {
-      background-color: var(--ngx-json-undefined-key, #999);
+      background-color: var(--ngx-json-undefined-key, #656e77);
     }
   }
   .segment-type-object > .segment-main,

@@ -2,23 +2,24 @@
   <section
     *ngFor="let segment of segments"
     [ngClass]="['segment', 'segment-type-' + segment.type]">
+    @let expandable = isExpandable(segment);
     <section
       (click)="toggle(segment)"
       [ngClass]="{
         'segment-main': true,
-        expandable: isExpandable(segment),
+        expandable: expandable,
         expanded: segment.expanded,
       }">
-      <div *ngIf="isExpandable(segment)" class="toggler"></div>
+      <div *ngIf="expandable" class="toggler"></div>
       <span class="segment-key">{{ segment.key }}</span>
       <span class="segment-separator">: </span>
       <span
-        *ngIf="!segment.expanded || !isExpandable(segment)"
-        class="segment-value"
-        >{{ segment.description }}</span
-      >
+        *ngIf="!segment.expanded || !expandable"
+        [class]="expandable ? 'segment-label' : 'segment-value'"
+        >{{ segment.description }}
+      </span>
     </section>
-    <section *ngIf="segment.expanded && isExpandable(segment)" class="children">
+    <section *ngIf="segment.expanded && expandable" class="children">
       <ngx-json-treeview
         [json]="segment.value"
         [expanded]="expanded"
