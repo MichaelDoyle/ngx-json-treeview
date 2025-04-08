@@ -1,5 +1,5 @@
 <section class="ngx-json-treeview">
-  @for (segment of segments; track segment) {
+  @for (segment of segments(); track segment) {
     <section [class]="'segment segment-type-' + segment.type">
       @let expandable = isExpandable(segment);
       <section
@@ -24,9 +24,9 @@
         <section class="children">
           <ngx-json-treeview
             [json]="segment.value"
-            [expanded]="expanded"
-            [depth]="depth"
-            [_currentDepth]="_currentDepth + 1" />
+            [expanded]="expanded()"
+            [depth]="depth()"
+            [_currentDepth]="_currentDepth() + 1" />
         </section>
       }
     </section>

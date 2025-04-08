@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 
 export interface Segment {
   key: string;
@@ -16,30 +16,31 @@ export interface Segment {
   templateUrl: './ngx-json-treeview.component.html',
   styleUrls: ['./ngx-json-treeview.component.scss'],
 })
-export class NgxJsonTreeviewComponent implements OnChanges {
-  @Input() json: any;
-  @Input() expanded = true;
-  @Input() depth = -1;
-  @Input() _currentDepth = 0;
+export class NgxJsonTreeviewComponent {
+  // inputs & outputs
+  json = input.required<any>();
+  expanded = input<boolean>(true);
+  depth = input<number>(-1);
+  _currentDepth = input<number>(0);
 
-  segments: Segment[] = [];
-
-  ngOnChanges() {
-    this.segments = [];
-
-    // remove cycles
-    this.json = this.decycle(this.json);
-
-    if (typeof this.json === 'object') {
-      Object.keys(this.json).forEach((key) => {
-        this.segments.push(this.parseKeyValue(key, this.json[key]));
+  // computed values
+  segments = computed<Segment[]>(() => {
+    const json = this.decycle(this.json());
+    const arr = [];
+    if (typeof json === 'object') {
+      Object.keys(json).forEach((key) => {
+        arr.push(this.parseKeyValue(key, json[key]));
       });
     } else {
-      this.segments.push(
-        this.parseKeyValue(`(${typeof this.json})`, this.json)
-      );
+      arr.push(this.parseKeyValue(`(${typeof json})`, json));
     }
-  }
+    return arr;
+  });
+  isExpanded = computed<boolean>(
+    () =>
+      this.expanded() &&
+      !(this.depth() > -1 && this._currentDepth() >= this.depth())
+  );
 
   isExpandable(segment: Segment) {
     return (
@@ -87,7 +88,7 @@ export class NgxJsonTreeviewComponent implements OnChanges {
         break;
       }
       case 'object': {
-        // yea, null is object
+        // yes, null is object
         if (segment.value === null) {
           segment.type = 'null';
           segment.description = 'null';
@@ -109,12 +110,6 @@ export class NgxJsonTreeviewComponent implements OnChanges {
     }
 
     return segment;
-  }
-
-  private isExpanded(): boolean {
-    return (
-      this.expanded && !(this.depth > -1 && this._currentDepth >= this.depth)
-    );
   }
 
   // https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
