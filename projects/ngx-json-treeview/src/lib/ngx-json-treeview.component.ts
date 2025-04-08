@@ -65,48 +65,41 @@ export class NgxJsonTreeviewComponent {
     };
 
     switch (typeof segment.value) {
-      case 'number': {
+      case 'number':
         segment.type = 'number';
         break;
-      }
-      case 'boolean': {
+      case 'boolean':
         segment.type = 'boolean';
         break;
-      }
-      case 'function': {
+      case 'function':
         segment.type = 'function';
         break;
-      }
-      case 'string': {
+      case 'string':
         segment.type = 'string';
         segment.description = '"' + segment.value + '"';
         break;
-      }
-      case 'undefined': {
+      case 'undefined':
         segment.type = 'undefined';
         segment.description = 'undefined';
         break;
-      }
-      case 'object': {
-        // yes, null is object
+      case 'object':
         if (segment.value === null) {
           segment.type = 'null';
           segment.description = 'null';
         } else if (Array.isArray(segment.value)) {
           segment.type = 'array';
-          segment.description =
-            'Array[' +
-            segment.value.length +
-            '] ' +
-            JSON.stringify(segment.value);
+          const len = segment.value.length;
+          segment.description = `Array[${len}] ${JSON.stringify(segment.value)}`;
         } else if (segment.value instanceof Date) {
           segment.type = 'date';
+          segment.description = segment.value.toISOString();
         } else {
           segment.type = 'object';
-          segment.description = 'Object ' + JSON.stringify(segment.value);
+          segment.description = `Object ${JSON.stringify(segment.value)}`;
         }
         break;
-      }
+      default:
+        console.error('Unknown type parsing json key/value.');
     }
 
     return segment;

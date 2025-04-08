@@ -16,6 +16,7 @@ export class AppComponent {
     url: 'http://www.google.com',
     null: null,
     undefined: undefined,
+    date: new Date(),
     array: ['apple', 'banana', 'cherry', 123, false],
     emptyArray: [],
     emptyObject: {},
@@ -28,6 +29,9 @@ export class AppComponent {
       deeplyNested: {
         ...structuredClone(this.baseObj),
       },
+    },
+    function: () => {
+      return 'foo';
     },
   };
 }
