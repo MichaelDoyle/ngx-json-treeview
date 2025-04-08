@@ -88,13 +88,13 @@ export class NgxJsonTreeviewComponent {
         } else if (Array.isArray(segment.value)) {
           segment.type = 'array';
           const len = segment.value.length;
-          segment.description = `Array[${len}] ${JSON.stringify(segment.value)}`;
+          segment.description = this.previewString(segment.value);
         } else if (segment.value instanceof Date) {
           segment.type = 'date';
           segment.description = segment.value.toISOString();
         } else {
           segment.type = 'object';
-          segment.description = `Object ${JSON.stringify(segment.value)}`;
+          segment.description = this.previewString(segment.value);
         }
         break;
       default:
@@ -102,6 +102,44 @@ export class NgxJsonTreeviewComponent {
     }
 
     return segment;
+  }
+
+  private previewString(obj: any, limit = 200, stringsLimit = 10) {
+    let result = '';
+
+    if (typeof obj === 'string') {
+      if (obj.length > stringsLimit) {
+        result += `"${obj.substring(0, stringsLimit)}…"`;
+      } else {
+        result += `"${obj}"`;
+      }
+    } else if (typeof obj === 'boolean') {
+      result += `${obj ? 'true' : 'false'}`;
+    } else if (typeof obj === 'number') {
+      result += `${obj}`;
+    } else if (typeof obj === 'object') {
+      const isArray = Array.isArray(obj);
+      result += isArray ? `Array[${obj.length}] [` : 'Object {';
+      for (const key in obj) {
+        const value = obj[key];
+        result += isArray ? '' : `${key}: `;
+        if (result.length >= limit) {
+          return result.substring(0, limit);
+        }
+        result += this.previewString(value, limit - result.length);
+        result += `, `;
+      }
+      if (result.endsWith(', ')) {
+        result = result.slice(0, -2);
+      }
+      result += isArray ? ']' : '}';
+    }
+
+    if (result.length >= limit) {
+      return result.substring(0, limit);
+    }
+
+    return result;
   }
 
   // https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
