@@ -1,16 +1,19 @@
 {
   "name": "ngx-json-treeview",
-  "version": "18.0.0",
+  "version": "18.0.1",
+  "license": "Apache-2.0",
   "scripts": {
     "build": "pnpm run build:lib && pnpm run build:demo",
     "build:lib": "ng build ngx-json-treeview",
+    "postbuild:lib": "cpy ./README.md ./dist/ngx-json-treeview && cpy ./LICENSE ./dist/ngx-json-treeview",
     "build:demo": "ng build demo",
     "format:check": "prettier . --check",
     "format": "prettier . --write",
     "ng": "ng",
     "start": "ng serve",
     "test": "ng test",
-    "watch": "ng build --watch --configuration development"
+    "watch": "ng build --watch --configuration development",
+    "publish:lib": "pnpm publish ./dist/ngx-json-treeview"
   },
   "private": true,
   "dependencies": {
@@ -31,6 +34,7 @@
     "@angular/cli": "^18.2.17",
     "@angular/compiler-cli": "^18.2.0",
     "@types/jasmine": "~5.1.0",
+    "cpy-cli": "^5.0.0",
     "jasmine-core": "~5.2.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
