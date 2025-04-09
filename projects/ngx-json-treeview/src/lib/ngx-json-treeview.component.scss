@@ -45,10 +45,6 @@ $type-colors: (
         color: var(--ngx-json-key, #a31515);
       }
 
-      .segment-separator {
-        color: var(--ngx-json-separator, #656e77);
-      }
-
       .segment-label {
         color: var(--ngx-json-label, #656e77);
         font-style: italic;
@@ -94,5 +90,9 @@ $type-colors: (
   .expandable,
   .expandable > .toggler {
     cursor: pointer;
+  }
+
+  .puctuation {
+    color: var(--ngx-json-punctuation, #000);
   }
 }

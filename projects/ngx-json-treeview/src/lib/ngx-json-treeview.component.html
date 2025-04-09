@@ -1,4 +1,7 @@
 <section class="ngx-json-treeview">
+  @if (_currentDepth() === 0) {
+    <span class="puctuation">{{ '{' }}</span>
+  }
   @for (segment of segments(); track segment) {
     <section [class]="'segment segment-type-' + segment.type">
       @let expandable = isExpandable(segment);
@@ -13,11 +16,19 @@
           <div class="toggler"></div>
         }
         <span class="segment-key">{{ segment.key }}</span>
-        <span class="segment-separator">: </span>
+        <span class="puctuation">: </span>
         @if (!expandable || !segment.expanded) {
           <span [class]="expandable ? 'segment-label' : 'segment-value'">{{
             segment.description
           }}</span>
+        } @else if (expandable && segment.expanded) {
+          <span class="puctuation">
+            @if (segment.type === 'array') {
+              {{ '[' }}
+            } @else {
+              {{ '{' }}
+            }
+          </span>
         }
       </section>
       @if (expandable && segment.expanded) {
@@ -28,7 +39,19 @@
             [depth]="depth()"
             [_currentDepth]="_currentDepth() + 1" />
         </section>
+        @if (['object', 'array'].includes(segment.type ?? '')) {
+          <span class="puctuation">
+            @if (segment.type === 'array') {
+              {{ ']' }}
+            } @else {
+              {{ '}' }}
+            }
+          </span>
+        }
       }
     </section>
+  }
+  @if (_currentDepth() === 0) {
+    <span class="puctuation">{{ '}' }}</span>
   }
 </section>
