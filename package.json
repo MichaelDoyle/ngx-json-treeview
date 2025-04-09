@@ -1,6 +1,6 @@
 {
   "name": "ngx-json-treeview",
-  "version": "0.0.0",
+  "version": "18.0.0",
   "scripts": {
     "build": "pnpm run build:lib && pnpm run build:demo",
     "build:lib": "ng build ngx-json-treeview",
