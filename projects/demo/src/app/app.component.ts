@@ -2,11 +2,10 @@ import { Component } from '@angular/core';
 import { NgxJsonTreeviewComponent } from 'ngx-json-treeview';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [NgxJsonTreeviewComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+    selector: 'app-root',
+    imports: [NgxJsonTreeviewComponent],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss'
 })
 export class AppComponent {
   baseObj = {
