@@ -24,6 +24,7 @@ $type-colors: (
 
     .segment-main {
       word-wrap: break-word;
+      margin: 1px 1px 1px 12px;
 
       .toggler {
         color: var(--ngx-json-toggler, #787878);

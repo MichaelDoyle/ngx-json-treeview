@@ -38,16 +38,16 @@
             [expanded]="expanded()"
             [depth]="depth()"
             [_currentDepth]="_currentDepth() + 1" />
+          @if (['object', 'array'].includes(segment.type ?? '')) {
+            <span class="puctuation">
+              @if (segment.type === 'array') {
+                {{ ']' }}
+              } @else {
+                {{ '}' }}
+              }
+            </span>
+          }
         </section>
-        @if (['object', 'array'].includes(segment.type ?? '')) {
-          <span class="puctuation">
-            @if (segment.type === 'array') {
-              {{ ']' }}
-            } @else {
-              {{ '}' }}
-            }
-          </span>
-        }
       }
     </section>
   }
