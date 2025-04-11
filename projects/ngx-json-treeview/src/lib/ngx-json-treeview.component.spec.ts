@@ -1,22 +1,28 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { TestBed } from '@angular/core/testing';
 import { NgxJsonTreeviewComponent } from './ngx-json-treeview.component';
 
+async function setupTest({
+  json = {},
+}: {
+  json?: any;
+} = {}) {
+  await TestBed.configureTestingModule({
+    imports: [NgxJsonTreeviewComponent],
+  }).compileComponents();
+
+  const fixture = TestBed.createComponent(NgxJsonTreeviewComponent);
+  const component = fixture.componentInstance;
+  fixture.componentRef.setInput('json', json);
+  fixture.detectChanges();
+  const loader = TestbedHarnessEnvironment.loader(fixture);
+
+  return { component, fixture, loader };
+}
+
 describe('NgxJsonTreeviewComponent', () => {
-  let component: NgxJsonTreeviewComponent;
-  let fixture: ComponentFixture<NgxJsonTreeviewComponent>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [NgxJsonTreeviewComponent],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(NgxJsonTreeviewComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
+  it('should create', async () => {
+    const { component } = await setupTest();
     expect(component).toBeTruthy();
   });
 });

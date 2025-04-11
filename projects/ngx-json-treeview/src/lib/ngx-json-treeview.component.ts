@@ -10,10 +10,10 @@ export interface Segment {
 }
 
 @Component({
-    selector: 'ngx-json-treeview',
-    imports: [CommonModule],
-    templateUrl: './ngx-json-treeview.component.html',
-    styleUrls: ['./ngx-json-treeview.component.scss']
+  selector: 'ngx-json-treeview',
+  imports: [CommonModule],
+  templateUrl: './ngx-json-treeview.component.html',
+  styleUrls: ['./ngx-json-treeview.component.scss'],
 })
 export class NgxJsonTreeviewComponent {
   // inputs & outputs

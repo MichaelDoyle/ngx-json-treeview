@@ -1,0 +1,29 @@
+name: ngx-json-treeview CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+        - uses: pnpm/action-setup@v3
+        - name: Set up node v20
+          uses: actions/setup-node@v4
+          with:
+            node-version: 20.x
+            cache: 'pnpm'
+        - name: Install dependencies
+          run: pnpm install
+        - name: Check Code Format
+          run: pnpm format:check
+        - name: Build
+          run: pnpm build
+        - name: Run Tests
+          run: pnpm test --watch=false --no-progress --browsers=ChromeHeadless
