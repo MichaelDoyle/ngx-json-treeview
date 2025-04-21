@@ -1,7 +1,21 @@
 {
   "name": "ngx-json-treeview",
-  "version": "19.0.1",
+  "version": "19.0.2",
   "license": "Apache-2.0",
+  "author": {
+    "name": "Michael J Doyle",
+    "email": "michael.james.doyle@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MichaelDoyle/ngx-json-treeview"
+  },
+  "keywords": [
+    "angular",
+    "ngx",
+    "json",
+    "treeview"
+  ],
   "scripts": {
     "build": "pnpm run build:lib && pnpm run build:demo",
     "build:lib": "ng build ngx-json-treeview",
@@ -17,23 +31,23 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^19.2.6",
-    "@angular/cdk": "^19.2.9",
-    "@angular/common": "^19.2.6",
-    "@angular/compiler": "^19.2.6",
-    "@angular/core": "^19.2.6",
-    "@angular/forms": "^19.2.6",
-    "@angular/platform-browser": "^19.2.6",
-    "@angular/platform-browser-dynamic": "^19.2.6",
-    "@angular/router": "^19.2.6",
+    "@angular/animations": "^19.0.0",
+    "@angular/cdk": "^19.0.0",
+    "@angular/common": "^19.0.0",
+    "@angular/compiler": "^19.0.0",
+    "@angular/core": "^19.0.0",
+    "@angular/forms": "^19.0.0",
+    "@angular/platform-browser": "^19.0.0",
+    "@angular/platform-browser-dynamic": "^19.0.0",
+    "@angular/router": "^19.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^19.2.7",
-    "@angular/cli": "^19.2.7",
-    "@angular/compiler-cli": "^19.2.6",
+    "@angular-devkit/build-angular": "^19.0.0",
+    "@angular/cli": "^19.0.0",
+    "@angular/compiler-cli": "^19.0.0",
     "@types/jasmine": "~5.1.0",
     "cpy-cli": "^5.0.0",
     "jasmine-core": "~5.2.0",
@@ -42,7 +56,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "ng-packagr": "^19.2.2",
+    "ng-packagr": "^19.0.0",
     "prettier": "^3.5.3",
     "prettier-plugin-css-order": "^2.1.2",
     "prettier-plugin-organize-imports": "^4.1.0",
