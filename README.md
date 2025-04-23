@@ -2,6 +2,8 @@
 
 A collapsible JSON tree view for Angular
 
+<img width="530" alt="image" src="https://github.com/user-attachments/assets/0312d9e8-6774-45ad-8610-71582055fbef" />
+
 ## Install
 
 ```bash
