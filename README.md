@@ -14,6 +14,10 @@ npm install ngx-json-treeview
 <ngx-json-treeview [json]="someObject" />
 ```
 
+## Demo
+
+[https://stackblitz.com/edit/ngx-json-treeview](https://stackblitz.com/edit/ngx-json-treeview?file=src%2Fapp%2Fapp.component.ts)
+
 ## Theming
 
 Theming can be done with CSS variables
