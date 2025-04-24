@@ -25,12 +25,18 @@ export class AppComponent {
     ...structuredClone(this.baseObj),
     nested: {
       ...structuredClone(this.baseObj),
+      function: () => {
+        return 'foo';
+      },
       deeplyNested: {
         ...structuredClone(this.baseObj),
+        function: () => {
+          return 'bar';
+        },
       },
     },
     function: () => {
-      return 'foo';
+      return 'baz';
     },
   };
 }

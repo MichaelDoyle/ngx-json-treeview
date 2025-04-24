@@ -87,7 +87,6 @@ export class NgxJsonTreeviewComponent {
           segment.description = 'null';
         } else if (Array.isArray(segment.value)) {
           segment.type = 'array';
-          const len = segment.value.length;
           segment.description = this.previewString(segment.value);
         } else if (segment.value instanceof Date) {
           segment.type = 'date';
@@ -107,7 +106,11 @@ export class NgxJsonTreeviewComponent {
   private previewString(obj: any, limit = 200, stringsLimit = 10) {
     let result = '';
 
-    if (typeof obj === 'string') {
+    if (obj === null) {
+      result += 'null';
+    } else if (obj === undefined) {
+      result += 'undefined';
+    } else if (typeof obj === 'string') {
       if (obj.length > stringsLimit) {
         result += `"${obj.substring(0, stringsLimit)}…"`;
       } else {
@@ -118,21 +121,40 @@ export class NgxJsonTreeviewComponent {
     } else if (typeof obj === 'number') {
       result += `${obj}`;
     } else if (typeof obj === 'object') {
-      const isArray = Array.isArray(obj);
-      result += isArray ? `Array[${obj.length}] [` : 'Object {';
-      for (const key in obj) {
-        const value = obj[key];
-        result += isArray ? '' : `${key}: `;
-        if (result.length >= limit) {
-          return result.substring(0, limit);
+      if (obj instanceof Date) {
+        result += obj.toISOString();
+      } else if (Array.isArray(obj)) {
+        result += `Array[${obj.length}] [`;
+        for (const key in obj) {
+          if (result.length >= limit) {
+            break;
+          }
+          result += this.previewString(obj[key], limit - result.length);
+          result += ', ';
         }
-        result += this.previewString(value, limit - result.length);
-        result += `, `;
+        if (result.endsWith(', ')) {
+          result = result.slice(0, -2);
+        }
+        result += ']';
+      } else {
+        result += 'Object {';
+        for (const key in obj) {
+          if (result.length >= limit) {
+            break;
+          }
+          if (obj[key] !== undefined) {
+            result += `${key}: `;
+            result += this.previewString(obj[key], limit - result.length);
+            result += ', ';
+          }
+        }
+        if (result.endsWith(', ')) {
+          result = result.slice(0, -2);
+        }
+        result += '}';
       }
-      if (result.endsWith(', ')) {
-        result = result.slice(0, -2);
-      }
-      result += isArray ? ']' : '}';
+    } else if (typeof obj === 'function') {
+      result += 'Function';
     }
 
     if (result.length >= limit) {
