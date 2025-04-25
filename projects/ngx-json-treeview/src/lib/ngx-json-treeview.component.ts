@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
+import { decycle, previewString } from './util';
 
 export interface Segment {
   key: string;
@@ -24,7 +25,7 @@ export class NgxJsonTreeviewComponent {
 
   // computed values
   segments = computed<Segment[]>(() => {
-    const json = this.decycle(this.json());
+    const json = decycle(this.json());
     const arr = [];
     if (typeof json === 'object') {
       Object.keys(json).forEach((key) => {
@@ -87,14 +88,13 @@ export class NgxJsonTreeviewComponent {
           segment.description = 'null';
         } else if (Array.isArray(segment.value)) {
           segment.type = 'array';
-          const len = segment.value.length;
-          segment.description = `Array[${len}] ${JSON.stringify(segment.value)}`;
+          segment.description = previewString(segment.value);
         } else if (segment.value instanceof Date) {
           segment.type = 'date';
-          segment.description = segment.value.toISOString();
+          segment.description = `"${segment.value.toISOString()}"`;
         } else {
           segment.type = 'object';
-          segment.description = `Object ${JSON.stringify(segment.value)}`;
+          segment.description = previewString(segment.value);
         }
         break;
       default:
@@ -102,47 +102,5 @@ export class NgxJsonTreeviewComponent {
     }
 
     return segment;
-  }
-
-  // https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
-  private decycle(object: any) {
-    const objects = new WeakMap();
-    return (function derez(value, path) {
-      let old_path;
-      let nu: any;
-
-      if (
-        typeof value === 'object' &&
-        value !== null &&
-        !(value instanceof Boolean) &&
-        !(value instanceof Date) &&
-        !(value instanceof Number) &&
-        !(value instanceof RegExp) &&
-        !(value instanceof String)
-      ) {
-        old_path = objects.get(value);
-        if (old_path !== undefined) {
-          return { $ref: old_path };
-        }
-        objects.set(value, path);
-
-        if (Array.isArray(value)) {
-          nu = [];
-          value.forEach(function (element, i) {
-            nu[i] = derez(element, path + '[' + i + ']');
-          });
-        } else {
-          nu = {};
-          Object.keys(value).forEach(function (name) {
-            nu[name] = derez(
-              value[name],
-              path + '[' + JSON.stringify(name) + ']'
-            );
-          });
-        }
-        return nu;
-      }
-      return value;
-    })(object, '$');
   }
 }
