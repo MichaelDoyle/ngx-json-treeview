@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
+import { decycle, previewString } from './util';
 
 export interface Segment {
   key: string;
@@ -24,7 +25,7 @@ export class NgxJsonTreeviewComponent {
 
   // computed values
   segments = computed<Segment[]>(() => {
-    const json = this.decycle(this.json());
+    const json = decycle(this.json());
     const arr = [];
     if (typeof json === 'object') {
       Object.keys(json).forEach((key) => {
@@ -87,13 +88,13 @@ export class NgxJsonTreeviewComponent {
           segment.description = 'null';
         } else if (Array.isArray(segment.value)) {
           segment.type = 'array';
-          segment.description = this.previewString(segment.value);
+          segment.description = previewString(segment.value);
         } else if (segment.value instanceof Date) {
           segment.type = 'date';
-          segment.description = segment.value.toISOString();
+          segment.description = `"${segment.value.toISOString()}"`;
         } else {
           segment.type = 'object';
-          segment.description = this.previewString(segment.value);
+          segment.description = previewString(segment.value);
         }
         break;
       default:
@@ -101,108 +102,5 @@ export class NgxJsonTreeviewComponent {
     }
 
     return segment;
-  }
-
-  private previewString(obj: any, limit = 200, stringsLimit = 10) {
-    let result = '';
-
-    if (obj === null) {
-      result += 'null';
-    } else if (obj === undefined) {
-      result += 'undefined';
-    } else if (typeof obj === 'string') {
-      if (obj.length > stringsLimit) {
-        result += `"${obj.substring(0, stringsLimit)}…"`;
-      } else {
-        result += `"${obj}"`;
-      }
-    } else if (typeof obj === 'boolean') {
-      result += `${obj ? 'true' : 'false'}`;
-    } else if (typeof obj === 'number') {
-      result += `${obj}`;
-    } else if (typeof obj === 'object') {
-      if (obj instanceof Date) {
-        result += obj.toISOString();
-      } else if (Array.isArray(obj)) {
-        result += `Array[${obj.length}] [`;
-        for (const key in obj) {
-          if (result.length >= limit) {
-            break;
-          }
-          result += this.previewString(obj[key], limit - result.length);
-          result += ', ';
-        }
-        if (result.endsWith(', ')) {
-          result = result.slice(0, -2);
-        }
-        result += ']';
-      } else {
-        result += 'Object {';
-        for (const key in obj) {
-          if (result.length >= limit) {
-            break;
-          }
-          if (obj[key] !== undefined) {
-            result += `${key}: `;
-            result += this.previewString(obj[key], limit - result.length);
-            result += ', ';
-          }
-        }
-        if (result.endsWith(', ')) {
-          result = result.slice(0, -2);
-        }
-        result += '}';
-      }
-    } else if (typeof obj === 'function') {
-      result += 'Function';
-    }
-
-    if (result.length >= limit) {
-      return result.substring(0, limit);
-    }
-
-    return result;
-  }
-
-  // https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
-  private decycle(object: any) {
-    const objects = new WeakMap();
-    return (function derez(value, path) {
-      let old_path;
-      let nu: any;
-
-      if (
-        typeof value === 'object' &&
-        value !== null &&
-        !(value instanceof Boolean) &&
-        !(value instanceof Date) &&
-        !(value instanceof Number) &&
-        !(value instanceof RegExp) &&
-        !(value instanceof String)
-      ) {
-        old_path = objects.get(value);
-        if (old_path !== undefined) {
-          return { $ref: old_path };
-        }
-        objects.set(value, path);
-
-        if (Array.isArray(value)) {
-          nu = [];
-          value.forEach(function (element, i) {
-            nu[i] = derez(element, path + '[' + i + ']');
-          });
-        } else {
-          nu = {};
-          Object.keys(value).forEach(function (name) {
-            nu[name] = derez(
-              value[name],
-              path + '[' + JSON.stringify(name) + ']'
-            );
-          });
-        }
-        return nu;
-      }
-      return value;
-    })(object, '$');
   }
 }
