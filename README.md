@@ -1,6 +1,6 @@
 # ngx-json-treeview
 
-A collapsible JSON tree view for Angular
+A simple Angular component to display JSON data in an expandable tree view.
 
 <img width="530" alt="image" src="https://github.com/user-attachments/assets/0312d9e8-6774-45ad-8610-71582055fbef" />
 
@@ -10,10 +10,37 @@ A collapsible JSON tree view for Angular
 npm install ngx-json-treeview
 ```
 
+## Key Features
+
+- Expandable/collapsible nodes.
+- Configurable initial expansion state and depth.
+- Optional click handling for value nodes.
+
 ## Usage
+
+To render JSON in its fully expanded state.
 
 ```html
 <ngx-json-treeview [json]="someObject" />
+```
+
+To render JSON with all nodes collapsed.
+
+```html
+<ngx-json-treeview [json]="someObject" [expanded]="false" />
+```
+
+Alternatively, expand only to a max depth by default.
+
+```html
+<ngx-json-treeview [json]="someObject" [depth]="1" />
+```
+
+You can enable the user to click on values. Provide `onValueClick` to implement
+the desired behavior.
+
+```html
+<ngx-json-treeview [json]="someObject" [enableClickableValues]="true" (onValueClick)="onValueClick($event)" />
 ```
 
 ## Demo

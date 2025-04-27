@@ -1,13 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { decycle, previewString } from './util';
 
 export interface Segment {
   key: string;
   value: any;
-  type: undefined | string;
+  type?: string;
   description: string;
   expanded: boolean;
+  parent?: Segment;
+  path: string;
 }
 
 @Component({
@@ -21,7 +23,12 @@ export class NgxJsonTreeviewComponent {
   json = input.required<any>();
   expanded = input<boolean>(true);
   depth = input<number>(-1);
+  enableClickableValues = input<boolean>(false);
+
+  _parent = input<Segment>();
   _currentDepth = input<number>(0);
+
+  onValueClick = output<Segment>();
 
   // computed values
   segments = computed<Segment[]>(() => {
@@ -55,8 +62,16 @@ export class NgxJsonTreeviewComponent {
     }
   }
 
+  onValueClickHandler(segment: Segment) {
+    if (this.enableClickableValues()) {
+      this.onValueClick.emit(segment);
+    }
+  }
+
   private parseKeyValue(key: any, value: any): Segment {
     const segment: Segment = {
+      parent: this._parent(),
+      path: this._parent() ? `${this._parent()!.path}.${key}` : key,
       key: key,
       value: value,
       type: undefined,

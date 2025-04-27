@@ -14,3 +14,21 @@
 <div class="json-container">
   <ngx-json-treeview [json]="json" />
 </div>
+
+<h3>Clickable Nodes</h3>
+<div class="clickable-container">
+  <div class="json-container">
+    <ngx-json-treeview
+      [json]="json"
+      [expanded]="false"
+      [enableClickableValues]="true"
+      (onValueClick)="onValueClick($event)" />
+  </div>
+
+  @let segment = currentSegment();
+  @if (segment) {
+    <div class="preview-pane">
+      <pre>{{ stringify(segment.value) }}</pre>
+    </div>
+  }
+</div>

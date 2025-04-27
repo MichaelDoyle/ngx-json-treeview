@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { NgxJsonTreeviewComponent } from 'ngx-json-treeview';
+import { Component, signal } from '@angular/core';
+import { NgxJsonTreeviewComponent, Segment } from 'ngx-json-treeview';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +8,8 @@ import { NgxJsonTreeviewComponent } from 'ngx-json-treeview';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
+  currentSegment = signal<Segment | undefined>(undefined);
+
   baseObj = {
     string: 'Hello World',
     number: 1234567890,
@@ -39,4 +41,12 @@ export class AppComponent {
       return 'baz';
     },
   };
+
+  onValueClick(segment: Segment) {
+    this.currentSegment.set(segment);
+  }
+
+  stringify(obj: any) {
+    return typeof obj === 'function' ? '' + obj : JSON.stringify(obj, null, 2);
+  }
 }

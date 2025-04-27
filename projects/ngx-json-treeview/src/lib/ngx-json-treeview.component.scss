@@ -93,6 +93,15 @@ $type-colors: (
     cursor: pointer;
   }
 
+  .clickable {
+    cursor: pointer;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
   .puctuation {
     color: var(--ngx-json-punctuation, #000);
   }
