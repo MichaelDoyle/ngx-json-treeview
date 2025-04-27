@@ -1,3 +1,22 @@
 .json-container {
   font-family: monospace;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.clickable-container {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.clickable-container > .json-container,
+.clickable-container > .preview-pane {
+  box-sizing: border-box;
+  flex-basis: 50%;
+}
+
+.preview-pane {
+  border-left: 1px solid #ccc;
+  padding: 10px;
 }
