@@ -4,17 +4,21 @@ A simple Angular component to display JSON data in an expandable tree view.
 
 <img width="530" alt="image" src="https://github.com/user-attachments/assets/0312d9e8-6774-45ad-8610-71582055fbef" />
 
-## Install
-
-```bash
-npm install ngx-json-treeview
-```
-
 ## Key Features
 
 - Expandable/collapsible nodes.
 - Configurable initial expansion state and depth.
 - Optional click handling for value nodes.
+
+## Demo
+
+[https://stackblitz.com/edit/ngx-json-treeview](https://stackblitz.com/edit/ngx-json-treeview?file=src%2Fapp%2Fapp.component.ts)
+
+## Install
+
+```bash
+npm install ngx-json-treeview
+```
 
 ## Usage
 
@@ -43,32 +47,28 @@ the desired behavior.
 <ngx-json-treeview [json]="someObject" [enableClickableValues]="true" (onValueClick)="onValueClick($event)" />
 ```
 
-## Demo
-
-[https://stackblitz.com/edit/ngx-json-treeview](https://stackblitz.com/edit/ngx-json-treeview?file=src%2Fapp%2Fapp.component.ts)
-
 ## Theming
 
 Theming can be done with CSS variables
 
-- --ngx-json-string : color of string values
-- --ngx-json-number : color of number values
-- --ngx-json-boolean : color of boolean values
-- --ngx-json-date : color of date values
-- --ngx-json-array : color of array values
-- --ngx-json-object : color of object values
-- --ngx-json-function : color of function values
-- --ngx-json-null : color of null values
-- --ngx-json-null-bg : background color of null values
-- --ngx-json-undefined : color of undefined values
-- --ngx-json-toggler : color of toggler
-- --ngx-json-key : color of keys
-- --ngx-json-punctuation : color of punctuation (`:`, `{`, `}`, etc)
-- --ngx-json-value : color of values
-- --ngx-json-undefined-key : color for key of undefined values
-- --ngx-json-label color of preview labels
-- --ngx-json-font-family : font-family
-- --ngx-json-font-size : font-size
+- `--ngx-json-string` : color of string values
+- `--ngx-json-number` : color of number values
+- `--ngx-json-boolean` : color of boolean values
+- `--ngx-json-date` : color of date values
+- `--ngx-json-array` : color of array values
+- `--ngx-json-object` : color of object values
+- `--ngx-json-function` : color of function values
+- `--ngx-json-null` : color of null values
+- `--ngx-json-null-bg` : background color of null values
+- `--ngx-json-undefined` : color of undefined values
+- `--ngx-json-toggler` : color of toggler
+- `--ngx-json-key` : color of keys
+- `--ngx-json-punctuation : color of punctuation (`:`, `{`, `}`, etc)
+- `--ngx-json-value` : color of values
+- `--ngx-json-undefined-key` : color for key of undefined values
+- `--ngx-json-label` color of preview labels
+- `--ngx-json-font-family` : font-family
+- `--ngx-json-font-size` : font-size
 
 ## Thanks
 

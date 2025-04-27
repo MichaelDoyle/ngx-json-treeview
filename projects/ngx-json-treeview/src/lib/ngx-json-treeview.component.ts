@@ -2,16 +2,35 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, input, output } from '@angular/core';
 import { decycle, previewString } from './util';
 
+/**
+ * Represents a segment (node) within the JSON tree structure.
+ * Each segment corresponds to a key-value pair in an object, an item in an
+ * array, or the root value itself, providing context and state for rendering.
+ */
 export interface Segment {
+  /** The key (for objects) or index (for arrays). */
   key: string;
+  /** The actual JavaScript value represented by this segment. */
   value: any;
+  /** The JavaScript data type of the value. */
   type?: string;
+  /** A string representation of the value, used for display purposes. */
   description: string;
+  /** Indicates whether the segment is expanded in the UI. */
   expanded: boolean;
+  /** A reference to the parent segment in the JSON tree. Undefined for root. */
   parent?: Segment;
+  /**
+   * A dot/bracket notation path string to this specific segment
+   * (e.g., 'settings.notifications.email', 'items[1].value').
+   */
   path: string;
 }
 
+/**
+ * Renders JSON data in an expandable and collapsible tree structure.
+ * Allows users to navigate complex data hierarchies visually.
+ */
 @Component({
   selector: 'ngx-json-treeview',
   imports: [CommonModule],
@@ -19,18 +38,62 @@ export interface Segment {
   styleUrls: ['./ngx-json-treeview.component.scss'],
 })
 export class NgxJsonTreeviewComponent {
-  // inputs & outputs
+  /**
+   * The JSON object or array to display in the tree view.
+   * @required
+   */
   json = input.required<any>();
+
+  /**
+   * Controls the default expansion state for all expandable segments
+   * i.e. objects and arrays.
+   * - If `true`, nodes are expanded down to the specified `depth`.
+   * - If `false`, all nodes start collapsed.
+   * @default true
+   */
   expanded = input<boolean>(true);
+
+  /**
+   * Determines the maximum nesting level automatically expanded when `expanded`
+   * is `true`.
+   * - `-1`: Infinite depth (all levels expanded).
+   * - `0`: Only the root node is expanded (if applicable).
+   * - `n`: Root and nodes down to `n` levels are expanded.
+   * @default -1
+   */
   depth = input<number>(-1);
+
+  /**
+   * If `true`, value nodes will emit an `onValueClick` event when clicked. This
+   * allows for some interesting use cases, such as:
+   * - Rendering preformatted text, html, markdown, etc in another component.
+   * - Copying a value to the clipboard.
+   * - Following hyperlinks, etc
+   * @default false
+   */
   enableClickableValues = input<boolean>(false);
 
-  _parent = input<Segment>();
-  _currentDepth = input<number>(0);
-
+  /**
+   * If `enableClickableValues` is set to `true`, emits a `Segment` object when
+   * a value node is clicked. The emitted `Segment` contains details about the
+   * clicked node (key, value, type, path, etc.).
+   */
   onValueClick = output<Segment>();
 
-  // computed values
+  /**
+   * *Internal* input representing the parent segment in the tree hierarchy.
+   * Primrily used for calculating paths.
+   * @internal
+   */
+  _parent = input<Segment>();
+
+  /**
+   * *Internal* input representing the current nesting depth. Used in
+   * conjunction with the `depth` input to control expansion.
+   * @internal
+   */
+  _currentDepth = input<number>(0);
+
   segments = computed<Segment[]>(() => {
     const json = decycle(this.json());
     const arr = [];
@@ -65,13 +128,31 @@ export class NgxJsonTreeviewComponent {
   onValueClickHandler(segment: Segment) {
     if (this.enableClickableValues()) {
       this.onValueClick.emit(segment);
+      console.debug(`onValueClick: ${segment.path}`);
     }
+  }
+
+  private getPath(key: string): string {
+    const parent = this._parent();
+    let path: string;
+
+    if (parent) {
+      if (parent.type === 'array') {
+        path = `${parent.path}[${key}]`;
+      } else {
+        path = `${parent.path}.${key}`;
+      }
+    } else {
+      path = key;
+    }
+
+    return path;
   }
 
   private parseKeyValue(key: any, value: any): Segment {
     const segment: Segment = {
       parent: this._parent(),
-      path: this._parent() ? `${this._parent()!.path}.${key}` : key,
+      path: this.getPath(key),
       key: key,
       value: value,
       type: undefined,
