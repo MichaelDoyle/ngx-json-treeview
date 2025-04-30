@@ -27,6 +27,8 @@ export interface Segment {
   path: string;
 }
 
+export type IsClickableValueFn = (segment: Segment) => boolean;
+
 /**
  * Renders JSON data in an expandable and collapsible tree structure.
  * Allows users to navigate complex data hierarchies visually.
@@ -72,6 +74,23 @@ export class NgxJsonTreeviewComponent {
    * @default false
    */
   enableClickableValues = input<boolean>(false);
+
+  /**
+   * A function that determines if a specific value node should be considered
+   * clickable. This provides more granular control than the global
+   * `enableClickableValues` flag.
+   *
+   * The function receives the `Segment` object and should return `true` if the
+   * value is clickable, `false` otherwise. This check is only performed if
+   * `enableClickableValues` is also `true`.
+   *
+   * @param segment - The segment being evaluated.
+   * @returns `true` if the segment's value should be clickable, `false`
+   * otherwise.
+   * @default () => true - By default, all values are considered clickable if
+   *   `enableClickableValues` is true.
+   */
+  isClickableValue = input<IsClickableValueFn>(() => true);
 
   /**
    * If `enableClickableValues` is set to `true`, emits a `Segment` object when
