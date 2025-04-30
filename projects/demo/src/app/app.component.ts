@@ -42,6 +42,10 @@ export class AppComponent {
     },
   };
 
+  isClickableValue(segment: Segment) {
+    return ['object', 'array', 'string'].includes(segment.type ?? '');
+  }
+
   onValueClick(segment: Segment) {
     this.currentSegment.set(segment);
   }
