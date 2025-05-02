@@ -105,4 +105,18 @@ $type-colors: (
   .puctuation {
     color: var(--ngx-json-punctuation, #000);
   }
+
+  @each $type, $color in $type-colors {
+    .segment-type-#{$type} > .segment-primative {
+      color: #{$color};
+    }
+  }
+  .segment-primative {
+    margin: 0px;
+    padding: 0px;
+  }
+  // special cases that need highlighting
+  .segment-type-null > .segment-primative {
+    background-color: var(--ngx-json-null-bg, red);
+  }
 }
