@@ -113,17 +113,15 @@ export class NgxJsonTreeviewComponent {
    */
   _currentDepth = input<number>(0);
 
+  rootType = computed<string>(() =>
+    this.json() != null ? typeof this.json() : 'null'
+  );
   segments = computed<Segment[]>(() => {
     const json = decycle(this.json());
-    const arr = [];
-    if (typeof json === 'object') {
-      Object.keys(json).forEach((key) => {
-        arr.push(this.parseKeyValue(key, json[key]));
-      });
-    } else {
-      arr.push(this.parseKeyValue(`(${typeof json})`, json));
+    if (typeof json === 'object' && json != null) {
+      return Object.keys(json).map((key) => this.parseKeyValue(key, json[key]));
     }
-    return arr;
+    return [];
   });
   isExpanded = computed<boolean>(
     () =>
