@@ -113,9 +113,13 @@ export class NgxJsonTreeviewComponent {
    */
   _currentDepth = input<number>(0);
 
-  rootType = computed<string>(() =>
-    this.json() != null ? typeof this.json() : 'null'
-  );
+  rootType = computed<string>(() => {
+    if (this.json() === null) {
+      return 'null';
+    } else if (Array.isArray(this.json())) {
+      return 'array';
+    } else return typeof this.json();
+  });
   segments = computed<Segment[]>(() => {
     const json = decycle(this.json());
     if (typeof json === 'object' && json != null) {
