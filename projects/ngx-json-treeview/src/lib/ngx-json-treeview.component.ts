@@ -132,12 +132,26 @@ export class NgxJsonTreeviewComponent {
       this.expanded() &&
       !(this.depth() > -1 && this._currentDepth() >= this.depth())
   );
+  openingBrace = computed<string>(() => {
+    if (this.rootType() === 'array') {
+      return '[';
+    } else return '{';
+  });
+  closingBrace = computed<string>(() => {
+    if (this.rootType() === 'array') {
+      return ']';
+    } else return '}';
+  });
 
   isExpandable(segment: Segment) {
     return (
       (segment.type === 'object' && Object.keys(segment.value).length > 0) ||
       (segment.type === 'array' && segment.value.length > 0)
     );
+  }
+
+  isClickable(segment: Segment) {
+    return this.enableClickableValues() && this.isClickableValue()(segment);
   }
 
   toggle(segment: Segment) {
@@ -147,10 +161,30 @@ export class NgxJsonTreeviewComponent {
   }
 
   onValueClickHandler(segment: Segment) {
-    if (this.enableClickableValues()) {
+    if (this.isClickable(segment)) {
       this.onValueClick.emit(segment);
       console.debug(`onValueClick: ${segment.path}`);
     }
+  }
+
+  openingBraceForSegment(segment: Segment) {
+    if (segment.type === 'array') {
+      return '[';
+    } else if (segment.type === 'object') {
+      return '{';
+    }
+
+    return undefined;
+  }
+
+  closingBraceForSegment(segment: Segment) {
+    if (segment.type === 'array') {
+      return ']';
+    } else if (segment.type === 'object') {
+      return '}';
+    }
+
+    return undefined;
   }
 
   private getPath(key: string): string {

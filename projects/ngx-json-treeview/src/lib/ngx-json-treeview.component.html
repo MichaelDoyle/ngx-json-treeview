@@ -7,11 +7,18 @@
     </section>
   } @else {
     @if (_currentDepth() === 0) {
-      <span class="puctuation">{{ rootType() === 'array' ? '[' : '{' }}</span>
+      <span class="puctuation">{{ openingBrace() }}</span>
     }
-    @for (segment of segments(); track segment; let i = $index) {
+    @for (
+      segment of segments();
+      track segment;
+      let i = $index;
+      let len = $count
+    ) {
       <section [class]="'segment segment-type-' + segment.type">
         @let expandable = isExpandable(segment);
+        @let openingBrace = openingBraceForSegment(segment);
+        @let closingBrace = closingBraceForSegment(segment);
         <section class="segment-main">
           <span
             [class.expandable]="expandable"
@@ -25,28 +32,19 @@
           <span class="puctuation">: </span>
           @if (!expandable || !segment.expanded) {
             <span
-              [class]="expandable ? 'segment-label' : 'segment-value'"
-              [class.clickable]="
-                enableClickableValues() && isClickableValue()(segment)
-              "
-              (click)="
-                isClickableValue()(segment)
-                  ? onValueClickHandler(segment)
-                  : undefined
-              "
+              [class.segment-label]="expandable"
+              [class.segment-value]="!expandable"
+              [class.clickable]="isClickable(segment)"
+              (click)="onValueClickHandler(segment)"
               >{{ segment.description }}</span
             >
-            <span class="puctuation">{{
-              i < segments().length - 1 ? ',' : ''
-            }}</span>
-          } @else if (expandable && segment.expanded) {
-            <span class="puctuation">
-              @if (segment.type === 'array') {
-                {{ '[' }}
-              } @else {
-                {{ '{' }}
-              }
-            </span>
+            <span class="puctuation">{{ i < len - 1 ? ',' : '' }}</span>
+          } @else {
+            @if (openingBrace) {
+              <span class="puctuation">
+                {{ openingBrace }}
+              </span>
+            }
           }
         </section>
         @if (expandable && segment.expanded) {
@@ -60,21 +58,15 @@
               [_parent]="segment"
               [_currentDepth]="_currentDepth() + 1"
               (onValueClick)="onValueClickHandler($event)" />
-            @if (['object', 'array'].includes(segment.type ?? '')) {
-              <span class="puctuation">
-                @if (segment.type === 'array') {
-                  {{ ']' }}
-                } @else {
-                  {{ '}' }}
-                }
-              </span>
+            @if (closingBrace) {
+              <span class="puctuation">{{ closingBrace }}</span>
             }
           </section>
         }
       </section>
     }
     @if (_currentDepth() === 0) {
-      <span class="puctuation">{{ rootType() === 'array' ? ']' : '}' }}</span>
+      <span class="puctuation">{{ closingBrace() }}</span>
     }
   }
 </section>
