@@ -1,13 +1,5 @@
 <h2>ngx-json-treeview</h2>
 
-<h3>Primatives</h3>
-<div class="json-container">
-  <ngx-json-treeview [json]="13" />
-  <ngx-json-treeview [json]="'hello, world!'" />
-  <ngx-json-treeview [json]="true" />
-  <ngx-json-treeview [json]="null" />
-</div>
-
 <h3>Collapsed</h3>
 <div class="json-container">
   <ngx-json-treeview [json]="json" [expanded]="false" />
@@ -40,4 +32,17 @@
       <pre>{{ stringify(segment.value) }}</pre>
     </div>
   }
+</div>
+
+<h3>Primatives</h3>
+<div class="json-container">
+  <ngx-json-treeview [json]="13" />
+  <ngx-json-treeview [json]="'hello, world!'" />
+  <ngx-json-treeview [json]="true" />
+  <ngx-json-treeview [json]="null" />
+</div>
+
+<h3>Arrays</h3>
+<div class="json-container">
+  <ngx-json-treeview [json]="[1, 2, 3, 'hello', 'world']" />
 </div>

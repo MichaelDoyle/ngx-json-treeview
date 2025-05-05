@@ -7,9 +7,9 @@
     </section>
   } @else {
     @if (_currentDepth() === 0) {
-      <span class="puctuation">{{ '{' }}</span>
+      <span class="puctuation">{{ rootType() === 'array' ? '[' : '{' }}</span>
     }
-    @for (segment of segments(); track segment) {
+    @for (segment of segments(); track segment; let i = $index) {
       <section [class]="'segment segment-type-' + segment.type">
         @let expandable = isExpandable(segment);
         <section class="segment-main">
@@ -33,9 +33,12 @@
                 isClickableValue()(segment)
                   ? onValueClickHandler(segment)
                   : undefined
-              ">
-              {{ segment.description }}
-            </span>
+              "
+              >{{ segment.description }}</span
+            >
+            <span class="puctuation">{{
+              i < segments().length - 1 ? ',' : ''
+            }}</span>
           } @else if (expandable && segment.expanded) {
             <span class="puctuation">
               @if (segment.type === 'array') {
@@ -71,7 +74,7 @@
       </section>
     }
     @if (_currentDepth() === 0) {
-      <span class="puctuation">{{ '}' }}</span>
+      <span class="puctuation">{{ rootType() === 'array' ? ']' : '}' }}</span>
     }
   }
 </section>
