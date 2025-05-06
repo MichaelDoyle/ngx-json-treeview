@@ -19,11 +19,14 @@
         @let expandable = isExpandable(segment);
         @let openingBrace = openingBraceForSegment(segment);
         @let closingBrace = closingBraceForSegment(segment);
+        @let clickableValue = isClickable(segment);
         <section class="segment-main">
           <span
+            [tabindex]="expandable ? 0 : -1"
             [class.expandable]="expandable"
             [class.expanded]="segment.expanded"
-            (click)="toggle(segment)">
+            (click)="toggle(segment)"
+            (keydown.enter)="toggle(segment)">
             @if (expandable) {
               <div class="toggler"></div>
             }
@@ -32,10 +35,12 @@
           <span class="puctuation">: </span>
           @if (!expandable || !segment.expanded) {
             <span
+              [tabindex]="clickableValue ? 0 : -1"
               [class.segment-label]="expandable"
               [class.segment-value]="!expandable"
-              [class.clickable]="isClickable(segment)"
+              [class.clickable]="clickableValue"
               (click)="onValueClickHandler(segment)"
+              (keydown.enter)="onValueClickHandler(segment)"
               >{{ segment.description }}</span
             >
             <span class="puctuation">{{ i < len - 1 ? ',' : '' }}</span>
