@@ -18,7 +18,7 @@ export class AppComponent {
     null: null,
     undefined: undefined,
     date: new Date(),
-    array: ['apple', 'banana', 'cherry', 123, false],
+    array: ['apple', 'banana', 'cherry', 123, false, { foo: 'bar' }],
     emptyArray: [],
     emptyObject: {},
   };
