@@ -13,10 +13,8 @@ $type-colors: (
 .ngx-json-treeview {
   font-family: var(--ngx-json-font-family, monospace);
   font-size: var(--ngx-json-font-size, 1em);
-  height: 100%;
   overflow: hidden;
   position: relative;
-  width: 100%;
 
   .segment {
     margin: 1px 1px 1px 12px;
