@@ -2,13 +2,14 @@
 
 A simple Angular component to display object data in an expandable JSON tree view.
 
-<img width="530" alt="image" src="https://github.com/user-attachments/assets/0312d9e8-6774-45ad-8610-71582055fbef" />
+<img width="499" alt="image" src="https://github.com/user-attachments/assets/2750774b-fe02-415d-89ed-ce02249868a0" />
 
 ## Key Features
 
 - Expandable/collapsible nodes.
 - Configurable initial expansion state and depth.
 - Optional click handling for value nodes.
+- Keyboard navigable
 
 ## Demo
 
