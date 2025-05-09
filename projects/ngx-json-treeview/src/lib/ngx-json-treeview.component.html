@@ -64,7 +64,9 @@
               [_currentDepth]="_currentDepth() + 1"
               (onValueClick)="onValueClickHandler($event)" />
             @if (closingBrace) {
-              <span class="puctuation">{{ closingBrace }}</span>
+              <span class="puctuation"
+                >{{ closingBrace }}{{ i < len - 1 ? ',' : '' }}</span
+              >
             }
           </section>
         }
