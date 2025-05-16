@@ -151,6 +151,13 @@ export class NgxJsonTreeviewComponent {
     );
   }
 
+  isEmpty(segment: Segment) {
+    return (
+      (segment.type === 'object' && Object.keys(segment.value).length === 0) ||
+      (segment.type === 'array' && segment.value.length === 0)
+    );
+  }
+
   isClickable(segment: Segment) {
     return this.enableClickableValues() && this.isClickableValue()(segment);
   }

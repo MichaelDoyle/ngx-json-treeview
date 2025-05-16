@@ -1,6 +1,10 @@
 <section class="ngx-json-treeview">
   @if (segments().length === 0) {
-    <section [class]="'segment-type-' + rootType()">
+    @let sectionClass =
+      ['object', 'array'].includes(rootType())
+        ? 'punctuation'
+        : 'segment-type-' + rootType();
+    <section [class]="sectionClass">
       <span class="segment-primative">
         {{ asString() }}
       </span>
@@ -17,6 +21,7 @@
     ) {
       <section [class]="'segment segment-type-' + segment.type">
         @let expandable = isExpandable(segment);
+        @let empty = isEmpty(segment);
         @let openingBrace = openingBraceForSegment(segment);
         @let closingBrace = closingBraceForSegment(segment);
         @let clickableValue = isClickable(segment);
@@ -33,7 +38,12 @@
             <span class="segment-key">{{ `"${segment.key}"` }}</span>
           </span>
           <span class="puctuation">: </span>
-          @if (!expandable || !segment.expanded) {
+          @if (empty) {
+            <span
+              class="puctuation"
+              >{{ `${openingBrace}${closingBrace}${i < len - 1 ? ',' : ''}` }}</span
+            >
+          } @else if (!expandable || !segment.expanded) {
             <span
               [tabindex]="clickableValue ? 0 : -1"
               [class.segment-label]="expandable"
