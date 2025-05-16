@@ -30,7 +30,7 @@
             @if (expandable) {
               <div class="toggler"></div>
             }
-            <span class="segment-key">{{ segment.key }}</span>
+            <span class="segment-key">{{ `"${segment.key}"` }}</span>
           </span>
           <span class="puctuation">: </span>
           @if (!expandable || !segment.expanded) {
