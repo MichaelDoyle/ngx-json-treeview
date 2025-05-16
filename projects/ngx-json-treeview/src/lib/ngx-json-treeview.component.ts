@@ -142,12 +142,21 @@ export class NgxJsonTreeviewComponent {
       return ']';
     } else return '}';
   });
-  asString = computed<string>(() => JSON.stringify(this.json(), null, 2));
+  asString = computed<string>(() =>
+    JSON.stringify(this.json(), null, 2).trim()
+  );
 
   isExpandable(segment: Segment) {
     return (
       (segment.type === 'object' && Object.keys(segment.value).length > 0) ||
       (segment.type === 'array' && segment.value.length > 0)
+    );
+  }
+
+  isEmpty(segment: Segment) {
+    return (
+      (segment.type === 'object' && Object.keys(segment.value).length === 0) ||
+      (segment.type === 'array' && segment.value.length === 0)
     );
   }
 
