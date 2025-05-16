@@ -11,7 +11,7 @@
     </section>
   } @else {
     @if (_currentDepth() === 0) {
-      <span class="puctuation">{{ openingBrace() }}</span>
+      <span class="punctuation">{{ openingBrace() }}</span>
     }
     @for (
       segment of segments();
@@ -37,10 +37,10 @@
             }
             <span class="segment-key">{{ `"${segment.key}"` }}</span>
           </span>
-          <span class="puctuation">: </span>
+          <span class="punctuation">: </span>
           @if (empty) {
             <span
-              class="puctuation"
+              class="punctuation"
               >{{ `${openingBrace}${closingBrace}${i < len - 1 ? ',' : ''}` }}</span
             >
           } @else if (!expandable || !segment.expanded) {
@@ -53,10 +53,10 @@
               (keydown.enter)="onValueClickHandler(segment)"
               >{{ segment.description }}</span
             >
-            <span class="puctuation">{{ i < len - 1 ? ',' : '' }}</span>
+            <span class="punctuation">{{ i < len - 1 ? ',' : '' }}</span>
           } @else {
             @if (openingBrace) {
-              <span class="puctuation">
+              <span class="punctuation">
                 {{ openingBrace }}
               </span>
             }
@@ -74,7 +74,7 @@
               [_currentDepth]="_currentDepth() + 1"
               (onValueClick)="onValueClickHandler($event)" />
             @if (closingBrace) {
-              <span class="puctuation"
+              <span class="punctuation"
                 >{{ closingBrace }}{{ i < len - 1 ? ',' : '' }}</span
               >
             }
@@ -83,7 +83,7 @@
       </section>
     }
     @if (_currentDepth() === 0) {
-      <span class="puctuation">{{ closingBrace() }}</span>
+      <span class="punctuation">{{ closingBrace() }}</span>
     }
   }
 </section>
