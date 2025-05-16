@@ -142,6 +142,7 @@ export class NgxJsonTreeviewComponent {
       return ']';
     } else return '}';
   });
+  asString = computed<string>(() => JSON.stringify(this.json(), null, 2));
 
   isExpandable(segment: Segment) {
     return (
