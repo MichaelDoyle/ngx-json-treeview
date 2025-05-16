@@ -2,7 +2,7 @@
 
 A simple Angular component to display object data in an expandable JSON tree view.
 
-<img width="499" alt="image" src="https://github.com/user-attachments/assets/2750774b-fe02-415d-89ed-ce02249868a0" />
+<img width="751" alt="image" src="https://github.com/user-attachments/assets/6025f020-727e-4098-bcb9-146fb2b66c0a" />
 
 ## Key Features
 
