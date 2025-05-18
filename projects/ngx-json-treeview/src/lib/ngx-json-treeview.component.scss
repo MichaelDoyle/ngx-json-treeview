@@ -105,16 +105,16 @@ $type-colors: (
   }
 
   @each $type, $color in $type-colors {
-    .segment-type-#{$type} > .segment-primative {
+    .segment-type-#{$type} > .segment-primitive {
       color: #{$color};
     }
   }
-  .segment-primative {
+  .segment-primitive {
     margin: 0px;
     padding: 0px;
   }
   // special cases that need highlighting
-  .segment-type-null > .segment-primative {
+  .segment-type-null > .segment-primitive {
     background-color: var(--ngx-json-null-bg, red);
   }
 }
