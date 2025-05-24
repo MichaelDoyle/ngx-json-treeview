@@ -110,8 +110,8 @@ $type-colors: (
     }
   }
   .segment-primitive {
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
   }
   // special cases that need highlighting
   .segment-type-null > .segment-primitive {

@@ -1,10 +1,6 @@
 <section class="ngx-json-treeview">
   @if (segments().length === 0) {
-    @let sectionClass =
-      ['object', 'array'].includes(rootType())
-        ? 'punctuation'
-        : 'segment-type-' + rootType();
-    <div [class]="sectionClass">
+    <div [class]="primativeSegmentClass()">
       <span class="segment-primitive">
         {{ asString() }}
       </span>
