@@ -32,9 +32,17 @@
             @if (expandable) {
               <div class="toggler"></div>
             }
-            <span class="segment-key">{{ `"${segment.key}"` }}</span>
+            @if (isArrayElement()) {
+              <span class="segment-label">{{ segment.key }}</span>
+            } @else {
+              <span class="segment-key">{{ `"${segment.key}"` }}</span>
+            }
           </span>
-          <span class="punctuation">: </span>
+          <span
+            [class.segment-label]="isArrayElement()"
+            [class.punctuation]="!isArrayElement()"
+            >:
+          </span>
           @if (empty) {
             <span class="punctuation"
               >{{ openingBrace }}{{ closingBrace
