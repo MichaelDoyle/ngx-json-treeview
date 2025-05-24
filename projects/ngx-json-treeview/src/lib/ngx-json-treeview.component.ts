@@ -152,6 +152,7 @@ export class NgxJsonTreeviewComponent {
     }
     return 'segment-type-' + type;
   });
+  isArrayElement = computed<boolean>(() => this.rootType() === 'array');
 
   isExpandable(segment: Segment) {
     return (
