@@ -145,6 +145,13 @@ export class NgxJsonTreeviewComponent {
   asString = computed<string>(() =>
     JSON.stringify(this.json(), null, 2).trim()
   );
+  primativeSegmentClass = computed<string>(() => {
+    const type = this.rootType();
+    if (['object', 'array'].includes(type)) {
+      return 'punctuation';
+    }
+    return 'segment-type-' + type;
+  });
 
   isExpandable(segment: Segment) {
     return (

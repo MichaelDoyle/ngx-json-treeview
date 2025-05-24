@@ -1,14 +1,10 @@
 <section class="ngx-json-treeview">
   @if (segments().length === 0) {
-    @let sectionClass =
-      ['object', 'array'].includes(rootType())
-        ? 'punctuation'
-        : 'segment-type-' + rootType();
-    <section [class]="sectionClass">
-      <span class="segment-primative">
+    <div [class]="primativeSegmentClass()">
+      <span class="segment-primitive">
         {{ asString() }}
       </span>
-    </section>
+    </div>
   } @else {
     @if (_currentDepth() === 0) {
       <span class="punctuation">{{ openingBrace() }}</span>
@@ -19,13 +15,14 @@
       let i = $index;
       let len = $count
     ) {
-      <section [class]="'segment segment-type-' + segment.type">
-        @let expandable = isExpandable(segment);
-        @let empty = isEmpty(segment);
-        @let openingBrace = openingBraceForSegment(segment);
-        @let closingBrace = closingBraceForSegment(segment);
-        @let clickableValue = isClickable(segment);
-        <section class="segment-main">
+      @let needsComma = i < len - 1;
+      @let expandable = isExpandable(segment);
+      @let empty = isEmpty(segment);
+      @let openingBrace = openingBraceForSegment(segment);
+      @let closingBrace = closingBraceForSegment(segment);
+      @let clickableValue = isClickable(segment);
+      <div [class]="'segment segment-type-' + segment.type">
+        <div class="segment-main">
           <span
             [tabindex]="expandable ? 0 : -1"
             [class.expandable]="expandable"
@@ -39,9 +36,9 @@
           </span>
           <span class="punctuation">: </span>
           @if (empty) {
-            <span
-              class="punctuation"
-              >{{ `${openingBrace}${closingBrace}${i < len - 1 ? ',' : ''}` }}</span
+            <span class="punctuation"
+              >{{ openingBrace }}{{ closingBrace
+              }}{{ needsComma ? ',' : '' }}</span
             >
           } @else if (!expandable || !segment.expanded) {
             <span
@@ -53,17 +50,15 @@
               (keydown.enter)="onValueClickHandler(segment)"
               >{{ segment.description }}</span
             >
-            <span class="punctuation">{{ i < len - 1 ? ',' : '' }}</span>
+            <span class="punctuation">{{ needsComma ? ',' : '' }}</span>
           } @else {
-            @if (openingBrace) {
-              <span class="punctuation">
-                {{ openingBrace }}
-              </span>
-            }
+            <span class="punctuation">
+              {{ openingBrace }}
+            </span>
           }
-        </section>
+        </div>
         @if (expandable && segment.expanded) {
-          <section class="children">
+          <div class="children">
             <ngx-json-treeview
               [json]="segment.value"
               [expanded]="expanded()"
@@ -73,14 +68,12 @@
               [_parent]="segment"
               [_currentDepth]="_currentDepth() + 1"
               (onValueClick)="onValueClickHandler($event)" />
-            @if (closingBrace) {
-              <span class="punctuation"
-                >{{ closingBrace }}{{ i < len - 1 ? ',' : '' }}</span
-              >
-            }
-          </section>
+            <span class="punctuation">
+              {{ closingBrace }}{{ needsComma ? ',' : '' }}
+            </span>
+          </div>
         }
-      </section>
+      </div>
     }
     @if (_currentDepth() === 0) {
       <span class="punctuation">{{ closingBrace() }}</span>
