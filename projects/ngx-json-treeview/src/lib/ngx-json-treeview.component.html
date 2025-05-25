@@ -66,16 +66,18 @@
           }
         </div>
         @if (expandable && segment.expanded) {
-          <div class="children">
-            <ngx-json-treeview
-              [json]="segment.value"
-              [expanded]="expanded()"
-              [depth]="depth()"
-              [isClickableValue]="isClickableValue()"
-              [enableClickableValues]="enableClickableValues()"
-              [_parent]="segment"
-              [_currentDepth]="_currentDepth() + 1"
-              (onValueClick)="onValueClickHandler($event)" />
+          <div class="children-container">
+            <div class="children">
+              <ngx-json-treeview
+                [json]="segment.value"
+                [expanded]="expanded()"
+                [depth]="depth()"
+                [isClickableValue]="isClickableValue()"
+                [enableClickableValues]="enableClickableValues()"
+                [_parent]="segment"
+                [_currentDepth]="_currentDepth() + 1"
+                (onValueClick)="onValueClickHandler($event)" />
+            </div>
             <span class="punctuation">
               {{ closingBrace }}{{ needsComma ? ',' : '' }}
             </span>
