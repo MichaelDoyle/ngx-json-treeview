@@ -54,8 +54,23 @@ $type-colors: (
       }
     }
 
-    .children {
+    .children-container {
       margin-left: 12px;
+
+      .children {
+        position: relative;
+      }
+    }
+
+    // Vertical line for connecting child segments
+    .children-container > .children::before {
+      background-color: var(--ngx-json-tree-line, #dcdbdb);
+      bottom: 0;
+      content: '';
+      left: 0.2em;
+      position: absolute;
+      top: 0;
+      width: 1px;
     }
   }
 
