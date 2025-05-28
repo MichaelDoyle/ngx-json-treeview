@@ -245,7 +245,7 @@ export class NgxJsonTreeviewComponent {
         break;
       case 'string':
         segment.type = 'string';
-        segment.description = '"' + segment.value + '"';
+        segment.description = JSON.stringify(segment.value);
         break;
       case 'undefined':
         segment.type = 'undefined';

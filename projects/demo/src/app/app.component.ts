@@ -12,6 +12,7 @@ export class AppComponent {
 
   baseObj = {
     string: 'Hello World',
+    stringPre: 'Hello\nWorld\n\tAnother line',
     number: 1234567890,
     boolean: true,
     url: 'http://www.google.com',
@@ -51,6 +52,11 @@ export class AppComponent {
   }
 
   stringify(obj: any) {
-    return typeof obj === 'function' ? '' + obj : JSON.stringify(obj, null, 2);
+    if (typeof obj === 'function') {
+      return '' + obj;
+    } else if (typeof obj === 'string') {
+      return obj;
+    }
+    return JSON.stringify(obj, null, 2);
   }
 }
