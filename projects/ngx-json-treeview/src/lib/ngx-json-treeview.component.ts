@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, input, output } from '@angular/core';
 import { decycle, previewString } from './util';
 
@@ -35,7 +34,7 @@ export type IsClickableValueFn = (segment: Segment) => boolean;
  */
 @Component({
   selector: 'ngx-json-treeview',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './ngx-json-treeview.component.html',
   styleUrls: ['./ngx-json-treeview.component.scss'],
 })
