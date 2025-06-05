@@ -3,8 +3,6 @@ $type-colors: (
   number: var(--ngx-json-number, #098658),
   boolean: var(--ngx-json-boolean, #a31515),
   date: var(--ngx-json-date, #05668d),
-  array: var(--ngx-json-array, #656e77),
-  object: var(--ngx-json-object, #656e77),
   function: var(--ngx-json-function, #656e77),
   'null': var(--ngx-json-null, #fff),
   undefined: var(--ngx-json-undefined, #fff),
@@ -74,7 +72,7 @@ $type-colors: (
       color: var(--ngx-json-undefined-key, #a31515);
     }
     & > .segment-value {
-      background-color: var(--ngx-json-undefined-key, #656e77);
+      background-color: var(--ngx-json-undefined-bg, #656e77);
     }
   }
   .segment-type-object > .segment-main,
