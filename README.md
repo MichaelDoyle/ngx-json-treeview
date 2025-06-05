@@ -61,6 +61,7 @@ Theming can be done with CSS variables
 --ngx-json-null          /* color of null values */
 --ngx-json-null-bg       /* background color of null values */
 --ngx-json-undefined     /* color of undefined values */
+--ngx-json-undefined-bg  /* background color of undefined values */
 --ngx-json-toggler       /* color of toggler */
 --ngx-json-key           /* color of keys */
 --ngx-json-punctuation   /* color of punctuation (':', '{', '}', etc) */
