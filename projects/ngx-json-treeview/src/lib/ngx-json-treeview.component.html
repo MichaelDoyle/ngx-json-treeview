@@ -1,4 +1,6 @@
-<section class="ngx-json-treeview">
+<section
+  class="ngx-json-treeview"
+  [attr.role]="_currentDepth() === 0 ? 'tree' : null">
   @if (segments().length === 0) {
     <div [class]="primativeSegmentClass()">
       <span class="segment-primitive">
@@ -21,14 +23,22 @@
       @let openingBrace = openingBraceForSegment(segment);
       @let closingBrace = closingBraceForSegment(segment);
       @let clickableValue = isClickable(segment);
-      <div [class]="'segment segment-type-' + segment.type">
+      <div
+        [class]="'segment segment-type-' + segment.type"
+        role="treeitem"
+        [attr.aria-expanded]="expandable ? segment.expanded : undefined"
+        [attr.aria-level]="_currentDepth() + 1"
+        [attr.aria-setsize]="len"
+        [attr.aria-posinset]="i + 1"
+        [attr.aria-labelledby]="'node-label-' + _currentDepth() + '-' + i">
         <div class="segment-main">
-          <span
-            [tabindex]="expandable ? 0 : -1"
+          <button
+            [id]="'node-label-' + _currentDepth() + '-' + i"
+            type="button"
             [class.expandable]="expandable"
             [class.expanded]="segment.expanded"
             (click)="toggle(segment)"
-            (keydown.enter)="toggle(segment)">
+            [disabled]="!expandable">
             @if (expandable) {
               <div class="toggler"></div>
             }
@@ -37,7 +47,7 @@
             } @else {
               <span class="segment-key">{{ `"${segment.key}"` }}</span>
             }
-          </span>
+          </button>
           <span
             [class.segment-label]="isArrayElement()"
             [class.punctuation]="!isArrayElement()"
@@ -49,15 +59,15 @@
               }}{{ needsComma ? ',' : '' }}</span
             >
           } @else if (!expandable || !segment.expanded) {
-            <span
-              [tabindex]="clickableValue ? 0 : -1"
+            <button
+              type="button"
               [class.segment-label]="expandable"
               [class.segment-value]="!expandable"
               [class.clickable]="clickableValue"
               (click)="onValueClickHandler(segment)"
-              (keydown.enter)="onValueClickHandler(segment)"
-              >{{ segment.description }}</span
-            >
+              [disabled]="!clickableValue">
+              {{ segment.description }}
+            </button>
             <span class="punctuation">{{ needsComma ? ',' : '' }}</span>
           } @else {
             <span class="punctuation">
@@ -66,7 +76,7 @@
           }
         </div>
         @if (expandable && segment.expanded) {
-          <div class="children">
+          <div class="children" role="group">
             <ngx-json-treeview
               [json]="segment.value"
               [expanded]="expanded()"

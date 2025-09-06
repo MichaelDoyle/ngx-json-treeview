@@ -22,6 +22,19 @@ $type-colors: (
       word-wrap: break-word;
       margin: 1px 1px 1px 12px;
 
+      > button {
+        background: none;
+        border: none;
+        color: inherit;
+        font: inherit;
+        margin: 0;
+        padding: 0;
+        text-align: left;
+        &:disabled {
+          cursor: default;
+        }
+      }
+
       .toggler {
         color: var(--ngx-json-toggler, #787878);
         font-size: 0.8em;
