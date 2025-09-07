@@ -23,6 +23,8 @@
       @let openingBrace = openingBraceForSegment(segment);
       @let closingBrace = closingBraceForSegment(segment);
       @let clickableValue = isClickable(segment);
+      @let nodeId = id + '-node-label-' + _currentDepth() + '-' + i;
+
       <div
         [class]="'segment segment-type-' + segment.type"
         role="treeitem"
@@ -30,12 +32,10 @@
         [attr.aria-level]="_currentDepth() + 1"
         [attr.aria-setsize]="len"
         [attr.aria-posinset]="i + 1"
-        [attr.aria-labelledby]="
-          id + '-node-label-' + _currentDepth() + '-' + i
-        ">
+        [attr.aria-labelledby]="nodeId">
         <div class="segment-main">
           <button
-            [id]="id + '-node-label-' + _currentDepth() + '-' + i"
+            [id]="nodeId"
             type="button"
             [class.expandable]="expandable"
             [class.expanded]="segment.expanded"
