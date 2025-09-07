@@ -153,6 +153,9 @@ export class NgxJsonTreeviewComponent {
   });
   isArrayElement = computed<boolean>(() => this.rootType() === 'array');
 
+  private static nextId = 0;
+  public readonly id = `ngx-json-treeview-${NgxJsonTreeviewComponent.nextId++}`;
+
   isExpandable(segment: Segment) {
     return (
       (segment.type === 'object' && Object.keys(segment.value).length > 0) ||

@@ -30,8 +30,14 @@ $type-colors: (
         margin: 0;
         padding: 0;
         text-align: left;
+
         &:disabled {
           cursor: default;
+        }
+
+        &:focus-visible {
+          outline: 1px solid var(--ngx-json-focus-color, #005fcc);
+          outline-offset: 1px;
         }
       }
 
