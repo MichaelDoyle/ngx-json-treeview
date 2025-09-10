@@ -1,4 +1,5 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
+import { ID_GENERATOR } from './services/id-generator';
 import { decycle, previewString } from './util';
 
 /**
@@ -152,6 +153,9 @@ export class NgxJsonTreeviewComponent {
     return 'segment-type-' + type;
   });
   isArrayElement = computed<boolean>(() => this.rootType() === 'array');
+
+  private readonly idGenerator = inject(ID_GENERATOR);
+  public readonly id = this.idGenerator.next();
 
   isExpandable(segment: Segment) {
     return (
