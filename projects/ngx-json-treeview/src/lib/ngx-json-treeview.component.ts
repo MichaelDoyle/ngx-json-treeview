@@ -145,12 +145,27 @@ export class NgxJsonTreeviewComponent {
   asString = computed<string>(() =>
     JSON.stringify(this.json(), null, 2).trim()
   );
-  primativeSegmentClass = computed<string>(() => {
+  primitiveSegmentClass = computed<string>(() => {
     const type = this.rootType();
     if (['object', 'array'].includes(type)) {
       return 'punctuation';
     }
     return 'segment-type-' + type;
+  });
+  private primitiveSegment = computed<Segment | null>(() => {
+    if (this.segments().length > 0) return null;
+    return {
+      key: '',
+      value: this.json(),
+      type: this.rootType(),
+      description: this.asString(),
+      expanded: false,
+      path: this._parent()?.path ?? '',
+    };
+  });
+  isClickablePrimitive = computed<boolean>(() => {
+    const segment = this.primitiveSegment();
+    return !!segment && this.isClickable(segment);
   });
   isArrayElement = computed<boolean>(() => this.rootType() === 'array');
 
@@ -181,10 +196,16 @@ export class NgxJsonTreeviewComponent {
     }
   }
 
+  onPrimitiveClick(): void {
+    const segment = this.primitiveSegment();
+    if (segment) {
+      this.onValueClickHandler(segment);
+    }
+  }
+
   onValueClickHandler(segment: Segment) {
     if (this.isClickable(segment)) {
       this.onValueClick.emit(segment);
-      console.debug(`onValueClick: ${segment.path}`);
     }
   }
 

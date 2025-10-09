@@ -10,6 +10,8 @@ import { NgxJsonTreeviewComponent, Segment } from 'ngx-json-treeview';
 export class AppComponent {
   currentSegment = signal<Segment | undefined>(undefined);
 
+  primitives = [13, 'hello, world!', true, null, {}, []];
+
   baseObj = {
     string: 'Hello World',
     stringPre: 'Hello\nWorld\n\tAnother line',
@@ -45,6 +47,10 @@ export class AppComponent {
 
   isClickableValue(segment: Segment) {
     return ['object', 'array', 'string'].includes(segment.type ?? '');
+  }
+
+  isClickablePrimitiveValue(segment: Segment) {
+    return ['string'].includes(segment.type ?? '');
   }
 
   onValueClick(segment: Segment) {
