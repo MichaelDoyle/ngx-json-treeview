@@ -18,14 +18,22 @@
 <h3>Clickable Nodes</h3>
 <div class="clickable-container">
   <div class="json-container">
+    <h4>Object</h4>
     <ngx-json-treeview
       [json]="json"
       [expanded]="false"
-      [isClickableValue]="isClickableValue"
+      [isClickableValue]="isClickablePrimitiveValue"
       [enableClickableValues]="true"
       (onValueClick)="onValueClick($event)" />
+    <h4>Primitives</h4>
+    @for (primitive of primitives; track $index) {
+      <ngx-json-treeview
+        [json]="primitive"
+        [isClickableValue]="isClickablePrimitiveValue"
+        [enableClickableValues]="true"
+        (onValueClick)="onValueClick($event)" />
+    }
   </div>
-
   @let segment = currentSegment();
   @if (segment) {
     <div class="preview-pane">
@@ -36,13 +44,9 @@
 
 <h3>Simple Types</h3>
 <div class="json-container">
-  <ngx-json-treeview [json]="13" />
-  <ngx-json-treeview [json]="'hello, world!'" />
-  <ngx-json-treeview [json]="'hello, world!\nanother line!'" />
-  <ngx-json-treeview [json]="true" />
-  <ngx-json-treeview [json]="null" />
-  <ngx-json-treeview [json]="{}" />
-  <ngx-json-treeview [json]="[]" />
+  @for (primitive of primitives; track $index) {
+    <ngx-json-treeview [json]="primitive" />
+  }
 </div>
 
 <h3>Arrays</h3>

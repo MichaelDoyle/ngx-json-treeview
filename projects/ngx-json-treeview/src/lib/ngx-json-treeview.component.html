@@ -2,10 +2,15 @@
   class="ngx-json-treeview"
   [attr.role]="_currentDepth() === 0 ? 'tree' : null">
   @if (segments().length === 0) {
-    <div [class]="primativeSegmentClass()">
-      <span class="segment-primitive">
+    <div [class]="primitiveSegmentClass()">
+      <button
+        type="button"
+        class="segment-primitive"
+        [class.clickable]="isClickablePrimitive()"
+        (click)="onPrimitiveClick()"
+        [disabled]="!isClickablePrimitive()">
         {{ asString() }}
-      </span>
+      </button>
     </div>
   } @else {
     @if (_currentDepth() === 0) {

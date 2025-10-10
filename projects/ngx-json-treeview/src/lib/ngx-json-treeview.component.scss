@@ -22,25 +22,6 @@ $type-colors: (
       word-wrap: break-word;
       margin: 1px 1px 1px 12px;
 
-      > button {
-        background: none;
-        border: none;
-        color: inherit;
-        font: inherit;
-        margin: 0;
-        padding: 0;
-        text-align: left;
-
-        &:disabled {
-          cursor: default;
-        }
-
-        &:focus-visible {
-          outline: 1px solid var(--ngx-json-focus-color, #005fcc);
-          outline-offset: 1px;
-        }
-      }
-
       .toggler {
         color: var(--ngx-json-toggler, #787878);
         font-size: 0.8em;
@@ -119,6 +100,25 @@ $type-colors: (
 
   .punctuation {
     color: var(--ngx-json-punctuation, #000);
+  }
+
+  button {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+
+    &:disabled {
+      cursor: default;
+    }
+
+    &:focus-visible {
+      outline: 1px solid var(--ngx-json-focus-color, #005fcc);
+      outline-offset: 1px;
+    }
   }
 
   @each $type, $color in $type-colors {
