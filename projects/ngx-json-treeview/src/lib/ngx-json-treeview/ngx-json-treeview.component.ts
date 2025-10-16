@@ -1,33 +1,7 @@
 import { Component, computed, inject, input, output } from '@angular/core';
-import { ID_GENERATOR } from './services/id-generator';
-import { decycle, previewString } from './util';
-
-/**
- * Represents a segment (node) within the JSON tree structure.
- * Each segment corresponds to a key-value pair in an object, an item in an
- * array, or the root value itself, providing context and state for rendering.
- */
-export interface Segment {
-  /** The key (for objects) or index (for arrays). */
-  key: string;
-  /** The actual JavaScript value represented by this segment. */
-  value: any;
-  /** The JavaScript data type of the value. */
-  type?: string;
-  /** A string representation of the value, used for display purposes. */
-  description: string;
-  /** Indicates whether the segment is expanded in the UI. */
-  expanded: boolean;
-  /** A reference to the parent segment in the JSON tree. Undefined for root. */
-  parent?: Segment;
-  /**
-   * A dot/bracket notation path string to this specific segment
-   * (e.g., 'settings.notifications.email', 'items[1].value').
-   */
-  path: string;
-}
-
-export type IsClickableValueFn = (segment: Segment) => boolean;
+import { ID_GENERATOR } from '../services/id-generator';
+import { IsClickableValueFn, Segment } from '../types';
+import { decycle, previewString } from '../util';
 
 /**
  * Renders JSON data in an expandable and collapsible tree structure.
