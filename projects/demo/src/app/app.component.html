@@ -2,17 +2,20 @@
 
 <h3>Collapsed</h3>
 <div class="json-container">
-  <ngx-json-treeview [json]="json" [expanded]="false" />
+  <ngx-json-treeview
+    [json]="json"
+    [expanded]="false"
+    [enableClickableValues]="true" />
 </div>
 
 <h3>Max Depth (1)</h3>
 <div class="json-container">
-  <ngx-json-treeview [json]="json" [depth]="1" />
+  <ngx-json-treeview [json]="json" [depth]="1" [enableClickableValues]="true" />
 </div>
 
 <h3>Fully Expanded</h3>
 <div class="json-container">
-  <ngx-json-treeview [json]="json" />
+  <ngx-json-treeview [json]="json" [enableClickableValues]="true" />
 </div>
 
 <h3>Clickable Nodes</h3>
@@ -22,16 +25,14 @@
     <ngx-json-treeview
       [json]="json"
       [expanded]="false"
-      [isClickableValue]="isClickablePrimitiveValue"
-      [enableClickableValues]="true"
-      (onValueClick)="onValueClick($event)" />
+      [valueClickHandlers]="clickHandlers"
+      [enableClickableValues]="true" />
     <h4>Primitives</h4>
     @for (primitive of primitives; track $index) {
       <ngx-json-treeview
         [json]="primitive"
-        [isClickableValue]="isClickablePrimitiveValue"
-        [enableClickableValues]="true"
-        (onValueClick)="onValueClick($event)" />
+        [valueClickHandlers]="primitiveClickHandlers"
+        [enableClickableValues]="true" />
     }
   </div>
   @let segment = currentSegment();
