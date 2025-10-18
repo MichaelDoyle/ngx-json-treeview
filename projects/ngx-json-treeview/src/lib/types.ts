@@ -30,3 +30,27 @@ export interface Segment {
  * @returns `true` if the value is clickable, `false` otherwise.
  */
 export type IsClickableValueFn = (segment: Segment) => boolean;
+
+/**
+ * Represents a handler for value click events, containing both the logic to
+ * determine if a value is clickable and the handler function itself.
+ *
+ * This approach allows for a more modular and self-contained way to define
+ * click behaviors. Each handler can specify its own criteria for being active
+ * and the action to take, making it easier to manage and extend different
+ * click functionalities.
+ */
+export interface ValueClickHandler {
+  /**
+   * A function that determines whether this handler should be active for a
+   * given segment.
+   * @param segment The segment to evaluate.
+   * @returns `true` if the handler is applicable, `false` otherwise.
+   */
+  canHandle: IsClickableValueFn;
+  /**
+   * The function to execute when a clickable value is clicked.
+   * @param segment The segment that was clicked.
+   */
+  handler: (segment: Segment) => void;
+}
