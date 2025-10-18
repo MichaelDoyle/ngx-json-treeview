@@ -1,6 +1,7 @@
-import { Component, computed, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
+import { VALUE_CLICK_HANDLERS } from '../handlers';
 import { ID_GENERATOR } from '../services/id-generator';
-import { IsClickableValueFn, Segment } from '../types';
+import { Segment, ValueClickHandler } from '../types';
 import { decycle, previewString } from '../util';
 
 /**
@@ -40,38 +41,24 @@ export class NgxJsonTreeviewComponent {
   depth = input<number>(-1);
 
   /**
-   * If `true`, value nodes will emit an `onValueClick` event when clicked. This
-   * allows for some interesting use cases, such as:
-   * - Rendering preformatted text, html, markdown, etc in another component.
+   * If `true`, values are clickable when there is a corresponding handler
+   * in the `valueClickHandlers` array that can process it.
+   *
+   * This allows for use cases such as:
+   * - Following hyperlinks.
    * - Copying a value to the clipboard.
-   * - Following hyperlinks, etc
+   * - Triggering custom actions based on the value's content or type.
    * @default false
    */
   enableClickableValues = input<boolean>(false);
 
   /**
-   * A function that determines if a specific value node should be considered
-   * clickable. This provides more granular control than the global
-   * `enableClickableValues` flag.
-   *
-   * The function receives the `Segment` object and should return `true` if the
-   * value is clickable, `false` otherwise. This check is only performed if
-   * `enableClickableValues` is also `true`.
-   *
-   * @param segment - The segment being evaluated.
-   * @returns `true` if the segment's value should be clickable, `false`
-   * otherwise.
-   * @default () => true - By default, all values are considered clickable if
-   *   `enableClickableValues` is true.
+   * An array of handler functions to be executed when a value node is clicked.
+   * Only the first handler in the array for which `isClickable` returns `true`
+   * will be executed.
+   * @default VALUE_CLICK_HANDLERS
    */
-  isClickableValue = input<IsClickableValueFn>(() => true);
-
-  /**
-   * If `enableClickableValues` is set to `true`, emits a `Segment` object when
-   * a value node is clicked. The emitted `Segment` contains details about the
-   * clicked node (key, value, type, path, etc.).
-   */
-  onValueClick = output<Segment>();
+  valueClickHandlers = input<ValueClickHandler[]>();
 
   /**
    * *Internal* input representing the parent segment in the tree hierarchy.
@@ -142,6 +129,9 @@ export class NgxJsonTreeviewComponent {
     return !!segment && this.isClickable(segment);
   });
   isArrayElement = computed<boolean>(() => this.rootType() === 'array');
+  private internalValueClickHandlers = computed(
+    () => this.valueClickHandlers() ?? [...VALUE_CLICK_HANDLERS]
+  );
 
   private readonly idGenerator = inject(ID_GENERATOR);
   public readonly id = this.idGenerator.next();
@@ -160,8 +150,18 @@ export class NgxJsonTreeviewComponent {
     );
   }
 
-  isClickable(segment: Segment) {
-    return this.enableClickableValues() && this.isClickableValue()(segment);
+  isClickable(segment: Segment): boolean {
+    if (!this.enableClickableValues()) {
+      return false;
+    }
+
+    return this.internalValueClickHandlers().some((handler) => {
+      try {
+        return handler.canHandle(segment);
+      } catch (e) {
+        return false;
+      }
+    });
   }
 
   toggle(segment: Segment) {
@@ -178,8 +178,19 @@ export class NgxJsonTreeviewComponent {
   }
 
   onValueClickHandler(segment: Segment) {
-    if (this.isClickable(segment)) {
-      this.onValueClick.emit(segment);
+    for (const handler of this.internalValueClickHandlers()) {
+      try {
+        if (handler.canHandle(segment)) {
+          try {
+            handler.handler(segment);
+          } catch (e) {
+            console.error('Error executing click handler:', e);
+          }
+          return; // Stop after the first handler is executed.
+        }
+      } catch (e) {
+        // in case of any error, continue to the next handler
+      }
     }
   }
 

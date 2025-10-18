@@ -88,11 +88,9 @@
               [json]="segment.value"
               [expanded]="expanded()"
               [depth]="depth()"
-              [isClickableValue]="isClickableValue()"
               [enableClickableValues]="enableClickableValues()"
               [_parent]="segment"
-              [_currentDepth]="_currentDepth() + 1"
-              (onValueClick)="onValueClickHandler($event)" />
+              [_currentDepth]="_currentDepth() + 1" />
             <span class="punctuation">
               {{ closingBrace }}{{ needsComma ? ',' : '' }}
             </span>
