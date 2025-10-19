@@ -1,7 +1,7 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { VALUE_CLICK_HANDLERS } from '../handlers';
 import { ID_GENERATOR } from '../services/id-generator';
-import { Segment, ValueClickHandler } from '../types';
+import { IsClickableValueFn, Segment, ValueClickHandler } from '../types';
 import { decycle, previewString } from '../util';
 
 /**
@@ -53,10 +53,40 @@ export class NgxJsonTreeviewComponent {
   enableClickableValues = input<boolean>(false);
 
   /**
+   * @deprecated Use `valueClickHandlers` instead. This input will be removed
+   * in a future version.
+   *
+   * A function that determines if a specific value node should be considered
+   * clickable. This provides more granular control than the global
+   * `enableClickableValues` flag.
+   *
+   * The function receives the `Segment` object and should return `true` if the
+   * value is clickable, `false` otherwise. This check is only performed if
+   * `enableClickableValues` is also `true`.
+   *
+   * @param segment - The segment being evaluated.
+   * @returns `true` if the segment's value should be clickable, `false`
+   * otherwise.
+   */
+  isClickableValue = input<IsClickableValueFn>();
+
+  /**
+   * @deprecated Use `valueClickHandlers` instead. This output will be removed
+   * in a future version.
+   *
+   * If `enableClickableValues` is set to `true`, emits a `Segment` object when
+   * a value node is clicked. The emitted `Segment` contains details about the
+   * clicked node (key, value, type, path, etc.).
+   */
+  onValueClick = output<Segment>();
+
+  /**
    * An array of handler functions to be executed when a value node is clicked.
    * Only the first handler in the array for which `isClickable` returns `true`
    * will be executed.
-   * @default VALUE_CLICK_HANDLERS
+   *
+   * If `enableClickableValues` is set to true, but `valueClickHandlers` is
+   * omitted, the built-in `VALUE_CLICK_HANDLERS` will be used as the default.
    */
   valueClickHandlers = input<ValueClickHandler[]>();
 
@@ -73,6 +103,21 @@ export class NgxJsonTreeviewComponent {
    * @internal
    */
   _currentDepth = input<number>(0);
+
+  private internalValueClickHandlers = computed<ValueClickHandler[]>(() => {
+    const handlers: ValueClickHandler[] = [];
+    const legacyIsClickableFn = this.isClickableValue();
+
+    if (legacyIsClickableFn) {
+      handlers.push({
+        canHandle: legacyIsClickableFn,
+        handler: (segment) => this.onValueClick.emit(segment),
+      });
+    }
+
+    handlers.push(...(this.valueClickHandlers() ?? VALUE_CLICK_HANDLERS));
+    return handlers;
+  });
 
   rootType = computed<string>(() => {
     if (this.json() === null) {
@@ -129,9 +174,6 @@ export class NgxJsonTreeviewComponent {
     return !!segment && this.isClickable(segment);
   });
   isArrayElement = computed<boolean>(() => this.rootType() === 'array');
-  private internalValueClickHandlers = computed(
-    () => this.valueClickHandlers() ?? [...VALUE_CLICK_HANDLERS]
-  );
 
   private readonly idGenerator = inject(ID_GENERATOR);
   public readonly id = this.idGenerator.next();
