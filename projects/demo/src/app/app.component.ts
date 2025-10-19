@@ -1,5 +1,9 @@
 import { Component, signal } from '@angular/core';
-import { NgxJsonTreeviewComponent, Segment } from 'ngx-json-treeview';
+import {
+  NgxJsonTreeviewComponent,
+  Segment,
+  ValueClickHandler,
+} from 'ngx-json-treeview';
 
 @Component({
   selector: 'app-root',
@@ -45,17 +49,27 @@ export class AppComponent {
     },
   };
 
-  isClickableValue(segment: Segment) {
-    return ['object', 'array', 'string'].includes(segment.type ?? '');
-  }
+  clickHandlers: ValueClickHandler[] = [
+    {
+      canHandle: (segment: Segment) => {
+        return ['object', 'array', 'string'].includes(segment.type ?? '');
+      },
+      handler: (segment: Segment) => {
+        this.currentSegment.set(segment);
+      },
+    },
+  ];
 
-  isClickablePrimitiveValue(segment: Segment) {
-    return ['string'].includes(segment.type ?? '');
-  }
-
-  onValueClick(segment: Segment) {
-    this.currentSegment.set(segment);
-  }
+  primitiveClickHandlers: ValueClickHandler[] = [
+    {
+      canHandle: (segment: Segment) => {
+        return ['string'].includes(segment.type ?? '');
+      },
+      handler: (segment: Segment) => {
+        this.currentSegment.set(segment);
+      },
+    },
+  ];
 
   stringify(obj: any) {
     if (typeof obj === 'function') {
