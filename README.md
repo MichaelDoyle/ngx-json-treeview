@@ -24,30 +24,121 @@ npm install ngx-json-treeview
 
 ## Usage
 
-To render JSON in its fully expanded state.
+### Basic Setup
+
+By default, JSON objects are rendered fully expanded:
 
 ```html
 <ngx-json-treeview [json]="someObject" />
 ```
 
-To render JSON with all nodes collapsed.
+### Controlling Field Expansion
+
+To render the JSON with all nodes initially collapsed:
 
 ```html
 <ngx-json-treeview [json]="someObject" [expanded]="false" />
 ```
 
-Alternatively, expand only to a max depth by default.
+Or with nodes expanded up to a certain depth:
 
 ```html
 <ngx-json-treeview [json]="someObject" [depth]="1" />
 ```
 
-You can enable the user to click on values. Provide `onValueClick` to implement
-the desired behavior.
+### Clickable Values
 
-```html
-<ngx-json-treeview [json]="someObject" [enableClickableValues]="true" (onValueClick)="onValueClick($event)" />
+You can make values in the JSON tree clickable to trigger custom actions. For
+convenience, a default click handler is provided for URLs (which will be opened
+in a new tab, when clicked.)
+
+1.  **Enable Clickable Values**: Set the `enableClickableValues` input to
+    `true`. This also enables the default click handler(s) automatically.
+
+    ```html
+    <ngx-json-treeview [json]="someObject" [enableClickableValues]="true" />
+    ```
+
+2.  **Provide Click Handlers**: Provide your own custom behaviors by passing an
+    array of `ValueClickHandler` objects to the
+    `valueClickHandlers` input.
+
+    A `ValueClickHandler` has two properties:
+
+    - `canHandle`: A function that returns `true` if the handler should apply to
+      a given value.
+    - `handler`: The function to execute when the value is clicked.
+
+    Only the _first_ handler in the array where `canHandle` returns `true` will
+    be executed.
+
+#### Example: Copy to Clipboard
+
+Here's how you could implement a handler that copies a string value to the
+clipboard when clicked.
+
+**In your component's TypeScript file:**
+
+```typescript
+import { Segment, ValueClickHandler } from 'ngx-json-treeview';
+
+// Define a custom click handler
+copyToClipboardHandler: ValueClickHandler = {
+  canHandle: (segment: Segment) => typeof segment.value === 'string',
+  handler: (segment: Segment) => {
+    navigator.clipboard.writeText(segment.value).then(() => {
+      alert(`Copied "${segment.value}" to clipboard!`);
+    });
+  },
+};
+
+customValueClickHandlers: ValueClickHandler[] = [
+  this.copyToClipboardHandler,
+  // Add addt'l custom handlers here
+];
 ```
+
+**In your component's HTML file:**
+
+<!-- prettier-ignore -->
+```html
+<ngx-json-treeview
+  [json]="someObject"
+  [enableClickableValues]="true"
+  [valueClickhandlers]="customValueClickHandlers"
+/>
+```
+
+In this example, any string value will be clickable. When clicked, it will be
+copied to the clipboard.
+
+#### Combining Handlers
+
+Custom handlers can be combined alongside the built-in ones (such as the URL
+handler). To apply all of the default built-in handlers, you can import the `VALUE_CLICK_HANDLERS` array and spread it into your `customValueClickHandlers`
+array. Alternatively, handlers be the imported individually via
+`ValueClickHandlers`.
+
+```typescript
+import {
+  ValueClickHandlers,
+  VALUE_CLICK_HANDLERS,
+} from 'ngx-json-treeview';
+
+customValueClickHandlers: ValueClickHandler[] = [
+  ...VALUE_CLICK_HANDLERS,
+  this.copyToClipboardHandler,
+];
+
+// OR
+
+customValueClickHandlers: ValueClickHandler[] = [
+  ValueClickHandlers.followLinkHandler,
+  this.copyToClipboardHandler,
+];
+```
+
+In this example, any string that matches a URL will trigger the `followLinkHandler`, and all other strings will trigger the `copyToClipboardHandler`.
 
 ## Theming
 
