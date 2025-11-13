@@ -89,6 +89,9 @@
               [expanded]="expanded()"
               [depth]="depth()"
               [enableClickableValues]="enableClickableValues()"
+              [valueClickHandlers]="valueClickHandlers()"
+              [isClickableValue]="isClickableValue()"
+              (onValueClick)="onValueClickHandler($event)"
               [_parent]="segment"
               [_currentDepth]="_currentDepth() + 1" />
             <span class="punctuation">
