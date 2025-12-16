@@ -64,7 +64,6 @@ in a new tab, when clicked.)
     `valueClickHandlers` input.
 
     A `ValueClickHandler` has two properties:
-
     - `canHandle`: A function that returns `true` if the handler should apply to
       a given value.
     - `handler`: The function to execute when the value is clicked.
