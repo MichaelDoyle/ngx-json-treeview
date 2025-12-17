@@ -1,6 +1,6 @@
 {
   "name": "ngx-json-treeview",
-  "version": "20.2.0",
+  "version": "21.0.0",
   "license": "Apache-2.0",
   "author": {
     "name": "Michael J Doyle",
@@ -33,23 +33,23 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^20.3.0",
-    "@angular/cdk": "^20.2.0",
-    "@angular/common": "^20.3.0",
-    "@angular/compiler": "^20.3.0",
-    "@angular/core": "^20.3.0",
-    "@angular/forms": "^20.3.0",
-    "@angular/platform-browser": "^20.3.0",
-    "@angular/platform-browser-dynamic": "^20.3.0",
-    "@angular/router": "^20.3.0",
+    "@angular/animations": "^21.0.5",
+    "@angular/cdk": "^21.0.3",
+    "@angular/common": "^21.0.5",
+    "@angular/compiler": "^21.0.5",
+    "@angular/core": "^21.0.5",
+    "@angular/forms": "^21.0.5",
+    "@angular/platform-browser": "^21.0.5",
+    "@angular/platform-browser-dynamic": "^21.0.5",
+    "@angular/router": "^21.0.5",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.15.0"
+    "zone.js": "~0.16.0"
   },
   "devDependencies": {
-    "@angular/build": "^20.3.0",
-    "@angular/cli": "^20.3.0",
-    "@angular/compiler-cli": "^20.3.0",
+    "@angular/build": "^21.0.3",
+    "@angular/cli": "^21.0.3",
+    "@angular/compiler-cli": "^21.0.5",
     "@types/jasmine": "~5.1.13",
     "cpy-cli": "^6.0.0",
     "jasmine-core": "~5.13.0",
@@ -58,11 +58,11 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "ng-packagr": "^20.3.0",
+    "ng-packagr": "^21.0.1",
     "prettier": "^3.7.4",
     "prettier-plugin-css-order": "^2.1.2",
     "prettier-plugin-organize-imports": "^4.3.0",
     "typescript": "~5.9.3"
   },
-  "packageManager": "pnpm@10.26.1+sha512.664074abc367d2c9324fdc18037097ce0a8f126034160f709928e9e9f95d98714347044e5c3164d65bd5da6c59c6be362b107546292a8eecb7999196e5ce58fa"
+  "packageManager": "pnpm@10.26.2+sha512.0e308ff2005fc7410366f154f625f6631ab2b16b1d2e70238444dd6ae9d630a8482d92a451144debc492416896ed16f7b114a86ec68b8404b2443869e68ffda6"
 }
