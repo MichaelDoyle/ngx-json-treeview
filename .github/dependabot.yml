@@ -13,3 +13,11 @@ updates:
       angular:
         patterns:
           - "@angular/*"
+  - package-ecosystem: "npm"
+    directory: "/projects/ngx-json-treeview"
+    schedule:
+      interval: "weekly"
+    groups:
+      angular:
+        patterns:
+          - "@angular/*"
