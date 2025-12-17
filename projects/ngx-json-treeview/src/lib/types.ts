@@ -52,5 +52,5 @@ export interface ValueClickHandler {
    * The function to execute when a clickable value is clicked.
    * @param segment The segment that was clicked.
    */
-  handler: (segment: Segment) => void;
+  handler: (segment: Segment, event?: MouseEvent) => void;
 }
