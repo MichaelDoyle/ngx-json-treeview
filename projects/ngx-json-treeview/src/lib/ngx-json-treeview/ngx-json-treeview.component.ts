@@ -212,19 +212,19 @@ export class NgxJsonTreeviewComponent {
     }
   }
 
-  onPrimitiveClick(): void {
+  onPrimitiveClick(event?: MouseEvent): void {
     const segment = this.primitiveSegment();
     if (segment) {
-      this.onValueClickHandler(segment);
+      this.onValueClickHandler(segment, event);
     }
   }
 
-  onValueClickHandler(segment: Segment) {
+  onValueClickHandler(segment: Segment, event?: MouseEvent) {
     for (const handler of this.internalValueClickHandlers()) {
       try {
         if (handler.canHandle(segment)) {
           try {
-            handler.handler(segment);
+            handler.handler(segment, event);
           } catch (e) {
             console.error('Error executing click handler:', e);
           }

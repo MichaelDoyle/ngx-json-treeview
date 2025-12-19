@@ -7,7 +7,7 @@
         type="button"
         class="segment-primitive"
         [class.clickable]="isClickablePrimitive()"
-        (click)="onPrimitiveClick()"
+        (click)="onPrimitiveClick($event)"
         [disabled]="!isClickablePrimitive()">
         {{ asString() }}
       </button>
@@ -71,7 +71,7 @@
               [class.segment-label]="expandable"
               [class.segment-value]="!expandable"
               [class.clickable]="clickableValue"
-              (click)="onValueClickHandler(segment)"
+              (click)="onValueClickHandler(segment, $event)"
               [disabled]="!clickableValue">
               {{ segment.description }}
             </button>
