@@ -54,12 +54,13 @@ export class NgxJsonTreeviewComponent {
   enableClickableValues = input<boolean>(false);
 
   /**
-   * A flag to stop click events from propagating up the DOM tree.
+   * A flag to control whether click events on nodes propagate up the DOM tree.
    *
-   * When a value is clicked, the event is normally propagated. Set this to
-   * `true` to prevent this behavior. This can be useful in scenarios where
-   * the tree view is embedded within other clickable elements, and you want to
-   * avoid unintended side effects.
+   * By default, click events are stopped from propagating. This is useful when
+   * the tree view is embedded within other clickable elements to avoid
+   * unintended side effects.
+   *
+   * Set to `false` to allow events to propagate.
    *
    * @default true
    */
