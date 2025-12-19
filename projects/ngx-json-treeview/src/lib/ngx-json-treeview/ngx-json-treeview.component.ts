@@ -1,4 +1,5 @@
 import { Component, computed, inject, input, output } from '@angular/core';
+import { StopClickPropagationDirective } from '../directives/stop-click-propagation.directive';
 import { VALUE_CLICK_HANDLERS } from '../handlers';
 import { ID_GENERATOR } from '../services/id-generator';
 import { IsClickableValueFn, Segment, ValueClickHandler } from '../types';
@@ -10,7 +11,7 @@ import { decycle, previewString } from '../util';
  */
 @Component({
   selector: 'ngx-json-treeview',
-  imports: [],
+  imports: [StopClickPropagationDirective],
   templateUrl: './ngx-json-treeview.component.html',
   styleUrls: ['./ngx-json-treeview.component.scss'],
 })
@@ -51,6 +52,19 @@ export class NgxJsonTreeviewComponent {
    * @default false
    */
   enableClickableValues = input<boolean>(false);
+
+  /**
+   * A flag to control whether click events on nodes propagate up the DOM tree.
+   *
+   * By default, click events are stopped from propagating. This is useful when
+   * the tree view is embedded within other clickable elements to avoid
+   * unintended side effects.
+   *
+   * Set to `false` to allow events to propagate.
+   *
+   * @default true
+   */
+  stopClickPropagation = input<boolean>(true);
 
   /**
    * @deprecated Use `valueClickHandlers` instead. This input will be removed

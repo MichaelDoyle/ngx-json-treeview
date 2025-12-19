@@ -8,6 +8,7 @@
         class="segment-primitive"
         [class.clickable]="isClickablePrimitive()"
         (click)="onPrimitiveClick($event)"
+        [ngxJtStopClickPropagation]="stopClickPropagation()"
         [disabled]="!isClickablePrimitive()">
         {{ asString() }}
       </button>
@@ -45,6 +46,7 @@
             [class.expandable]="expandable"
             [class.expanded]="segment.expanded"
             (click)="toggle(segment)"
+            [ngxJtStopClickPropagation]="stopClickPropagation()"
             [disabled]="!expandable">
             @if (expandable) {
               <div class="toggler"></div>
@@ -72,6 +74,7 @@
               [class.segment-value]="!expandable"
               [class.clickable]="clickableValue"
               (click)="onValueClickHandler(segment, $event)"
+              [ngxJtStopClickPropagation]="stopClickPropagation()"
               [disabled]="!clickableValue">
               {{ segment.description }}
             </button>
@@ -91,6 +94,7 @@
               [enableClickableValues]="enableClickableValues()"
               [valueClickHandlers]="valueClickHandlers()"
               [isClickableValue]="isClickableValue()"
+              [stopClickPropagation]="stopClickPropagation()"
               (onValueClick)="onValueClickHandler($event)"
               [_parent]="segment"
               [_currentDepth]="_currentDepth() + 1" />
