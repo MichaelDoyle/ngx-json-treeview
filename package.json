@@ -26,6 +26,7 @@
     "format": "prettier . --write",
     "ng": "ng",
     "start": "ng serve",
+    "start:demo": "pnpm run build && pnpm run start",
     "test": "ng test",
     "watch": "ng build --watch --configuration development",
     "publish:lib": "pnpm publish ./dist/ngx-json-treeview"
