@@ -4,6 +4,10 @@ A simple Angular component to display object data in an expandable JSON tree vie
 
 <img width="751" alt="image" src="https://github.com/user-attachments/assets/6025f020-727e-4098-bcb9-146fb2b66c0a" />
 
+See it in action on StackBlitz.
+
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/MichaelDoyle/ngx-json-treeview?file=README.md&startScript=start:demo)
+
 ## Key Features
 
 - Display JSON objects and arrays in a collapsible tree structure.
@@ -11,10 +15,6 @@ A simple Angular component to display object data in an expandable JSON tree vie
 - Clickable value nodes for custom interactions.
 - Control over initial expansion depth.
 - Keyboard navigable
-
-## Demo
-
-[https://stackblitz.com/edit/ngx-json-treeview](https://stackblitz.com/edit/ngx-json-treeview?file=src%2Fapp%2Fapp.component.ts)
 
 ## Install
 
