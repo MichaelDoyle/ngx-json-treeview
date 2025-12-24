@@ -1,6 +1,6 @@
 {
   "name": "ngx-json-treeview",
-  "version": "20.2.0",
+  "version": "21.0.0",
   "license": "Apache-2.0",
   "author": {
     "name": "Michael J Doyle",
@@ -18,8 +18,8 @@
     "treeview"
   ],
   "peerDependencies": {
-    "@angular/common": "^20.0.0",
-    "@angular/core": "^20.0.0"
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
