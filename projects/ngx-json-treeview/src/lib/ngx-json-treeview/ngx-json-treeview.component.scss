@@ -68,7 +68,7 @@ $type-colors: (
     background-color: var(--ngx-json-null-bg, red);
   }
   .segment-type-undefined > .segment-main {
-    & > .segment-key {
+    & > button > .segment-key {
       color: var(--ngx-json-undefined-key, #a31515);
     }
     & > .segment-value {
