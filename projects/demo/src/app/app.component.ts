@@ -1,20 +1,37 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   NgxJsonTreeviewComponent,
   Segment,
+  VALUE_CLICK_HANDLERS,
   ValueClickHandler,
 } from 'ngx-json-treeview';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
-  imports: [NgxJsonTreeviewComponent],
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatTabsModule,
+    MatToolbarModule,
+    MatTooltipModule,
+    NgxJsonTreeviewComponent,
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
   currentSegment = signal<Segment | undefined>(undefined);
+  expansionDepth = signal(1);
 
-  primitives = [13, 'hello, world!', true, null, {}, []];
+  protected readonly themeService = inject(ThemeService);
 
   baseObj = {
     string: 'Hello World',
@@ -50,20 +67,10 @@ export class AppComponent {
   };
 
   clickHandlers: ValueClickHandler[] = [
+    ...VALUE_CLICK_HANDLERS,
     {
       canHandle: (segment: Segment) => {
         return ['object', 'array', 'string'].includes(segment.type ?? '');
-      },
-      handler: (segment: Segment) => {
-        this.currentSegment.set(segment);
-      },
-    },
-  ];
-
-  primitiveClickHandlers: ValueClickHandler[] = [
-    {
-      canHandle: (segment: Segment) => {
-        return ['string'].includes(segment.type ?? '');
       },
       handler: (segment: Segment) => {
         this.currentSegment.set(segment);
@@ -78,5 +85,9 @@ export class AppComponent {
       return obj;
     }
     return JSON.stringify(obj, null, 2);
+  }
+
+  toggleExpansion() {
+    this.expansionDepth.update((depth) => (depth === -1 ? 0 : -1));
   }
 }

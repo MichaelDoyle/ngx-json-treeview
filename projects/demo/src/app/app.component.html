@@ -1,56 +1,69 @@
-<h2>ngx-json-treeview</h2>
-
-<h3>Collapsed</h3>
-<div class="json-container">
-  <ngx-json-treeview
-    [json]="json"
-    [expanded]="false"
-    [enableClickableValues]="true" />
-</div>
-
-<h3>Max Depth (1)</h3>
-<div class="json-container">
-  <ngx-json-treeview [json]="json" [depth]="1" [enableClickableValues]="true" />
-</div>
-
-<h3>Fully Expanded</h3>
-<div class="json-container">
-  <ngx-json-treeview [json]="json" [enableClickableValues]="true" />
-</div>
-
-<h3>Clickable Nodes</h3>
-<div class="clickable-container">
-  <div class="json-container">
-    <h4>Object</h4>
-    <ngx-json-treeview
-      [json]="json"
-      [expanded]="false"
-      [valueClickHandlers]="clickHandlers"
-      [enableClickableValues]="true" />
-    <h4>Primitives</h4>
-    @for (primitive of primitives; track $index) {
-      <ngx-json-treeview
-        [json]="primitive"
-        [valueClickHandlers]="primitiveClickHandlers"
-        [enableClickableValues]="true" />
-    }
-  </div>
-  @let segment = currentSegment();
-  @if (segment) {
-    <div class="preview-pane">
-      <pre>{{ stringify(segment.value) }}</pre>
+<mat-toolbar class="fixed-header">
+  <span>ngx-json-treeview</span>
+  <span class="spacer"></span>
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="themeMenu"
+    aria-label="Select theme">
+    <mat-icon>
+      @switch (themeService.theme()) {
+        @case ('dark') {
+          dark_mode
+        }
+        @case ('light') {
+          light_mode
+        }
+        @case ('system') {
+          brightness_auto
+        }
+      }
+    </mat-icon>
+  </button>
+  <mat-menu #themeMenu="matMenu">
+    <button mat-menu-item (click)="themeService.setTheme('light')">
+      <mat-icon>light_mode</mat-icon>
+      <span>Light</span>
+    </button>
+    <button mat-menu-item (click)="themeService.setTheme('dark')">
+      <mat-icon>dark_mode</mat-icon>
+      <span>Dark</span>
+    </button>
+    <button mat-menu-item (click)="themeService.setTheme('system')">
+      <mat-icon>brightness_auto</mat-icon>
+      <span>System</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>
+<main class="content-container">
+  <div class="clickable-container">
+    <div class="json-container">
+      <button
+        class="action-button"
+        mat-icon-button
+        (click)="toggleExpansion()"
+        [matTooltip]="expansionDepth() === -1 ? 'Collapse all' : 'Expand all'">
+        @if (expansionDepth() === -1) {
+          <mat-icon>collapse_all</mat-icon>
+        } @else {
+          <mat-icon>expand_all</mat-icon>
+        }
+      </button>
+      <div class="json-scroll-container">
+        <ngx-json-treeview
+          [json]="json"
+          [expanded]="true"
+          [depth]="expansionDepth()"
+          [enableClickableValues]="true"
+          [valueClickHandlers]="clickHandlers" />
+      </div>
     </div>
-  }
-</div>
-
-<h3>Simple Types</h3>
-<div class="json-container">
-  @for (primitive of primitives; track $index) {
-    <ngx-json-treeview [json]="primitive" />
-  }
-</div>
-
-<h3>Arrays</h3>
-<div class="json-container">
-  <ngx-json-treeview [json]="[1, 2, 3, 'hello', 'world']" />
-</div>
+    @let segment = currentSegment();
+    <div class="preview-pane">
+      @if (segment) {
+        <pre>{{ stringify(segment.value) }}</pre>
+      } @else {
+        {{ 'Click an attribute to preview it here.' }}
+      }
+    </div>
+  </div>
+</main>
