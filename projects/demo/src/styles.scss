@@ -1,4 +1,67 @@
 /* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+html {
+  color-scheme: light;
+
+  @include mat.theme(
+    (
+      color: mat.$azure-palette,
+      typography: 'Google Sans',
+      density: 0,
+    )
+  );
+}
+
 body {
-  font-family: 'Google Sans';
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font-family: 'Google Sans', 'Roboto', sans-serif;
+  margin: 0;
+
+  &[data-theme='dark'] {
+    color-scheme: dark;
+  }
+}
+
+:root {
+  // JSON Treeview Overrides
+  --ngx-json-font-family: 'Roboto Mono', 'Courier New', monospace;
+  --ngx-json-string: #007b49ff;
+  --ngx-json-number: #3252b8ff;
+  --ngx-json-boolean: #3252b8ff;
+  --ngx-json-date: #007b49ff;
+  --ngx-json-function: #3252b8ff;
+  --ngx-json-null: #fff;
+  --ngx-json-null-bg: #a31515;
+  --ngx-json-undefined: #fff;
+  --ngx-json-undefined-bg: #707070ff;
+  --ngx-json-undefined-key: #0075a2ff;
+  --ngx-json-toggler: #707070ff;
+  --ngx-json-key: #0075a2ff;
+  --ngx-json-punctuation: #292929ff;
+  --ngx-json-value: #3252b8ff;
+  --ngx-json-label: #707070ff;
+}
+
+body[data-theme='dark'] {
+  // JSON Treeview Overrides
+  --ngx-json-font-family: 'Roboto Mono', 'Courier New', monospace;
+  --ngx-json-string: #77d5a3ff;
+  --ngx-json-number: #8da8ffff;
+  --ngx-json-boolean: #8da8ffff;
+  --ngx-json-date: #77d5a3ff;
+  --ngx-json-function: #8da8ffff;
+  --ngx-json-null: #fff;
+  --ngx-json-null-bg: #a31515;
+  --ngx-json-undefined: #fff;
+  --ngx-json-undefined-bg: #707070ff;
+  --ngx-json-undefined-key: #85cdf1ff;
+  --ngx-json-toggler: #8e8e8eff;
+  --ngx-json-key: #85cdf1ff;
+  --ngx-json-punctuation: #e1dfdfff;
+  --ngx-json-value: #8da8ffff;
+  --ngx-json-label: #8e8e8eff;
 }

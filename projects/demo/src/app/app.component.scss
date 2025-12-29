@@ -1,12 +1,65 @@
-.json-container {
-  font-family: monospace;
+.fixed-header {
+  background: var(--mat-sys-surface);
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  color: var(--mat-sys-on-surface);
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 1000;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.content-container {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px);
+  margin-top: 64px; // Toolbar height
   overflow: hidden;
+  padding: 20px;
+}
+
+.json-container {
+  background: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 4px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  font-family: 'Roboto Mono', monospace;
+  overflow: hidden;
+  position: relative;
+
+  &:hover .action-button {
+    opacity: 1;
+  }
+
+  .action-button {
+    opacity: 0;
+    position: absolute;
+    right: 20px;
+    top: 4px;
+    transition: opacity 0.2s;
+    z-index: 10;
+  }
+}
+
+.json-scroll-container {
+  flex: 1;
+  overflow: auto;
   padding: 10px;
 }
 
 .clickable-container {
+  box-sizing: border-box;
   display: flex;
-  gap: 10px;
+  gap: 20px;
+  height: 100%;
+  overflow: hidden;
   width: 100%;
 }
 
@@ -14,10 +67,24 @@
 .clickable-container > .preview-pane {
   box-sizing: border-box;
   flex-basis: 50%;
+  height: 100%;
 }
 
 .preview-pane {
-  background: #f9f9f9;
-  border-left: 1px solid #ccc;
+  align-items: center;
+  background: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 4px;
+  color: var(--mat-sys-on-surface-variant);
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  overflow: auto;
   padding: 10px;
+
+  pre {
+    height: 100%;
+    margin: 0;
+    width: 100%;
+  }
 }
