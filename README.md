@@ -1,4 +1,4 @@
-[![npm version](https://badge.fury.io/js/ngx-json-treeview.svg?icon=si%3Anpm)](https://badge.fury.io/js/ngx-json-treeview) [![CI](https://github.com/michaeldoyle/ngx-json-treeview/actions/workflows/ci.yml/badge.svg)](https://github.com/michaeldoyle/ngx-json-treeview/actions) [![Apache license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/MichaelDoyle/ngx-json-treeview/blob/main/LICENSE)
+[![npm version](https://badge.fury.io/js/ngx-json-treeview.svg?icon=si%3Anpm)](https://badge.fury.io/js/ngx-json-treeview) [![CI](https://github.com/michaeldoyle/ngx-json-treeview/actions/workflows/ci.yml/badge.svg)](https://github.com/michaeldoyle/ngx-json-treeview/actions) [![Apache license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
 # ngx-json-treeview
 
