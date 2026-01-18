@@ -1,4 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -26,6 +31,7 @@ import { ThemeService } from './services/theme.service';
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
   currentSegment = signal<Segment | undefined>(undefined);
@@ -33,7 +39,7 @@ export class AppComponent {
 
   protected readonly themeService = inject(ThemeService);
 
-  baseObj = {
+  private baseObj = {
     string: 'Hello World',
     stringPre: 'Hello\nWorld\n\tAnother line',
     number: 1234567890,

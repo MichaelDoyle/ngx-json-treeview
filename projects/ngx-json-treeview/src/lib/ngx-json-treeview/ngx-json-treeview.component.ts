@@ -1,4 +1,12 @@
-import { Component, computed, inject, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  computed,
+  inject,
+  input,
+  output,
+} from '@angular/core';
 import { StopClickPropagationDirective } from '../directives/stop-click-propagation.directive';
 import { VALUE_CLICK_HANDLERS } from '../handlers';
 import { ID_GENERATOR } from '../services/id-generator';
@@ -14,6 +22,7 @@ import { decycle, previewString } from '../util';
   imports: [StopClickPropagationDirective],
   templateUrl: './ngx-json-treeview.component.html',
   styleUrls: ['./ngx-json-treeview.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NgxJsonTreeviewComponent {
   /**
@@ -117,6 +126,8 @@ export class NgxJsonTreeviewComponent {
    * @internal
    */
   _currentDepth = input<number>(0);
+
+  private readonly cdr = inject(ChangeDetectorRef);
 
   private internalValueClickHandlers = computed<ValueClickHandler[]>(() => {
     const handlers: ValueClickHandler[] = [];
@@ -223,6 +234,7 @@ export class NgxJsonTreeviewComponent {
   toggle(segment: Segment) {
     if (this.isExpandable(segment)) {
       segment.expanded = !segment.expanded;
+      this.cdr.markForCheck();
     }
   }
 
