@@ -1,11 +1,11 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   computed,
   inject,
   input,
   output,
+  signal,
 } from '@angular/core';
 import { StopClickPropagationDirective } from '../directives/stop-click-propagation.directive';
 import { VALUE_CLICK_HANDLERS } from '../handlers';
@@ -127,8 +127,6 @@ export class NgxJsonTreeviewComponent {
    */
   _currentDepth = input<number>(0);
 
-  private readonly cdr = inject(ChangeDetectorRef);
-
   private internalValueClickHandlers = computed<ValueClickHandler[]>(() => {
     const handlers: ValueClickHandler[] = [];
     const legacyIsClickableFn = this.isClickableValue();
@@ -200,6 +198,12 @@ export class NgxJsonTreeviewComponent {
   });
   isArrayElement = computed<boolean>(() => this.rootType() === 'array');
 
+  /**
+   * Tracks the expansion state of individual segments. Ensures user-toggled
+   * states persist even when the underlying data or segments are re-generated.
+   */
+  expandedSegments = signal<Map<string, boolean>>(new Map());
+
   private readonly idGenerator = inject(ID_GENERATOR);
   public readonly id = this.idGenerator.next();
 
@@ -233,8 +237,11 @@ export class NgxJsonTreeviewComponent {
 
   toggle(segment: Segment) {
     if (this.isExpandable(segment)) {
-      segment.expanded = !segment.expanded;
-      this.cdr.markForCheck();
+      this.expandedSegments.update((map) => {
+        const newMap = new Map(map);
+        newMap.set(segment.path, !segment.expanded);
+        return newMap;
+      });
     }
   }
 
@@ -300,14 +307,15 @@ export class NgxJsonTreeviewComponent {
   }
 
   private parseKeyValue(key: any, value: any): Segment {
+    const path = this.getPath(key);
     const segment: Segment = {
       parent: this._parent(),
-      path: this.getPath(key),
+      path,
       key: key,
       value: value,
       type: undefined,
       description: '' + value,
-      expanded: this.isExpanded(),
+      expanded: this.expandedSegments().get(path) ?? this.isExpanded(),
     };
 
     switch (typeof segment.value) {
