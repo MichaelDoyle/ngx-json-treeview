@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   input,
   output,
@@ -126,6 +127,13 @@ export class NgxJsonTreeviewComponent {
    * @internal
    */
   _currentDepth = input<number>(0);
+
+  constructor() {
+    effect(() => {
+      this.depth();
+      this.expandedSegments.set(new Map());
+    });
+  }
 
   private internalValueClickHandlers = computed<ValueClickHandler[]>(() => {
     const handlers: ValueClickHandler[] = [];
