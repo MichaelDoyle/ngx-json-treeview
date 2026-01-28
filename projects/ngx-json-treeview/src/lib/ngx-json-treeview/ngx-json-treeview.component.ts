@@ -30,7 +30,7 @@ export class NgxJsonTreeviewComponent {
    * The JSON object or array to display in the tree view.
    * @required
    */
-  json = input.required<any>();
+  readonly json = input.required<any>();
 
   /**
    * Controls the default expansion state for all expandable segments
@@ -39,7 +39,7 @@ export class NgxJsonTreeviewComponent {
    * - If `false`, all nodes start collapsed.
    * @default true
    */
-  expanded = input<boolean>(true);
+  readonly expanded = input<boolean>(true);
 
   /**
    * Determines the maximum nesting level automatically expanded when `expanded`
@@ -49,7 +49,7 @@ export class NgxJsonTreeviewComponent {
    * - `n`: Root and nodes down to `n` levels are expanded.
    * @default -1
    */
-  depth = input<number>(-1);
+  readonly depth = input<number>(-1);
 
   /**
    * If `true`, values are clickable when there is a corresponding handler
@@ -61,7 +61,7 @@ export class NgxJsonTreeviewComponent {
    * - Triggering custom actions based on the value's content or type.
    * @default false
    */
-  enableClickableValues = input<boolean>(false);
+  readonly enableClickableValues = input<boolean>(false);
 
   /**
    * A flag to control whether click events on nodes propagate up the DOM tree.
@@ -74,7 +74,7 @@ export class NgxJsonTreeviewComponent {
    *
    * @default true
    */
-  stopClickPropagation = input<boolean>(true);
+  readonly stopClickPropagation = input<boolean>(true);
 
   /**
    * @deprecated Use `valueClickHandlers` instead. This input will be removed
@@ -92,7 +92,7 @@ export class NgxJsonTreeviewComponent {
    * @returns `true` if the segment's value should be clickable, `false`
    * otherwise.
    */
-  isClickableValue = input<IsClickableValueFn>();
+  readonly isClickableValue = input<IsClickableValueFn>();
 
   /**
    * @deprecated Use `valueClickHandlers` instead. This output will be removed
@@ -102,7 +102,7 @@ export class NgxJsonTreeviewComponent {
    * a value node is clicked. The emitted `Segment` contains details about the
    * clicked node (key, value, type, path, etc.).
    */
-  onValueClick = output<Segment>();
+  readonly onValueClick = output<Segment>();
 
   /**
    * An array of handler functions to be executed when a value node is clicked.
@@ -112,28 +112,21 @@ export class NgxJsonTreeviewComponent {
    * If `enableClickableValues` is set to true, but `valueClickHandlers` is
    * omitted, the built-in `VALUE_CLICK_HANDLERS` will be used as the default.
    */
-  valueClickHandlers = input<ValueClickHandler[]>();
+  readonly valueClickHandlers = input<ValueClickHandler[]>();
 
   /**
    * *Internal* input representing the parent segment in the tree hierarchy.
    * Primrily used for calculating paths.
    * @internal
    */
-  _parent = input<Segment>();
+  protected readonly _parent = input<Segment>();
 
   /**
    * *Internal* input representing the current nesting depth. Used in
    * conjunction with the `depth` input to control expansion.
    * @internal
    */
-  _currentDepth = input<number>(0);
-
-  constructor() {
-    effect(() => {
-      this.depth();
-      this.expandedSegments.set(new Map());
-    });
-  }
+  protected readonly _currentDepth = input<number>(0);
 
   private internalValueClickHandlers = computed<ValueClickHandler[]>(() => {
     const handlers: ValueClickHandler[] = [];
@@ -150,46 +143,53 @@ export class NgxJsonTreeviewComponent {
     return handlers;
   });
 
-  rootType = computed<string>(() => {
+  private readonly rootType = computed<string>(() => {
     if (this.json() === null) {
       return 'null';
     } else if (Array.isArray(this.json())) {
       return 'array';
     } else return typeof this.json();
   });
-  segments = computed<Segment[]>(() => {
+
+  protected readonly segments = computed<Segment[]>(() => {
     const json = decycle(this.json());
     if (typeof json === 'object' && json != null) {
       return Object.keys(json).map((key) => this.parseKeyValue(key, json[key]));
     }
     return [];
   });
-  isExpanded = computed<boolean>(
+
+  private readonly isExpanded = computed<boolean>(
     () =>
       this.expanded() &&
       !(this.depth() > -1 && this._currentDepth() >= this.depth())
   );
-  openingBrace = computed<string>(() => {
+
+  protected readonly openingBrace = computed<string>(() => {
     if (this.rootType() === 'array') {
       return '[';
     } else return '{';
   });
-  closingBrace = computed<string>(() => {
+
+  protected readonly closingBrace = computed<string>(() => {
     if (this.rootType() === 'array') {
       return ']';
     } else return '}';
   });
-  asString = computed<string>(() =>
+
+  protected readonly asString = computed<string>(() =>
     JSON.stringify(this.json(), null, 2).trim()
   );
-  primitiveSegmentClass = computed<string>(() => {
+
+  protected readonly primitiveSegmentClass = computed<string>(() => {
     const type = this.rootType();
     if (['object', 'array'].includes(type)) {
       return 'punctuation';
     }
     return 'segment-type-' + type;
   });
-  private primitiveSegment = computed<Segment | null>(() => {
+
+  private readonly primitiveSegment = computed<Segment | null>(() => {
     if (this.segments().length > 0) return null;
     return {
       key: '',
@@ -200,36 +200,47 @@ export class NgxJsonTreeviewComponent {
       path: this._parent()?.path ?? '',
     };
   });
-  isClickablePrimitive = computed<boolean>(() => {
+
+  protected readonly isClickablePrimitive = computed<boolean>(() => {
     const segment = this.primitiveSegment();
     return !!segment && this.isClickable(segment);
   });
-  isArrayElement = computed<boolean>(() => this.rootType() === 'array');
+
+  protected readonly isArrayElement = computed<boolean>(
+    () => this.rootType() === 'array'
+  );
 
   /**
    * Tracks the expansion state of individual segments. Ensures user-toggled
    * states persist even when the underlying data or segments are re-generated.
    */
-  expandedSegments = signal<Map<string, boolean>>(new Map());
+  private readonly expandedSegments = signal<Map<string, boolean>>(new Map());
 
   private readonly idGenerator = inject(ID_GENERATOR);
-  public readonly id = this.idGenerator.next();
+  protected readonly id = this.idGenerator.next();
 
-  isExpandable(segment: Segment) {
+  constructor() {
+    effect(() => {
+      this.depth();
+      this.expandedSegments.set(new Map());
+    });
+  }
+
+  protected isExpandable(segment: Segment) {
     return (
       (segment.type === 'object' && Object.keys(segment.value).length > 0) ||
       (segment.type === 'array' && segment.value.length > 0)
     );
   }
 
-  isEmpty(segment: Segment) {
+  protected isEmpty(segment: Segment) {
     return (
       (segment.type === 'object' && Object.keys(segment.value).length === 0) ||
       (segment.type === 'array' && segment.value.length === 0)
     );
   }
 
-  isClickable(segment: Segment): boolean {
+  protected isClickable(segment: Segment): boolean {
     if (!this.enableClickableValues()) {
       return false;
     }
@@ -243,7 +254,7 @@ export class NgxJsonTreeviewComponent {
     });
   }
 
-  toggle(segment: Segment) {
+  protected toggle(segment: Segment) {
     if (this.isExpandable(segment)) {
       this.expandedSegments.update((map) => {
         const newMap = new Map(map);
@@ -253,14 +264,14 @@ export class NgxJsonTreeviewComponent {
     }
   }
 
-  onPrimitiveClick(event?: MouseEvent): void {
+  protected onPrimitiveClick(event?: MouseEvent): void {
     const segment = this.primitiveSegment();
     if (segment) {
       this.onValueClickHandler(segment, event);
     }
   }
 
-  onValueClickHandler(segment: Segment, event?: MouseEvent) {
+  protected onValueClickHandler(segment: Segment, event?: MouseEvent) {
     for (const handler of this.internalValueClickHandlers()) {
       try {
         if (handler.canHandle(segment)) {
@@ -277,7 +288,7 @@ export class NgxJsonTreeviewComponent {
     }
   }
 
-  openingBraceForSegment(segment: Segment) {
+  protected openingBraceForSegment(segment: Segment) {
     if (segment.type === 'array') {
       return '[';
     } else if (segment.type === 'object') {
@@ -287,7 +298,7 @@ export class NgxJsonTreeviewComponent {
     return undefined;
   }
 
-  closingBraceForSegment(segment: Segment) {
+  protected closingBraceForSegment(segment: Segment) {
     if (segment.type === 'array') {
       return ']';
     } else if (segment.type === 'object') {
