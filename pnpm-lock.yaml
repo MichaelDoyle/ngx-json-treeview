@@ -55,8 +55,8 @@ importers:
         specifier: ~5.1.15
         version: 5.1.15
       cpy-cli:
-        specifier: ^6.0.0
-        version: 6.0.0
+        specifier: ^7.0.0
+        version: 7.0.0
       jasmine-core:
         specifier: ~5.13.0
         version: 5.13.0
@@ -1597,13 +1597,13 @@ packages:
     resolution: {integrity: sha512-KIHbLJqu73RGr/hnbrO9uBeixNGuvSQjul/jdFvS/KFSIH1hWVd1ng7zOHx+YrEfInLG7q4n6GHQ9cDtxv/P6g==}
     engines: {node: '>= 0.10'}
 
-  cpy-cli@6.0.0:
-    resolution: {integrity: sha512-q7GUqTDnRymCbScJ4Ph1IUM86wWdKG8JbgrvKLgvvehH4wrbRcVN+jRwOTlxJdwm7ykdXMKSp6IESksFeHa0eA==}
+  cpy-cli@7.0.0:
+    resolution: {integrity: sha512-uGCdhIxGfZcPXidCuT8w1jBknVXFx0un7NLjzqBZcdnkIWtLUnWMPk5TC37ceoVjwASLSNsRtTXXNTuFIyE2ng==}
     engines: {node: '>=20'}
     hasBin: true
 
-  cpy@12.1.0:
-    resolution: {integrity: sha512-3z9tP1rPBLG7pQYn9iRgl7JOSew0SMPuWmakaRfzhXpmFBHmRbp7JekpuqPkXbbWOdSeKSbInYEcdIZjov2fNQ==}
+  cpy@13.2.0:
+    resolution: {integrity: sha512-zTF1smuEo4MqYkx2/vzE2QftjgUJGaDNkIyEV9iZG7OfRhxZh6DlLEm+xHAcc0D2k8hL/Abseoep1crmG9so/w==}
     engines: {node: '>=20'}
 
   cross-spawn@7.0.6:
@@ -1838,8 +1838,8 @@ packages:
   fast-uri@3.0.6:
     resolution: {integrity: sha512-Atfo14OibSv5wAp4VWNsFYE1AchQRTv9cBGWET4pZWHzYshFSS9NQI6I57rdKn9croWVMbYFbLhJ+yJvmZIIHw==}
 
-  fastq@1.19.1:
-    resolution: {integrity: sha512-GwLTyxkCXjXbxqIhTsMI2Nui8huMPtnxg7krajPJAjnEG/iiOS7i+zCtWGZR9G0NBKbXKh6X9m9UIsYX/N6vvQ==}
+  fastq@1.20.1:
+    resolution: {integrity: sha512-GGToxJ/w1x32s/D2EKND7kTil4n8OVk/9mycTc4VDza13lOvpUZTGX3mFSCtV9ksdGBVzvsyAVLM6mHFThxXxw==}
 
   fdir@6.5.0:
     resolution: {integrity: sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg==}
@@ -1946,10 +1946,10 @@ packages:
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
-  globby@15.0.0:
-    resolution: {integrity: sha512-oB4vkQGqlMl682wL1IlWd02tXCbquGWM4voPEI85QmNKCaw8zGTm1f1rubFgkg3Eli2PtKlFgrnmUqasbQWlkw==}
+  globby@16.1.0:
+    resolution: {integrity: sha512-+A4Hq7m7Ze592k9gZRy4gJ27DrXRNnC1vPjxTt1qQxEY8RxagBkBxivkCwg7FxSTG0iLLEMaUx13oOr0R2/qcQ==}
     engines: {node: '>=20'}
 
   gopd@1.2.0:
@@ -2097,6 +2097,10 @@ packages:
   is-number@7.0.0:
     resolution: {integrity: sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==}
     engines: {node: '>=0.12.0'}
+
+  is-path-inside@4.0.0:
+    resolution: {integrity: sha512-lJJV/5dYS+RcL8uQdBDW9c9uWFLLBNRyFhnAKXw5tVqLlKZ4RMGZKv+YQ/IA3OhD+RpbJa1LLFM1FQPGyIXvOA==}
+    engines: {node: '>=12'}
 
   is-promise@4.0.0:
     resolution: {integrity: sha512-hvpoI6korhJMnej285dSg6nu1+e6uxs7zG3BYAm5byqDsgJNWwxzM6z6iZiAgQR4TJ30JmBTOwqZUw3WlyH3AQ==}
@@ -2284,9 +2288,9 @@ packages:
     resolution: {integrity: sha512-aisnrDP4GNe06UcKFnV5bfMNPBUw4jsLGaWwWfnH3v02GnBuXX2MCVn5RbrWo0j3pczUilYblq7fQ7Nw2t5XKw==}
     engines: {node: '>= 0.8'}
 
-  meow@13.2.0:
-    resolution: {integrity: sha512-pxQJQzB6djGPXh08dacEloMFopsOqGVRKFPYvPOt9XDZ1HasbgDZA74CJGreSU4G3Ak7EFJGoiH2auq+yXISgA==}
-    engines: {node: '>=18'}
+  meow@14.0.0:
+    resolution: {integrity: sha512-JhC3R1f6dbspVtmF3vKjAWz1EVIvwFrGGPLSdU6rK79xBwHWTuHoLnRX/t1/zHS1Ch1Y2UtIrih7DAHuH9JFJA==}
+    engines: {node: '>=20'}
 
   merge-descriptors@2.0.0:
     resolution: {integrity: sha512-Snk314V5ayFLhp3fkUREub6WtjBfPdCPY1Ln8/8munuLuiYhsABgBVWsozAG+MWMbVEvcdcpbi9R7ww22l9Q3g==}
@@ -2524,10 +2528,6 @@ packages:
     resolution: {integrity: sha512-37/tPdZ3oJwHaS3gNJdenCDB3Tz26i9sjhnguBtvN0vYlRIiDNnvTWkuh+0hETV9rLPdJ3rlL3yVOYPIAnM8rw==}
     engines: {node: '>=18'}
 
-  p-map@7.0.3:
-    resolution: {integrity: sha512-VkndIv2fIB99swvQoA65bm+fsmt6UNdGeIB0oxBs+WhAhdh08QA04JXpI7rbB9r08/nkbysKoya9rtDERYOYMA==}
-    engines: {node: '>=18'}
-
   p-map@7.0.4:
     resolution: {integrity: sha512-tkAQEw8ysMzmkhgw8k+1U/iPhWNhykKnSk4Rd5zLoPJCuJaGRPo6YposrZgaxHKzDHdDWWZvE/Sk7hsL2X/CpQ==}
     engines: {node: '>=18'}
@@ -2575,10 +2575,6 @@ packages:
 
   path-to-regexp@8.3.0:
     resolution: {integrity: sha512-7jdwVIRtsP8MYpdXSwOS0YdD0Du+qOoF/AEPIt88PcCFrZCzx41oxku1jD88hZBwbNUIEfpqvuhjFaMAqMTWnA==}
-
-  path-type@6.0.0:
-    resolution: {integrity: sha512-Vj7sf++t5pBD637NSfkxpHSMfWaeig5+DKWLhcqIYx6mWQz5hdJTGDVMQiJcw1ZYkhs7AazKDGpRVji1LJCZUQ==}
-    engines: {node: '>=18'}
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -2954,7 +2950,7 @@ packages:
   tar@7.5.2:
     resolution: {integrity: sha512-7NyxrTE4Anh8km8iEy7o0QYPs+0JKBTj5ZaqHg6B39erLg0qYXN3BijtShwbsNSvQ+LN75+KV+C4QR/f6Gwnpg==}
     engines: {node: '>=18'}
-    deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exhorbitant rates) by contacting i@izs.me
+    deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   terser@5.39.1:
     resolution: {integrity: sha512-Mm6+uad0ZuDtcV8/4uOZQDQ8RuiC5Pu+iZRedJtF7yA/27sPL7d++In/AJKpWZlU3SYMPPkVfwetn6sgZ66pUA==}
@@ -3008,9 +3004,9 @@ packages:
     resolution: {integrity: sha512-CfPufgPFHCYu0W4h1NiKW9+tNJ39o3kWm7Cm29ET1enSJx+AERfz7A2wAr26aY0SZbYzZlTBQtcHy15o60VZfQ==}
     engines: {node: '>=20.18.1'}
 
-  unicorn-magic@0.3.0:
-    resolution: {integrity: sha512-+QBBXBCvifc56fsbuxZQ6Sic3wqqc3WWaqxs58gvJrcOuN83HGTCwz3oS5phzU9LthRNE9VrJCFCLUgHeeFnfA==}
-    engines: {node: '>=18'}
+  unicorn-magic@0.4.0:
+    resolution: {integrity: sha512-wH590V9VNgYH9g3lH9wWjTrUoKsjLF6sGLjhR4sH1LWpLmCOH0Zf7PukhDA8BiS7KHe4oPNkcTHqYkj7SOGUOw==}
+    engines: {node: '>=20'}
 
   unique-filename@5.0.0:
     resolution: {integrity: sha512-2RaJTAvAb4owyjllTfXzFClJ7WsGxlykkPvCr9pA//LD9goVq+m4PPAeBgNodGZ7nSrntT/auWpJ6Y5IFXcfjg==}
@@ -4007,7 +4003,7 @@ snapshots:
   '@nodelib/fs.walk@1.2.8':
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
-      fastq: 1.19.1
+      fastq: 1.20.1
 
   '@npmcli/agent@4.0.0':
     dependencies:
@@ -4615,19 +4611,20 @@ snapshots:
       object-assign: 4.1.1
       vary: 1.1.2
 
-  cpy-cli@6.0.0:
+  cpy-cli@7.0.0:
     dependencies:
-      cpy: 12.1.0
-      meow: 13.2.0
+      cpy: 13.2.0
+      globby: 16.1.0
+      meow: 14.0.0
 
-  cpy@12.1.0:
+  cpy@13.2.0:
     dependencies:
       copy-file: 11.1.0
-      globby: 15.0.0
+      globby: 16.1.0
       junk: 4.0.1
       micromatch: 4.0.8
       p-filter: 4.1.0
-      p-map: 7.0.3
+      p-map: 7.0.4
 
   cross-spawn@7.0.6:
     dependencies:
@@ -4879,7 +4876,7 @@ snapshots:
 
   fast-uri@3.0.6: {}
 
-  fastq@1.19.1:
+  fastq@1.20.1:
     dependencies:
       reusify: 1.1.0
 
@@ -4993,14 +4990,14 @@ snapshots:
       once: 1.4.0
       path-is-absolute: 1.0.1
 
-  globby@15.0.0:
+  globby@16.1.0:
     dependencies:
       '@sindresorhus/merge-streams': 4.0.0
       fast-glob: 3.3.3
       ignore: 7.0.5
-      path-type: 6.0.0
+      is-path-inside: 4.0.0
       slash: 5.1.0
-      unicorn-magic: 0.3.0
+      unicorn-magic: 0.4.0
 
   gopd@1.2.0: {}
 
@@ -5139,6 +5136,8 @@ snapshots:
   is-interactive@2.0.0: {}
 
   is-number@7.0.0: {}
+
+  is-path-inside@4.0.0: {}
 
   is-promise@4.0.0: {}
 
@@ -5396,7 +5395,7 @@ snapshots:
 
   media-typer@1.1.0: {}
 
-  meow@13.2.0: {}
+  meow@14.0.0: {}
 
   merge-descriptors@2.0.0: {}
 
@@ -5661,9 +5660,7 @@ snapshots:
 
   p-filter@4.1.0:
     dependencies:
-      p-map: 7.0.3
-
-  p-map@7.0.3: {}
+      p-map: 7.0.4
 
   p-map@7.0.4: {}
 
@@ -5721,8 +5718,6 @@ snapshots:
       minipass: 7.1.2
 
   path-to-regexp@8.3.0: {}
-
-  path-type@6.0.0: {}
 
   picocolors@1.1.1: {}
 
@@ -6219,7 +6214,7 @@ snapshots:
 
   undici@7.18.0: {}
 
-  unicorn-magic@0.3.0: {}
+  unicorn-magic@0.4.0: {}
 
   unique-filename@5.0.0:
     dependencies:
