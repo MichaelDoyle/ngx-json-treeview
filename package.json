@@ -1,6 +1,7 @@
 {
   "name": "ngx-json-treeview",
-  "version": "21.2.0",
+  "description": "Display object data in an expandable JSON tree view.",
+  "version": "21.2.1",
   "license": "Apache-2.0",
   "author": {
     "name": "Michael J Doyle",
@@ -33,22 +34,22 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/cdk": "^21.2.3",
-    "@angular/common": "^21.2.5",
-    "@angular/compiler": "^21.2.5",
-    "@angular/core": "^21.2.5",
-    "@angular/forms": "^21.2.5",
-    "@angular/material": "^21.2.3",
-    "@angular/platform-browser": "^21.2.5",
-    "@angular/platform-browser-dynamic": "^21.2.5",
-    "@angular/router": "^21.2.5",
+    "@angular/cdk": "^21.2.4",
+    "@angular/common": "^21.2.6",
+    "@angular/compiler": "^21.2.6",
+    "@angular/core": "^21.2.6",
+    "@angular/forms": "^21.2.6",
+    "@angular/material": "^21.2.4",
+    "@angular/platform-browser": "^21.2.6",
+    "@angular/platform-browser-dynamic": "^21.2.6",
+    "@angular/router": "^21.2.6",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@angular/build": "^21.2.3",
-    "@angular/cli": "^21.2.3",
-    "@angular/compiler-cli": "^21.2.5",
+    "@angular/build": "^21.2.5",
+    "@angular/cli": "^21.2.5",
+    "@angular/compiler-cli": "^21.2.6",
     "@types/jasmine": "~5.1.15",
     "cpy-cli": "^7.0.0",
     "jasmine-core": "~5.13.0",
@@ -57,11 +58,11 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.2.0",
-    "ng-packagr": "^21.2.1",
+    "ng-packagr": "^21.2.2",
     "prettier": "^3.8.1",
     "prettier-plugin-css-order": "^2.2.0",
     "prettier-plugin-organize-imports": "^4.3.0",
     "typescript": "~5.9.3"
   },
-  "packageManager": "pnpm@10.26.2+sha512.0e308ff2005fc7410366f154f625f6631ab2b16b1d2e70238444dd6ae9d630a8482d92a451144debc492416896ed16f7b114a86ec68b8404b2443869e68ffda6"
+  "packageManager": "pnpm@10.33.0+sha512.10568bb4a6afb58c9eb3630da90cc9516417abebd3fabbe6739f0ae795728da1491e9db5a544c76ad8eb7570f5c4bb3d6c637b2cb41bfdcdb47fa823c8649319"
 }

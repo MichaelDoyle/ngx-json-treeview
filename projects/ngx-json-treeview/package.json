@@ -1,6 +1,7 @@
 {
   "name": "ngx-json-treeview",
-  "version": "21.2.0",
+  "description": "Display object data in an expandable JSON tree view.",
+  "version": "21.2.1",
   "license": "Apache-2.0",
   "author": {
     "name": "Michael J Doyle",
@@ -19,7 +20,8 @@
   ],
   "peerDependencies": {
     "@angular/common": "^21.0.0",
-    "@angular/core": "^21.0.0"
+    "@angular/core": "^21.0.0",
+    "@angular/cdk": "^21.0.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
