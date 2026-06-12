@@ -58,8 +58,8 @@ importers:
         specifier: ^7.0.0
         version: 7.0.0
       jasmine-core:
-        specifier: ~5.13.0
-        version: 5.13.0
+        specifier: ~6.3.0
+        version: 6.3.0
       karma:
         specifier: ~6.4.0
         version: 6.4.4
@@ -74,7 +74,7 @@ importers:
         version: 5.1.0(karma@6.4.4)
       karma-jasmine-html-reporter:
         specifier: ~2.2.0
-        version: 2.2.0(jasmine-core@5.13.0)(karma-jasmine@5.1.0(karma@6.4.4))(karma@6.4.4)
+        version: 2.2.0(jasmine-core@6.3.0)(karma-jasmine@5.1.0(karma@6.4.4))(karma@6.4.4)
       ng-packagr:
         specifier: ^21.2.3
         version: 21.2.3(@angular/compiler-cli@21.2.7(@angular/compiler@21.2.7)(typescript@5.9.3))(tslib@2.8.1)(typescript@5.9.3)
@@ -1571,8 +1571,8 @@ packages:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
     engines: {node: '>= 0.6'}
 
-  acorn@8.16.0:
-    resolution: {integrity: sha512-UVJyE9MttOsBQIDKw1skb9nAwQuR5wuGD3+82K6JgJlm/Y+KI92oNsMNGZCYdDsVtRHSak0pcV5Dno5+4jh9sw==}
+  acorn@8.17.0:
+    resolution: {integrity: sha512-xRQbDb9BnwDafYNn6Vwl839DYVjqXYb1XVGtWAZ1kcDc6iwAL4hg3B1dZlRiuENFeO2H53gFG3in621AdERVAg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
 
@@ -2364,8 +2364,8 @@ packages:
   jasmine-core@4.6.1:
     resolution: {integrity: sha512-VYz/BjjmC3klLJlLwA4Kw8ytk0zDSmbbDLNs794VnWmkcCB7I9aAL/D48VNQtmITyPvea2C3jdUMfc3kAoy0PQ==}
 
-  jasmine-core@5.13.0:
-    resolution: {integrity: sha512-vsYjfh7lyqvZX5QgqKc4YH8phs7g96Z8bsdIFNEU3VqXhlHaq+vov/Fgn/sr6MiUczdZkyXRC3TX369Ll4Nzbw==}
+  jasmine-core@6.3.0:
+    resolution: {integrity: sha512-eMm5qBovNjNoGOcgE/W207+wrcK5zrQv0Rg/rWGboUJUmZp0dFCpHTyjpuDAfCwRCqg7f9U2q2jtv/aUuzdCQg==}
 
   jiti@1.21.7:
     resolution: {integrity: sha512-/imKNG4EbWNrVjoNC/1H5/9GFy+tqjGBHCaSsN+P2RnPqjsLmv6UD3Ej+Kj8nBWaRAwyk7kK5ZUc+OEatnTR3A==}
@@ -4650,7 +4650,7 @@ snapshots:
       mime-types: 3.0.2
       negotiator: 1.0.0
 
-  acorn@8.16.0:
+  acorn@8.17.0:
     optional: true
 
   agent-base@7.1.4: {}
@@ -5538,7 +5538,7 @@ snapshots:
 
   jasmine-core@4.6.1: {}
 
-  jasmine-core@5.13.0: {}
+  jasmine-core@6.3.0: {}
 
   jiti@1.21.7:
     optional: true
@@ -5582,9 +5582,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  karma-jasmine-html-reporter@2.2.0(jasmine-core@5.13.0)(karma-jasmine@5.1.0(karma@6.4.4))(karma@6.4.4):
+  karma-jasmine-html-reporter@2.2.0(jasmine-core@6.3.0)(karma-jasmine@5.1.0(karma@6.4.4))(karma@6.4.4):
     dependencies:
-      jasmine-core: 5.13.0
+      jasmine-core: 6.3.0
       karma: 6.4.4
       karma-jasmine: 5.1.0(karma@6.4.4)
 
@@ -6523,7 +6523,7 @@ snapshots:
   terser@5.39.1:
     dependencies:
       '@jridgewell/source-map': 0.3.11
-      acorn: 8.16.0
+      acorn: 8.17.0
       commander: 2.20.3
       source-map-support: 0.5.21
     optional: true
