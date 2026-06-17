@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   provideZonelessChangeDetection,
   signal,
@@ -10,6 +11,7 @@ import { StopClickPropagationDirective } from './stop-click-propagation.directiv
 @Component({
   standalone: true,
   imports: [StopClickPropagationDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div (click)="parentClicked()">
       <div [ngxJtStopClickPropagation]="enabled()">
@@ -40,8 +42,12 @@ describe('StopClickPropagationDirective', () => {
   });
 
   it('should stop click propagation when enabled', () => {
-    const parentSpy = spyOn(component, 'parentClicked');
-    const childSpy = spyOn(component, 'childClicked');
+    const parentSpy = vi
+      .spyOn(component, 'parentClicked')
+      .mockReturnValue(undefined);
+    const childSpy = vi
+      .spyOn(component, 'childClicked')
+      .mockReturnValue(undefined);
 
     const clickableSpan = fixture.debugElement.query(By.css('span'));
     clickableSpan.nativeElement.click();
@@ -54,8 +60,12 @@ describe('StopClickPropagationDirective', () => {
     component.enabled.set(false);
     await fixture.whenStable();
 
-    const parentSpy = spyOn(component, 'parentClicked');
-    const childSpy = spyOn(component, 'childClicked');
+    const parentSpy = vi
+      .spyOn(component, 'parentClicked')
+      .mockReturnValue(undefined);
+    const childSpy = vi
+      .spyOn(component, 'childClicked')
+      .mockReturnValue(undefined);
 
     const clickableSpan = fixture.debugElement.query(By.css('span'));
     clickableSpan.nativeElement.click();
