@@ -54,7 +54,7 @@
     "istanbul-lib-instrument": "^6.0.3",
     "jsdom": "^29.1.1",
     "ng-packagr": "^22.0.1",
-    "prettier": "^3.8.4",
+    "prettier": "^3.9.5",
     "prettier-plugin-css-order": "^2.2.0",
     "prettier-plugin-organize-imports": "^4.3.0",
     "typescript": "~6.0.3",
