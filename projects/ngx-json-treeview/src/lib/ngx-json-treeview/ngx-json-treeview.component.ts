@@ -12,7 +12,7 @@ import { StopClickPropagationDirective } from '../directives/stop-click-propagat
 import { VALUE_CLICK_HANDLERS } from '../handlers';
 import { ID_GENERATOR } from '../services/id-generator';
 import { IsClickableValueFn, Segment, ValueClickHandler } from '../types';
-import { decycle, previewString } from '../util';
+import { decycle, isExpandableSegment, previewString } from '../util';
 
 /**
  * Renders JSON data in an expandable and collapsible tree structure.
@@ -227,11 +227,18 @@ export class NgxJsonTreeviewComponent {
     });
   }
 
+  toggle(segment: Segment) {
+    if (this.isExpandable(segment)) {
+      this.expandedSegments.update((map) => {
+        const newMap = new Map(map);
+        newMap.set(segment.path, !segment.expanded);
+        return newMap;
+      });
+    }
+  }
+
   protected isExpandable(segment: Segment) {
-    return (
-      (segment.type === 'object' && Object.keys(segment.value).length > 0) ||
-      (segment.type === 'array' && segment.value.length > 0)
-    );
+    return isExpandableSegment(segment);
   }
 
   protected isEmpty(segment: Segment) {
@@ -255,16 +262,6 @@ export class NgxJsonTreeviewComponent {
     });
   }
 
-  protected toggle(segment: Segment) {
-    if (this.isExpandable(segment)) {
-      this.expandedSegments.update((map) => {
-        const newMap = new Map(map);
-        newMap.set(segment.path, !segment.expanded);
-        return newMap;
-      });
-    }
-  }
-
   protected onPrimitiveClick(event?: MouseEvent): void {
     const segment = this.primitiveSegment();
     if (segment) {
@@ -277,7 +274,7 @@ export class NgxJsonTreeviewComponent {
       try {
         if (handler.canHandle(segment)) {
           try {
-            handler.handler(segment, event);
+            handler.handler(segment, event, this);
           } catch (e) {
             console.error('Error executing click handler:', e);
           }
