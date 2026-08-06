@@ -1,4 +1,5 @@
-import { decycle, previewString } from '../util';
+import { Segment } from '../types';
+import { decycle, isExpandableSegment, previewString } from '../util';
 
 describe('Util', () => {
   describe('previewString', () => {
@@ -126,6 +127,81 @@ describe('Util', () => {
       const obj2 = { b: 2, c: obj1 } as any;
       obj1.d = obj2;
       expect(decycle(obj1)).toEqual({ a: 1, d: { b: 2, c: { $ref: '$' } } });
+    });
+  });
+
+  describe('isExpandableSegment', () => {
+    it('should return true for a non-empty object segment', () => {
+      const segment: Segment = {
+        key: 'a',
+        value: { x: 1 },
+        type: 'object',
+        description: '',
+        expanded: false,
+        path: 'a',
+      };
+      expect(isExpandableSegment(segment)).toBe(true);
+    });
+
+    it('should return true for a non-empty array segment', () => {
+      const segment: Segment = {
+        key: 'b',
+        value: [1],
+        type: 'array',
+        description: '',
+        expanded: false,
+        path: 'b',
+      };
+      expect(isExpandableSegment(segment)).toBe(true);
+    });
+
+    it('should return false for an empty object segment', () => {
+      const segment: Segment = {
+        key: 'a',
+        value: {},
+        type: 'object',
+        description: '',
+        expanded: false,
+        path: 'a',
+      };
+      expect(isExpandableSegment(segment)).toBe(false);
+    });
+
+    it('should return false for an empty array segment', () => {
+      const segment: Segment = {
+        key: 'b',
+        value: [],
+        type: 'array',
+        description: '',
+        expanded: false,
+        path: 'b',
+      };
+      expect(isExpandableSegment(segment)).toBe(false);
+    });
+
+    it('should return false for a primitive segment', () => {
+      const segment: Segment = {
+        key: 'c',
+        value: 'test',
+        type: 'string',
+        description: '',
+        expanded: false,
+        path: 'c',
+      };
+      expect(isExpandableSegment(segment)).toBe(false);
+    });
+
+    it('should return false for null or undefined segment value', () => {
+      const nullSegment: Segment = {
+        key: 'd',
+        value: null,
+        type: 'null',
+        description: '',
+        expanded: false,
+        path: 'd',
+      };
+      expect(isExpandableSegment(nullSegment)).toBe(false);
+      expect(isExpandableSegment(null as any)).toBe(false);
     });
   });
 });

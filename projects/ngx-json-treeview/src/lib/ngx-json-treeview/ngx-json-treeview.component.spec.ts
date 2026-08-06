@@ -7,8 +7,10 @@ import { NgxJsonTreeviewNodeHarness } from './testing/ngx-json-treeview.harness'
 async function setupTest({
   json = {},
   depth = 0,
+  enableClickableValues = false,
 }: {
   depth?: number;
+  enableClickableValues?: boolean;
   json?: any;
 } = {}) {
   await TestBed.configureTestingModule({
@@ -19,6 +21,7 @@ async function setupTest({
   const fixture = TestBed.createComponent(NgxJsonTreeviewComponent);
   fixture.componentRef.setInput('depth', depth);
   fixture.componentRef.setInput('json', json);
+  fixture.componentRef.setInput('enableClickableValues', enableClickableValues);
   await fixture.whenStable();
 
   const component = fixture.componentInstance;
@@ -55,5 +58,24 @@ describe('NgxJsonTreeviewComponent', () => {
       NgxJsonTreeviewNodeHarness.with({ key: 'deep' })
     );
     expect(await deepNodeAfter.isExpanded()).toBe(true);
+  });
+
+  it('should expand a collapsed node when clicking value preview with enableClickableValues=true', async () => {
+    const { fixture, loader } = await setupTest({
+      depth: 0,
+      enableClickableValues: true,
+      json: { user: { name: 'Alice', age: 30 } },
+    });
+
+    const userNode = await loader.getHarness(
+      NgxJsonTreeviewNodeHarness.with({ key: 'user' })
+    );
+    expect(await userNode.isExpanded()).toBe(false);
+
+    // Click the value preview button on the collapsed node via harness
+    await userNode.clickValue();
+    await fixture.whenStable();
+
+    expect(await userNode.isExpanded()).toBe(true);
   });
 });
