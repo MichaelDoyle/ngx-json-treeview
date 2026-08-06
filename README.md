@@ -116,9 +116,10 @@ copied to the clipboard.
 #### Combining Handlers
 
 Custom handlers can be combined alongside the built-in ones (such as the URL
-handler). To apply all of the default built-in handlers, you can import the `VALUE_CLICK_HANDLERS` array and spread it into your `customValueClickHandlers`
-array. Alternatively, handlers be the imported individually via
-`ValueClickHandlers`.
+handler `followLinkHandler` and node expansion handler `expandHandler`). To
+apply all of the default built-in handlers, you can import the `VALUE_CLICK_HANDLERS` array and spread it into your `customValueClickHandlers`
+array. Alternatively, handlers can be imported individually via
+`ValueClickHandlers` or direct exports.
 
 ```typescript
 import {
@@ -135,6 +136,7 @@ customValueClickHandlers: ValueClickHandler[] = [
 
 customValueClickHandlers: ValueClickHandler[] = [
   ValueClickHandlers.followLinkHandler,
+  ValueClickHandlers.expandHandler,
   this.copyToClipboardHandler,
 ];
 ```

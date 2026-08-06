@@ -1,3 +1,5 @@
+import { Segment } from './types';
+
 /**
  * Generates a preview string representation of an object.
  *
@@ -117,4 +119,22 @@ export function decycle(object: any): any {
     }
     return value;
   })(object, '$');
+}
+
+/**
+ * Determines whether a segment represents an expandable node
+ * (i.e. a non-empty object or array).
+ *
+ * @param segment The segment to evaluate.
+ * @returns `true` if the segment is expandable, `false` otherwise.
+ */
+export function isExpandableSegment(segment: Segment): boolean {
+  if (!segment || !segment.value) {
+    return false;
+  }
+
+  return (
+    (segment.type === 'object' && Object.keys(segment.value).length > 0) ||
+    (segment.type === 'array' && segment.value.length > 0)
+  );
 }

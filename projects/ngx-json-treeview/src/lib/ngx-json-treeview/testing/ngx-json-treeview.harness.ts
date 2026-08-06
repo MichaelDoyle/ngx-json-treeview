@@ -115,6 +115,14 @@ export class NgxJsonTreeviewNodeHarness extends ComponentHarness {
     await button.click();
   }
 
+  /** Clicks the value element of the node. */
+  async clickValue(): Promise<void> {
+    const valueEl = await this.valueElement();
+    if (valueEl) {
+      await valueEl.click();
+    }
+  }
+
   /** Gets the child treeview harness, if expanded. */
   async getChildTree(): Promise<NgxJsonTreeviewHarness | null> {
     const isExpanded = await this.isExpanded();
