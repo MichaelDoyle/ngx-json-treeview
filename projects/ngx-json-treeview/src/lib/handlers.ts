@@ -1,4 +1,5 @@
 import { ValueClickHandler } from './types';
+import { isExpandableSegment } from './util';
 
 /**
  * A handler that checks if a segment's value is a string that looks like an
@@ -22,11 +23,23 @@ export const followLinkHandler: ValueClickHandler = {
 };
 
 /**
+ * A handler that checks if a segment's value is an expandable object or array.
+ * If clicked, it expands or toggles the node in the tree view component.
+ */
+export const expandHandler: ValueClickHandler = {
+  canHandle: isExpandableSegment,
+  handler: (segment, _, component) => {
+    component?.toggle?.(segment);
+  },
+};
+
+/**
  * A collection of built-in value click handlers.
  * This array can be used to easily apply all default handlers.
  */
 export const VALUE_CLICK_HANDLERS: readonly ValueClickHandler[] = [
   followLinkHandler,
+  expandHandler,
 ];
 
 /**
@@ -35,4 +48,5 @@ export const VALUE_CLICK_HANDLERS: readonly ValueClickHandler[] = [
  */
 export const ValueClickHandlers = {
   followLinkHandler,
+  expandHandler,
 };

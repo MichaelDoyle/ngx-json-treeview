@@ -5,8 +5,10 @@
 export {
   VALUE_CLICK_HANDLERS,
   ValueClickHandlers,
+  expandHandler,
   followLinkHandler,
 } from './lib/handlers';
 export * from './lib/ngx-json-treeview/ngx-json-treeview.component';
 export * from './lib/ngx-json-treeview/testing/ngx-json-treeview.harness';
 export * from './lib/types';
+export { isExpandableSegment } from './lib/util';

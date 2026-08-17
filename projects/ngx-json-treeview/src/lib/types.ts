@@ -52,6 +52,11 @@ export interface ValueClickHandler {
    * The function to execute when a clickable value is clicked.
    * @param segment The segment that was clicked.
    * @param event The mouse event that triggered the click.
+   * @param component Optional reference to the NgxJsonTreeviewComponent instance.
    */
-  handler: (segment: Segment, event?: MouseEvent) => void;
+  handler: (
+    segment: Segment,
+    event?: MouseEvent,
+    component?: { toggle?: (segment: Segment) => void }
+  ) => void;
 }
