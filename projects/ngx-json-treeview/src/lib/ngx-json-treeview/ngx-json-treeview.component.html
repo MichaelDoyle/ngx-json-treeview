@@ -58,27 +58,30 @@
             }
           </button>
           <span
+            class="segment-colon"
             [class.segment-label]="isArrayElement()"
             [class.punctuation]="!isArrayElement()"
-            >:
-          </span>
+            >:</span
+          >
           @if (empty) {
             <span class="punctuation"
               >{{ openingBrace }}{{ closingBrace
               }}{{ needsComma ? ',' : '' }}</span
             >
           } @else if (!expandable || !segment.expanded) {
-            <button
-              type="button"
-              [class.segment-label]="expandable"
-              [class.segment-value]="!expandable"
-              [class.clickable]="clickableValue"
-              (click)="onValueClickHandler(segment, $event)"
-              [ngxJtStopClickPropagation]="stopClickPropagation()"
-              [disabled]="!clickableValue">
-              {{ segment.description }}
-            </button>
-            <span class="punctuation">{{ needsComma ? ',' : '' }}</span>
+            <span class="segment-preview-container">
+              <button
+                type="button"
+                [class.segment-label]="expandable"
+                [class.segment-value]="!expandable"
+                [class.clickable]="clickableValue"
+                (click)="onValueClickHandler(segment, $event)"
+                [ngxJtStopClickPropagation]="stopClickPropagation()"
+                [disabled]="!clickableValue">
+                {{ segment.description }}
+              </button>
+              <span class="punctuation">{{ needsComma ? ',' : '' }}</span>
+            </span>
           } @else {
             <span class="punctuation">
               {{ openingBrace }}
@@ -91,6 +94,7 @@
               [json]="segment.value"
               [expanded]="expanded()"
               [depth]="depth()"
+              [maxPreviewLength]="maxPreviewLength()"
               [enableClickableValues]="enableClickableValues()"
               [valueClickHandlers]="valueClickHandlers()"
               [isClickableValue]="isClickableValue()"

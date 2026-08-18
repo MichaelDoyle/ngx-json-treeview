@@ -52,6 +52,12 @@ export class NgxJsonTreeviewComponent {
   readonly depth = input<number>(-1);
 
   /**
+   * Maximum character length of collapsed object/array preview strings.
+   * @default 80
+   */
+  readonly maxPreviewLength = input<number>(80);
+
+  /**
    * If `true`, values are clickable when there is a corresponding handler
    * in the `valueClickHandlers` array that can process it.
    *
@@ -359,13 +365,19 @@ export class NgxJsonTreeviewComponent {
           segment.description = 'null';
         } else if (Array.isArray(segment.value)) {
           segment.type = 'array';
-          segment.description = previewString(segment.value);
+          segment.description = previewString(
+            segment.value,
+            this.maxPreviewLength()
+          );
         } else if (segment.value instanceof Date) {
           segment.type = 'date';
           segment.description = `"${segment.value.toISOString()}"`;
         } else {
           segment.type = 'object';
-          segment.description = previewString(segment.value);
+          segment.description = previewString(
+            segment.value,
+            this.maxPreviewLength()
+          );
         }
         break;
       default:

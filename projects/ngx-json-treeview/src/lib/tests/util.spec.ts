@@ -47,7 +47,17 @@ describe('Util', () => {
 
     it('should truncate when limit is exceeded', () => {
       const obj = { a: 1, b: 'hello'.repeat(50) };
-      expect(previewString(obj, 20)).toEqual('Object {"a":1,"b":"h…');
+      expect(previewString(obj, 20)).toEqual('Object {"a":1,"b":"…');
+    });
+
+    it('should default limit to 80 characters', () => {
+      const obj: Record<string, string> = {};
+      for (let i = 0; i < 20; i++) {
+        obj[`key_${i}`] = `val_${i}`;
+      }
+      const preview = previewString(obj);
+      expect(preview.length).toBe(80);
+      expect(preview.endsWith('…')).toBe(true);
     });
 
     it('should truncate string values in objects when stringsLimit is exceeded', () => {

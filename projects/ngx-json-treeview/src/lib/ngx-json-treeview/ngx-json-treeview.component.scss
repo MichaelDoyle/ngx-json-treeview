@@ -19,8 +19,12 @@ $type-colors: (
     padding: 2px;
 
     .segment-main {
-      word-wrap: break-word;
       margin: 1px 1px 1px 12px;
+      word-wrap: break-word;
+
+      .segment-colon {
+        margin-right: 0.25em;
+      }
 
       .toggler {
         color: var(--ngx-json-toggler, #787878);
@@ -57,27 +61,62 @@ $type-colors: (
     }
   }
 
+  .segment-type-object > .segment-main,
+  .segment-type-array > .segment-main {
+    align-items: baseline;
+    display: flex;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+
+    > button {
+      flex-shrink: 0;
+    }
+
+    > .punctuation,
+    .segment-colon {
+      flex-shrink: 0;
+    }
+
+    .segment-preview-container {
+      align-items: baseline;
+      display: inline-flex;
+      max-width: 100%;
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+
+      > button {
+        max-width: 100%;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      > .punctuation {
+        flex-shrink: 0;
+      }
+    }
+  }
+
   @each $type, $color in $type-colors {
-    .segment-type-#{$type} > .segment-main > .segment-value {
+    .segment-type-#{$type} > .segment-main .segment-value {
       color: #{$color};
     }
   }
 
   // special cases that need highlighting
-  .segment-type-null > .segment-main > .segment-value {
+  .segment-type-null > .segment-main .segment-value {
     background-color: var(--ngx-json-null-bg, red);
   }
   .segment-type-undefined > .segment-main {
     & > button > .segment-key {
       color: var(--ngx-json-undefined-key, #a31515);
     }
-    & > .segment-value {
+    & .segment-value {
       background-color: var(--ngx-json-undefined-bg, #656e77);
     }
-  }
-  .segment-type-object > .segment-main,
-  .segment-type-array > .segment-main {
-    white-space: nowrap;
   }
 
   .expanded > .toggler::after {
