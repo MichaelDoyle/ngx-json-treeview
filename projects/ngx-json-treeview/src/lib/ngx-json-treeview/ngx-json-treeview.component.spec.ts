@@ -78,4 +78,76 @@ describe('NgxJsonTreeviewComponent', () => {
 
     expect(await userNode.isExpanded()).toBe(true);
   });
+
+  it('should truncate collapsed preview strings using default maxPreviewLength (80)', async () => {
+    const largeObj: Record<string, string> = {};
+    for (let i = 0; i < 20; i++) {
+      largeObj[`key_${i}`] = `val_${i}`;
+    }
+    const { loader } = await setupTest({
+      depth: 0,
+      json: { data: largeObj },
+    });
+
+    const node = await loader.getHarness(
+      NgxJsonTreeviewNodeHarness.with({ key: 'data' })
+    );
+    const value = await node.getValue();
+    expect(value.length).toBe(80);
+    expect(value.endsWith('…')).toBe(true);
+  });
+
+  it('should respect custom maxPreviewLength input and propagate to children', async () => {
+    const largeObj: Record<string, string> = {};
+    for (let i = 0; i < 20; i++) {
+      largeObj[`key_${i}`] = `val_${i}`;
+    }
+    const { fixture, loader } = await setupTest({
+      depth: 1,
+      json: { outer: { inner: largeObj } },
+    });
+
+    fixture.componentRef.setInput('maxPreviewLength', 30);
+    await fixture.whenStable();
+
+    const node = await loader.getHarness(
+      NgxJsonTreeviewNodeHarness.with({ key: 'inner' })
+    );
+    const value = await node.getValue();
+    expect(value.length).toBe(30);
+    expect(value.endsWith('…')).toBe(true);
+  });
+
+  it('should render preview string button and trailing comma inside segment-preview-container', async () => {
+    const { fixture } = await setupTest({
+      depth: 0,
+      json: { a: { b: 1 }, c: 2 },
+    });
+
+    const containerEl = fixture.nativeElement.querySelector(
+      '.segment-preview-container'
+    );
+    expect(containerEl).not.toBeNull();
+
+    const button = containerEl.querySelector('button.segment-label');
+    const comma = containerEl.querySelector('.punctuation');
+
+    expect(button).not.toBeNull();
+    expect(comma).not.toBeNull();
+    expect(comma.textContent).toBe(',');
+  });
+
+  it('should not apply single-line nowrap ellipsis layout to primitive string nodes', async () => {
+    const { fixture } = await setupTest({
+      depth: 1,
+      json: { text: 'long primitive string value' },
+    });
+
+    const stringMainEl = fixture.nativeElement.querySelector(
+      '.segment-type-string > .segment-main'
+    );
+    expect(stringMainEl).not.toBeNull();
+    const computedStyle = getComputedStyle(stringMainEl);
+    expect(computedStyle.whiteSpace).not.toBe('nowrap');
+  });
 });

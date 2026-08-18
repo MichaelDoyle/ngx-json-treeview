@@ -4,12 +4,12 @@ import { Segment } from './types';
  * Generates a preview string representation of an object.
  *
  * @param obj The object to preview.
- * @param limit The maximum length of the preview string. Defaults to 200.
+ * @param limit The maximum length of the preview string. Defaults to 80.
  * @param stringsLimit The maximum length of a string to display before
  * truncating. Defaults to 10.
  * @returns A preview string representation of the object.
  */
-export function previewString(obj: any, limit = 200, stringsLimit = 10) {
+export function previewString(obj: any, limit = 80, stringsLimit = 10) {
   let result = '';
 
   if (obj === null) {
@@ -35,7 +35,7 @@ export function previewString(obj: any, limit = 200, stringsLimit = 10) {
         if (result.length >= limit) {
           break;
         }
-        result += previewString(obj[key], limit - result.length);
+        result += previewString(obj[key], limit - result.length, stringsLimit);
         result += ',';
       }
       if (result.endsWith(',')) {
@@ -50,7 +50,11 @@ export function previewString(obj: any, limit = 200, stringsLimit = 10) {
         }
         if (obj[key] !== undefined) {
           result += `"${key}":`;
-          result += previewString(obj[key], limit - result.length);
+          result += previewString(
+            obj[key],
+            limit - result.length,
+            stringsLimit
+          );
           result += ',';
         }
       }
@@ -63,8 +67,8 @@ export function previewString(obj: any, limit = 200, stringsLimit = 10) {
     result += 'Function';
   }
 
-  if (result.length >= limit) {
-    return result.substring(0, limit) + '…';
+  if (result.length > limit) {
+    return result.substring(0, Math.max(0, limit - 1)) + '…';
   }
 
   return result;

@@ -45,7 +45,7 @@ export class NgxJsonTreeviewNodeHarness extends ComponentHarness {
     '.segment-main > button .segment-key, .segment-main > button .segment-label'
   );
   protected valueElement = this.locatorForOptional(
-    '.segment-main > .segment-value, .segment-main > button.segment-label'
+    '.segment-main .segment-value, .segment-main button.segment-label'
   );
 
   /** Gets the key of the node. */
