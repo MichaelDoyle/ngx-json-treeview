@@ -2,6 +2,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { vi } from 'vitest';
+import { IsClickableValueFn, Segment } from '../types';
 import { NgxJsonTreeviewComponent } from './ngx-json-treeview.component';
 import { NgxJsonTreeviewNodeHarness } from './testing/ngx-json-treeview.harness';
 
@@ -9,9 +11,11 @@ async function setupTest({
   json = {},
   depth = 0,
   enableClickableValues = false,
+  isClickableValue,
 }: {
   depth?: number;
   enableClickableValues?: boolean;
+  isClickableValue?: IsClickableValueFn;
   json?: any;
 } = {}) {
   await TestBed.configureTestingModule({
@@ -23,6 +27,9 @@ async function setupTest({
   fixture.componentRef.setInput('depth', depth);
   fixture.componentRef.setInput('json', json);
   fixture.componentRef.setInput('enableClickableValues', enableClickableValues);
+  if (isClickableValue !== undefined) {
+    fixture.componentRef.setInput('isClickableValue', isClickableValue);
+  }
   await fixture.whenStable();
 
   const component = fixture.componentInstance;
@@ -183,5 +190,54 @@ describe('NgxJsonTreeviewComponent', () => {
       );
       expect(await ref.getValue()).toBe('"$"');
     });
+  });
+
+  it('should emit the clicked segment at the root when clicking a nested value with isClickableValue', async () => {
+    const { component, loader } = await setupTest({
+      depth: -1,
+      enableClickableValues: true,
+      isClickableValue: (segment) => segment.key === 'target',
+      json: { level1: { level2: { target: 'hello' } } },
+    });
+
+    const emittedSegments: Segment[] = [];
+    component.onValueClick.subscribe((segment) => {
+      emittedSegments.push(segment);
+    });
+
+    const targetNode = await loader.getHarness(
+      NgxJsonTreeviewNodeHarness.with({ key: 'target' })
+    );
+    await targetNode.clickValue();
+
+    expect(emittedSegments).toEqual([
+      expect.objectContaining({
+        key: 'target',
+        value: 'hello',
+        path: 'level1.level2.target',
+      }),
+    ]);
+  });
+
+  it('should only invoke onValueClickHandler once when clicking a nested value with isClickableValue', async () => {
+    const { loader } = await setupTest({
+      depth: -1,
+      enableClickableValues: true,
+      isClickableValue: (segment) => segment.key === 'target',
+      json: { level1: { level2: { target: 'hello' } } },
+    });
+
+    const handlerSpy = vi.spyOn(
+      NgxJsonTreeviewComponent.prototype as any,
+      'onValueClickHandler'
+    );
+
+    const targetNode = await loader.getHarness(
+      NgxJsonTreeviewNodeHarness.with({ key: 'target' })
+    );
+    await targetNode.clickValue();
+
+    expect(handlerSpy).toHaveBeenCalledTimes(1);
+    handlerSpy.mockRestore();
   });
 });
