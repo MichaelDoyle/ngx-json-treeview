@@ -77,7 +77,9 @@ export function previewString(obj: any, limit = 80, stringsLimit = 10) {
 /**
  * Decycles a JavaScript object by replacing circular references with `$ref`
  * properties. This is useful for serializing objects that contain circular
- * references, preventing infinite loops.
+ * references, preventing infinite loops. Only a reference back to an ancestor
+ * is replaced: an object that appears in several branches (a shared, not
+ * circular, reference) is kept in each of them.
  *
  * Original: https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
  *
@@ -119,6 +121,8 @@ export function decycle(object: any): any {
           );
         });
       }
+      // Leaving this branch: from here on, the object is no longer an ancestor.
+      objects.delete(value);
       return nu;
     }
     return value;
