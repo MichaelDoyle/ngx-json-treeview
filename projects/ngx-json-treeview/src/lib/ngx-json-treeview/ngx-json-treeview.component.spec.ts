@@ -240,4 +240,53 @@ describe('NgxJsonTreeviewComponent', () => {
     expect(handlerSpy).toHaveBeenCalledTimes(1);
     handlerSpy.mockRestore();
   });
+
+  describe('root values without segments', () => {
+    it('should render a root undefined as "undefined"', async () => {
+      // setupTest's default would turn json: undefined into {}.
+      const { fixture } = await setupTest();
+      fixture.componentRef.setInput('json', undefined);
+      await fixture.whenStable();
+
+      const button = fixture.nativeElement.querySelector(
+        'button.segment-primitive'
+      );
+      expect(button.textContent.trim()).toBe('undefined');
+    });
+
+    it('should render a root function as its source', async () => {
+      const fn = (x: number) => x + 1;
+      const { fixture } = await setupTest({ json: fn });
+
+      const button = fixture.nativeElement.querySelector(
+        'button.segment-primitive'
+      );
+      expect(button.textContent.trim()).toBe(String(fn));
+    });
+
+    for (const [json, shown] of [
+      [{}, '{}'],
+      [[], '[]'],
+    ] as const) {
+      it(`should render a root ${shown} as punctuation, not a primitive`, async () => {
+        const { fixture } = await setupTest({ json });
+
+        const el: HTMLElement = fixture.nativeElement;
+        expect(el.querySelector('button.segment-primitive')).toBeNull();
+        const punctuation = el.querySelector('section > .punctuation');
+        expect(punctuation?.textContent).toBe(shown);
+      });
+    }
+
+    it('should still render a root Date as a primitive', async () => {
+      const { fixture } = await setupTest({
+        json: new Date('2026-10-21T00:00:00.000Z'),
+      });
+
+      const button = fixture.nativeElement.querySelector(
+        'button.segment-primitive'
+      );
+      expect(button.textContent.trim()).toBe('"2026-10-21T00:00:00.000Z"');
+    });
+  });
 });
