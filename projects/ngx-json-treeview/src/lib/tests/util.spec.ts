@@ -138,6 +138,37 @@ describe('Util', () => {
       obj1.d = obj2;
       expect(decycle(obj1)).toEqual({ a: 1, d: { b: 2, c: { $ref: '$' } } });
     });
+
+    it('should keep an object shared by sibling branches in each of them', () => {
+      const sharedAddress = { city: 'Boston', zip: '02101' };
+      const order = {
+        billingAddress: sharedAddress,
+        shippingAddress: sharedAddress,
+      };
+      expect(decycle(order)).toEqual({
+        billingAddress: { city: 'Boston', zip: '02101' },
+        shippingAddress: { city: 'Boston', zip: '02101' },
+      });
+    });
+
+    it('should keep an array shared by cousin branches in each of them', () => {
+      const tags = ['a', 'b'];
+      const value = { x: { tags }, y: [{ tags }] };
+      expect(decycle(value)).toEqual({
+        x: { tags: ['a', 'b'] },
+        y: [{ tags: ['a', 'b'] }],
+      });
+    });
+
+    it('should still replace a cycle through a shared object', () => {
+      const shared = { name: 'shared' } as any;
+      const root = { first: shared, second: shared } as any;
+      shared.back = root;
+      expect(decycle(root)).toEqual({
+        first: { name: 'shared', back: { $ref: '$' } },
+        second: { name: 'shared', back: { $ref: '$' } },
+      });
+    });
   });
 
   describe('isExpandableSegment', () => {
