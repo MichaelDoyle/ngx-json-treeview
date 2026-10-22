@@ -173,4 +173,7 @@ $type-colors: (
   .segment-type-null > .segment-primitive {
     background-color: var(--ngx-json-null-bg, red);
   }
+  .segment-type-undefined > .segment-primitive {
+    background-color: var(--ngx-json-undefined-bg, #656e77);
+  }
 }
