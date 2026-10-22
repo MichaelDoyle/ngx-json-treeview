@@ -99,7 +99,7 @@
               [valueClickHandlers]="valueClickHandlers()"
               [isClickableValue]="isClickableValue()"
               [stopClickPropagation]="stopClickPropagation()"
-              (onValueClick)="onValueClickHandler($event)"
+              (onValueClick)="onValueClick.emit($event)"
               [_parent]="segment"
               [_currentDepth]="_currentDepth() + 1" />
             <span class="punctuation">
