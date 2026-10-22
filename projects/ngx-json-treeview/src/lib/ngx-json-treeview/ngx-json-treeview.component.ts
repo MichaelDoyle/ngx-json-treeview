@@ -158,7 +158,10 @@ export class NgxJsonTreeviewComponent {
   });
 
   protected readonly segments = computed<Segment[]>(() => {
-    const json = decycle(this.json());
+    // The root decycles the whole graph once; a nested tree is handed a
+    // subtree of that copy, which has no cycles left to break.
+    const json =
+      this._currentDepth() === 0 ? decycle(this.json()) : this.json();
     if (typeof json === 'object' && json != null) {
       return Object.keys(json).map((key) => this.parseKeyValue(key, json[key]));
     }

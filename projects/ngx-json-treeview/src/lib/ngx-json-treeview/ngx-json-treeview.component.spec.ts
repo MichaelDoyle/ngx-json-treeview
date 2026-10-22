@@ -1,6 +1,7 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { NgxJsonTreeviewComponent } from './ngx-json-treeview.component';
 import { NgxJsonTreeviewNodeHarness } from './testing/ngx-json-treeview.harness';
 
@@ -149,5 +150,38 @@ describe('NgxJsonTreeviewComponent', () => {
     expect(stringMainEl).not.toBeNull();
     const computedStyle = getComputedStyle(stringMainEl);
     expect(computedStyle.whiteSpace).not.toBe('nowrap');
+  });
+
+  describe('decycle', () => {
+    it('lets a nested tree use the decycled subtree it is given', async () => {
+      // Only the root copies the graph: the tree for "a" reads the very
+      // objects the root's copy holds, instead of decycling them again.
+      const { fixture } = await setupTest({
+        depth: 3,
+        json: { a: { b: { c: 1 } } },
+      });
+      const root = fixture.componentInstance as any;
+      const nested = fixture.debugElement.query(
+        By.directive(NgxJsonTreeviewComponent)
+      ).componentInstance as any;
+      const aCopy = root.segments()[0].value;
+      expect(nested._currentDepth()).toBe(1);
+      expect(nested.segments()[0].value).toBe(aCopy.b);
+    });
+
+    it('renders a cycle found several levels down as a $ref to the root', async () => {
+      const json: any = { a: { b: { c: 1 } } };
+      json.a.b.back = json;
+      const { loader } = await setupTest({ depth: 3, json });
+
+      const back = await loader.getHarness(
+        NgxJsonTreeviewNodeHarness.with({ key: 'back' })
+      );
+      await back.expand();
+      const ref = await loader.getHarness(
+        NgxJsonTreeviewNodeHarness.with({ key: '$ref' })
+      );
+      expect(await ref.getValue()).toBe('"$"');
+    });
   });
 });
