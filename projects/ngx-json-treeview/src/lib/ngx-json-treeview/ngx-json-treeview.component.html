@@ -1,7 +1,9 @@
 <section
   class="ngx-json-treeview"
   [attr.role]="_currentDepth() === 0 ? 'tree' : null">
-  @if (segments().length === 0) {
+  @if (isEmptyContainer()) {
+    <span class="punctuation">{{ openingBrace() }}{{ closingBrace() }}</span>
+  } @else if (segments().length === 0) {
     <div [class]="primitiveSegmentClass()">
       <button
         type="button"

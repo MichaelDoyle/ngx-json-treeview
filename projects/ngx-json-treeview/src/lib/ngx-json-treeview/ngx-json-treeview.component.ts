@@ -186,8 +186,18 @@ export class NgxJsonTreeviewComponent {
     } else return '}';
   });
 
+  // JSON.stringify returns undefined for undefined, functions and symbols.
   protected readonly asString = computed<string>(() =>
-    JSON.stringify(this.json(), null, 2).trim()
+    (JSON.stringify(this.json(), null, 2) ?? String(this.json())).trim()
+  );
+
+  // An empty object or array (not a Date, which has no keys either) shows as
+  // {} or [] rather than as a primitive value.
+  protected readonly isEmptyContainer = computed<boolean>(
+    () =>
+      this.segments().length === 0 &&
+      (this.rootType() === 'array' ||
+        (this.rootType() === 'object' && !(this.json() instanceof Date)))
   );
 
   protected readonly primitiveSegmentClass = computed<string>(() => {
@@ -199,7 +209,7 @@ export class NgxJsonTreeviewComponent {
   });
 
   private readonly primitiveSegment = computed<Segment | null>(() => {
-    if (this.segments().length > 0) return null;
+    if (this.segments().length > 0 || this.isEmptyContainer()) return null;
     return {
       key: '',
       value: this.json(),
