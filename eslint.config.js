@@ -4,6 +4,7 @@ const { defineConfig } = require('eslint/config');
 const tseslint = require('typescript-eslint');
 const angular = require('angular-eslint');
 const eslintConfigPrettier = require('eslint-config-prettier');
+const vitest = require('@vitest/eslint-plugin');
 
 module.exports = defineConfig([
   {
@@ -99,7 +100,26 @@ module.exports = defineConfig([
   },
   {
     files: ['**/*.spec.ts'],
+    plugins: {
+      vitest,
+    },
     rules: {
+      ...vitest.configs.recommended.rules,
+      'vitest/consistent-test-it': [
+        'error',
+        { fn: 'it', withinDescribe: 'it' },
+      ],
+      'vitest/prefer-to-be': 'error',
+      'vitest/prefer-to-contain': 'error',
+      'vitest/prefer-to-have-length': 'error',
+      'no-restricted-properties': [
+        'error',
+        {
+          property: 'detectChanges',
+          message:
+            'Use await fixture.whenStable() instead of fixture.detectChanges() in zoneless tests.',
+        },
+      ],
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-empty-function': 'off',
       'no-restricted-syntax': 'off',
