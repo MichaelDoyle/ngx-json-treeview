@@ -14,6 +14,14 @@ export interface NgxJsonTreeviewNodeHarnessFilters extends BaseHarnessFilters {
 export class NgxJsonTreeviewNodeHarness extends ComponentHarness {
   static hostSelector = '.segment';
 
+  protected toggleButton = this.locatorFor('.segment-main > button');
+  protected keyElement = this.locatorForOptional(
+    '.segment-main > button .segment-key, .segment-main > button .segment-label'
+  );
+  protected valueElement = this.locatorForOptional(
+    '.segment-main .segment-value, .segment-main button.segment-label'
+  );
+
   /**
    * Gets a `HarnessPredicate` that can be used to search for a
    * `NgxJsonTreeviewNodeHarness` that meets certain criteria.
@@ -39,14 +47,6 @@ export class NgxJsonTreeviewNodeHarness extends ComponentHarness {
         return isExpanded === expanded;
       });
   }
-
-  protected toggleButton = this.locatorFor('.segment-main > button');
-  protected keyElement = this.locatorForOptional(
-    '.segment-main > button .segment-key, .segment-main > button .segment-label'
-  );
-  protected valueElement = this.locatorForOptional(
-    '.segment-main .segment-value, .segment-main button.segment-label'
-  );
 
   /** Gets the key of the node. */
   async getKey(): Promise<string> {
