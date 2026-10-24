@@ -26,6 +26,9 @@ import { decycle, isExpandableSegment, previewString } from '../util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NgxJsonTreeviewComponent {
+  private readonly idGenerator = inject(ID_GENERATOR);
+  protected readonly id = this.idGenerator.next();
+
   /**
    * The JSON object or array to display in the tree view.
    * @required
@@ -236,9 +239,6 @@ export class NgxJsonTreeviewComponent {
    * states persist even when the underlying data or segments are re-generated.
    */
   private readonly expandedSegments = signal<Map<string, boolean>>(new Map());
-
-  private readonly idGenerator = inject(ID_GENERATOR);
-  protected readonly id = this.idGenerator.next();
 
   constructor() {
     effect(() => {

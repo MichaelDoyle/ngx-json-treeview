@@ -20,7 +20,9 @@ module.exports = defineConfig([
         tsconfigRootDir: __dirname,
       },
     },
-    rules: {},
+    rules: {
+      '@angular-eslint/inject-at-top': 'error',
+    },
   },
   {
     files: ['**/*.spec.ts'],
