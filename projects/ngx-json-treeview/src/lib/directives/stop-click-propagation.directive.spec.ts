@@ -13,6 +13,7 @@ import { StopClickPropagationDirective } from './stop-click-propagation.directiv
   imports: [StopClickPropagationDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
+    <!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
     <div (click)="parentClicked()">
       <div [ngxJtStopClickPropagation]="enabled()">
         <span (click)="childClicked()">Click Me</span>

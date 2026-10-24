@@ -7,6 +7,7 @@ export interface Segment {
   /** The key (for objects) or index (for arrays). */
   key: string;
   /** The actual JavaScript value represented by this segment. */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
   /** The JavaScript data type of the value. */
   type?: string;

@@ -30,6 +30,7 @@ export class NgxJsonTreeviewComponent {
    * The JSON object or array to display in the tree view.
    * @required
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly json = input.required<any>();
 
   /**
@@ -108,6 +109,7 @@ export class NgxJsonTreeviewComponent {
    * a value node is clicked. The emitted `Segment` contains details about the
    * clicked node (key, value, type, path, etc.).
    */
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix -- Deprecated output retained for backwards compatibility
   readonly onValueClick = output<Segment>();
 
   /**
@@ -342,7 +344,8 @@ export class NgxJsonTreeviewComponent {
     return path;
   }
 
-  private parseKeyValue(key: any, value: any): Segment {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private parseKeyValue(key: string, value: any): Segment {
     const path = this.getPath(key);
     const segment: Segment = {
       parent: this._parent(),
