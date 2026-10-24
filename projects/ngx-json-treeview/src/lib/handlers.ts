@@ -1,4 +1,4 @@
-import { ValueClickHandler } from './types';
+import { type ValueClickHandler } from './types';
 import { isExpandableSegment } from './util';
 
 /**

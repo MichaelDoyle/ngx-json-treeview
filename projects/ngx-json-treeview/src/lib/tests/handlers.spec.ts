@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { expandHandler } from '../handlers';
-import { Segment } from '../types';
+import { type Segment } from '../types';
 
 describe('ValueClickHandlers', () => {
   describe('expandHandler', () => {

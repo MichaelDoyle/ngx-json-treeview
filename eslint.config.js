@@ -21,6 +21,10 @@ module.exports = defineConfig([
       },
     },
     rules: {
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        { prefer: 'type-imports', fixStyle: 'inline-type-imports' },
+      ],
       '@typescript-eslint/prefer-optional-chain': 'error',
       '@angular-eslint/inject-at-top': 'error',
       '@angular-eslint/prefer-signals': 'error',

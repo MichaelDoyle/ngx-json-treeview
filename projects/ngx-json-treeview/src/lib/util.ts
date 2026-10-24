@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Segment } from './types';
+import { type Segment } from './types';
 
 /**
  * Generates a preview string representation of an object.

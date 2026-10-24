@@ -11,7 +11,11 @@ import {
 import { StopClickPropagationDirective } from '../directives/stop-click-propagation.directive';
 import { VALUE_CLICK_HANDLERS } from '../handlers';
 import { ID_GENERATOR } from '../services/id-generator';
-import { IsClickableValueFn, Segment, ValueClickHandler } from '../types';
+import {
+  type IsClickableValueFn,
+  type Segment,
+  type ValueClickHandler,
+} from '../types';
 import { decycle, isExpandableSegment, previewString } from '../util';
 
 /**
@@ -139,20 +143,22 @@ export class NgxJsonTreeviewComponent {
    */
   protected readonly _currentDepth = input<number>(0);
 
-  private readonly internalValueClickHandlers = computed<ValueClickHandler[]>(() => {
-    const handlers: ValueClickHandler[] = [];
-    const legacyIsClickableFn = this.isClickableValue();
+  private readonly internalValueClickHandlers = computed<ValueClickHandler[]>(
+    () => {
+      const handlers: ValueClickHandler[] = [];
+      const legacyIsClickableFn = this.isClickableValue();
 
-    if (legacyIsClickableFn) {
-      handlers.push({
-        canHandle: legacyIsClickableFn,
-        handler: (segment) => this.onValueClick.emit(segment),
-      });
+      if (legacyIsClickableFn) {
+        handlers.push({
+          canHandle: legacyIsClickableFn,
+          handler: (segment) => this.onValueClick.emit(segment),
+        });
+      }
+
+      handlers.push(...(this.valueClickHandlers() ?? VALUE_CLICK_HANDLERS));
+      return handlers;
     }
-
-    handlers.push(...(this.valueClickHandlers() ?? VALUE_CLICK_HANDLERS));
-    return handlers;
-  });
+  );
 
   private readonly rootType = computed<string>(() => {
     if (this.json() === null) {

@@ -1,4 +1,4 @@
-import { Segment } from '../types';
+import { type Segment } from '../types';
 import { decycle, isExpandableSegment, previewString } from '../util';
 
 describe('Util', () => {

@@ -12,9 +12,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   NgxJsonTreeviewComponent,
-  Segment,
+  type Segment,
   VALUE_CLICK_HANDLERS,
-  ValueClickHandler,
+  type ValueClickHandler,
 } from 'ngx-json-treeview';
 import { ThemeService } from './services/theme.service';
 
