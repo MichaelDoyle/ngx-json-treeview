@@ -21,6 +21,7 @@ module.exports = defineConfig([
       },
     },
     rules: {
+      '@typescript-eslint/prefer-optional-chain': 'error',
       '@angular-eslint/inject-at-top': 'error',
       '@angular-eslint/prefer-signals': 'error',
       '@angular-eslint/no-uncalled-signals': 'error',

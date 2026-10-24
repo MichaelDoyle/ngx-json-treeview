@@ -138,7 +138,7 @@ export function decycle(object: any): any {
  * @returns `true` if the segment is expandable, `false` otherwise.
  */
 export function isExpandableSegment(segment: Segment): boolean {
-  if (!segment || !segment.value) {
+  if (!segment?.value) {
     return false;
   }
 
