@@ -277,7 +277,7 @@ export class NgxJsonTreeviewComponent {
     return this.internalValueClickHandlers().some((handler) => {
       try {
         return handler.canHandle(segment);
-      } catch (e) {
+      } catch {
         return false;
       }
     });
@@ -301,7 +301,7 @@ export class NgxJsonTreeviewComponent {
           }
           return; // Stop after the first handler is executed.
         }
-      } catch (e) {
+      } catch {
         // in case of any error, continue to the next handler
       }
     }
