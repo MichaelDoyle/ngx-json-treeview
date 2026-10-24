@@ -3,7 +3,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { vi } from 'vitest';
-import { IsClickableValueFn, Segment } from '../types';
+import { type IsClickableValueFn, type Segment } from '../types';
 import { NgxJsonTreeviewComponent } from './ngx-json-treeview.component';
 import { NgxJsonTreeviewNodeHarness } from './testing/ngx-json-treeview.harness';
 
