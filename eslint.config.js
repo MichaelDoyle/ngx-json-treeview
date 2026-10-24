@@ -21,6 +21,8 @@ module.exports = defineConfig([
       },
     },
     rules: {
+      'no-console': ['error', { allow: ['warn', 'error'] }],
+      eqeqeq: ['error', 'always', { null: 'ignore' }],
       '@typescript-eslint/consistent-type-imports': [
         'error',
         { prefer: 'type-imports', fixStyle: 'inline-type-imports' },
