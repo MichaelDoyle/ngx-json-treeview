@@ -22,6 +22,13 @@ module.exports = defineConfig([
     },
     rules: {
       '@angular-eslint/inject-at-top': 'error',
+      '@angular-eslint/prefer-signals': 'error',
+      '@angular-eslint/no-uncalled-signals': 'error',
+      '@angular-eslint/prefer-output-readonly': 'error',
+      '@angular-eslint/computed-must-return': 'error',
+      '@angular-eslint/prefer-signal-model': 'error',
+      '@angular-eslint/no-async-lifecycle-method': 'error',
+      '@angular-eslint/no-duplicates-in-metadata-arrays': 'error',
     },
   },
   {
