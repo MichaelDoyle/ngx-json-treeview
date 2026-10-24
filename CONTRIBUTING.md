@@ -46,7 +46,7 @@ This will serve the demo app at `http://localhost:4200/`. The demo app is config
 
 ### Running Tests
 
-We use Jasmine and Karma for unit testing. To run the tests for the library:
+We use [Vitest](https://vitest.dev/) (via Angular's `@angular/build:unit-test` runner) for zoneless unit testing. To run the tests:
 
 ```bash
 pnpm test
