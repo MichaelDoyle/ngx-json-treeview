@@ -20,7 +20,7 @@ $type-colors: (
 
     .segment-main {
       margin: 1px 1px 1px 12px;
-      word-wrap: break-word;
+      overflow-wrap: break-word;
 
       .segment-colon {
         margin-right: 0.25em;
@@ -110,10 +110,12 @@ $type-colors: (
   .segment-type-null > .segment-main .segment-value {
     background-color: var(--ngx-json-null-bg, red);
   }
+
   .segment-type-undefined > .segment-main {
     & > button > .segment-key {
       color: var(--ngx-json-undefined-key, #a31515);
     }
+
     & .segment-value {
       background-color: var(--ngx-json-undefined-bg, #656e77);
     }
@@ -165,14 +167,17 @@ $type-colors: (
       color: #{$color};
     }
   }
+
   .segment-primitive {
     margin: 0;
     padding: 0;
   }
+
   // special cases that need highlighting
   .segment-type-null > .segment-primitive {
     background-color: var(--ngx-json-null-bg, red);
   }
+
   .segment-type-undefined > .segment-primitive {
     background-color: var(--ngx-json-undefined-bg, #656e77);
   }
