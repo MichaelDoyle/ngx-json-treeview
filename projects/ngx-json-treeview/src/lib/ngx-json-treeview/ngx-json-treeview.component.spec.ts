@@ -1,5 +1,4 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { vi } from 'vitest';
@@ -19,7 +18,6 @@ async function setupTest({
   json?: any;
 } = {}) {
   await TestBed.configureTestingModule({
-    providers: [provideZonelessChangeDetection()],
     imports: [NgxJsonTreeviewComponent],
   }).compileComponents();
 

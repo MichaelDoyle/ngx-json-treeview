@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  provideZonelessChangeDetection,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { StopClickPropagationDirective } from './stop-click-propagation.directive';
@@ -33,7 +28,6 @@ describe('StopClickPropagationDirective', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()],
       imports: [TestComponent],
     }).compileComponents();
 
