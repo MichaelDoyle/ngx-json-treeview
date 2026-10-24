@@ -47,6 +47,20 @@ module.exports = defineConfig([
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
+      '@typescript-eslint/member-ordering': [
+        'error',
+        {
+          default: [
+            'static-field',
+            'instance-field',
+            ['constructor', 'public-static-method', 'protected-static-method'],
+            ['public-get', 'public-set', 'public-instance-method'],
+            ['protected-get', 'protected-set', 'protected-instance-method'],
+            ['private-get', 'private-set', 'private-instance-method'],
+            'private-static-method',
+          ],
+        },
+      ],
       '@typescript-eslint/prefer-optional-chain': 'error',
       '@typescript-eslint/prefer-nullish-coalescing': 'error',
       '@typescript-eslint/no-floating-promises': [
