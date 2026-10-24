@@ -254,7 +254,10 @@ export class NgxJsonTreeviewComponent {
     });
   }
 
-  toggle(segment: Segment) {
+  /**
+   * Toggles the expansion state of an expandable segment.
+   */
+  public toggle(segment: Segment) {
     if (this.isExpandable(segment)) {
       this.expandedSegments.update((map) => {
         const newMap = new Map(map);

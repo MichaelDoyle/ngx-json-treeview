@@ -36,8 +36,8 @@ import { ThemeService } from './services/theme.service';
 export class AppComponent {
   protected readonly themeService = inject(ThemeService);
 
-  readonly currentSegment = signal<Segment | undefined>(undefined);
-  readonly expansionDepth = signal(1);
+  protected readonly currentSegment = signal<Segment | undefined>(undefined);
+  protected readonly expansionDepth = signal(1);
 
   private baseObj = {
     string: 'Hello World',
@@ -53,7 +53,7 @@ export class AppComponent {
     emptyObject: {},
   };
 
-  json = {
+  protected json = {
     ...structuredClone(this.baseObj),
     nested: {
       ...structuredClone(this.baseObj),
@@ -72,7 +72,7 @@ export class AppComponent {
     },
   };
 
-  clickHandlers: ValueClickHandler[] = [
+  protected clickHandlers: ValueClickHandler[] = [
     ...VALUE_CLICK_HANDLERS,
     {
       canHandle: (segment: Segment) => {
@@ -84,7 +84,7 @@ export class AppComponent {
     },
   ];
 
-  stringify(obj: unknown) {
+  protected stringify(obj: unknown) {
     if (typeof obj === 'function') {
       return '' + obj;
     } else if (typeof obj === 'string') {
@@ -93,7 +93,7 @@ export class AppComponent {
     return JSON.stringify(obj, null, 2);
   }
 
-  toggleExpansion() {
+  protected toggleExpansion() {
     this.expansionDepth.update((depth) => (depth === -1 ? 0 : -1));
   }
 }
