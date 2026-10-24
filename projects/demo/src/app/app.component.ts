@@ -34,10 +34,10 @@ import { ThemeService } from './services/theme.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
+  protected readonly themeService = inject(ThemeService);
+
   currentSegment = signal<Segment | undefined>(undefined);
   expansionDepth = signal(1);
-
-  protected readonly themeService = inject(ThemeService);
 
   private baseObj = {
     string: 'Hello World',
