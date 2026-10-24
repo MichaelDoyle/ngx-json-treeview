@@ -19,19 +19,14 @@
     @if (_currentDepth() === 0) {
       <span class="punctuation">{{ openingBrace() }}</span>
     }
-    @for (
-      segment of segments();
-      track segment.key;
-      let i = $index;
-      let len = $count
-    ) {
-      @let needsComma = i < len - 1;
+    @for (segment of segments(); track segment.key) {
+      @let needsComma = !$last;
       @let expandable = isExpandable(segment);
       @let empty = isEmpty(segment);
       @let openingBrace = openingBraceForSegment(segment);
       @let closingBrace = closingBraceForSegment(segment);
       @let clickableValue = isClickable(segment);
-      @let nodeId = id + '-node-label-' + _currentDepth() + '-' + i;
+      @let nodeId = id + '-node-label-' + _currentDepth() + '-' + $index;
 
       <div
         role="treeitem"
@@ -39,8 +34,8 @@
         [attr.aria-selected]="false"
         [attr.aria-expanded]="expandable ? segment.expanded : undefined"
         [attr.aria-level]="_currentDepth() + 1"
-        [attr.aria-setsize]="len"
-        [attr.aria-posinset]="i + 1"
+        [attr.aria-setsize]="$count"
+        [attr.aria-posinset]="$index + 1"
         [attr.aria-labelledby]="nodeId">
         <div class="segment-main">
           <button
