@@ -66,6 +66,24 @@ pnpm run format:check
 pnpm run format
 ```
 
+### Linting
+
+This project uses [ESLint](https://eslint.org/) (with [angular-eslint](https://github.com/angular-eslint/angular-eslint)) and [Stylelint](https://stylelint.io/) for code quality and style consistency:
+
+```bash
+# Run all linters (ESLint + Stylelint)
+pnpm run lint
+
+# Automatically fix linting issues
+pnpm run lint:fix
+
+# Run ESLint only
+pnpm run lint:es
+
+# Run Stylelint only
+pnpm run lint:style
+```
+
 ## Submitting Changes
 
 1.  **Create a Branch**: Create a new branch for your feature or bug fix.

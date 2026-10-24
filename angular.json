@@ -33,6 +33,16 @@
             "tsConfig": "projects/ngx-json-treeview/tsconfig.spec.json",
             "runner": "vitest"
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/ngx-json-treeview/**/*.ts",
+              "projects/ngx-json-treeview/**/*.html"
+            ],
+            "eslintConfig": "projects/ngx-json-treeview/eslint.config.js"
+          }
         }
       }
     },
@@ -116,6 +126,16 @@
             "buildTarget": "demo:build:testing",
             "runner": "vitest",
             "setupFiles": ["projects/demo/src/test-setup.ts"]
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/demo/**/*.ts",
+              "projects/demo/**/*.html"
+            ],
+            "eslintConfig": "projects/demo/eslint.config.js"
           }
         }
       }
