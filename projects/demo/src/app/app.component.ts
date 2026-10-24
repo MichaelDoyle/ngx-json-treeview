@@ -84,7 +84,7 @@ export class AppComponent {
     },
   ];
 
-  stringify(obj: any) {
+  stringify(obj: unknown) {
     if (typeof obj === 'function') {
       return '' + obj;
     } else if (typeof obj === 'string') {
