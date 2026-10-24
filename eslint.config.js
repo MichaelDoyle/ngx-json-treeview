@@ -24,6 +24,21 @@ module.exports = defineConfig([
     rules: {
       'no-console': ['error', { allow: ['warn', 'error'] }],
       eqeqeq: ['error', 'always', { null: 'ignore' }],
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            'ClassDeclaration:has(Decorator[expression.callee.name="Component"]) > ClassBody > PropertyDefinition:not([accessibility=/^(protected|private)$/]):not([value.callee.name=/^(input|output|model|outputFromObservable)$/]):not([value.callee.object.name=/^(input|model)$/])',
+          message:
+            'Use `protected` for component properties accessed in the template, or `private` for internal component state.',
+        },
+        {
+          selector:
+            'ClassDeclaration:has(Decorator[expression.callee.name="Component"]) > ClassBody > MethodDefinition:not([accessibility=/^(public|protected|private)$/]):not([kind="constructor"]):not([key.name=/^ng(OnChanges|OnInit|DoCheck|AfterContentInit|AfterContentChecked|AfterViewInit|AfterViewChecked|OnDestroy)$/])',
+          message:
+            'Use explicit `public` for component API methods, `protected` for template methods, or `private` for internal helper methods.',
+        },
+      ],
       '@typescript-eslint/consistent-type-imports': [
         'error',
         { prefer: 'type-imports', fixStyle: 'inline-type-imports' },
@@ -50,6 +65,7 @@ module.exports = defineConfig([
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-empty-function': 'off',
+      'no-restricted-syntax': 'off',
     },
   },
   {
