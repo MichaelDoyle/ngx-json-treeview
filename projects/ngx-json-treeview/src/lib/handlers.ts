@@ -11,7 +11,7 @@ export const followLinkHandler: ValueClickHandler = {
       try {
         const url = new URL(segment.value); // Validate the URL.
         return url.protocol === 'http:' || url.protocol === 'https:';
-      } catch (e) {
+      } catch {
         // Invalid URL.
       }
     }
