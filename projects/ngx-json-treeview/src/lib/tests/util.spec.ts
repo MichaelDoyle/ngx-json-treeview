@@ -4,50 +4,50 @@ import { decycle, isExpandableSegment, previewString } from '../util';
 describe('Util', () => {
   describe('previewString', () => {
     it('should handle null values', () => {
-      expect(previewString(null)).toEqual('null');
+      expect(previewString(null)).toBe('null');
     });
 
     it('should handle undefined values', () => {
-      expect(previewString(undefined)).toEqual('undefined');
+      expect(previewString(undefined)).toBe('undefined');
     });
 
     it('should handle string values', () => {
-      expect(previewString('hello')).toEqual('"hello"');
+      expect(previewString('hello')).toBe('"hello"');
     });
 
     it('should handle boolean values', () => {
-      expect(previewString(true)).toEqual('true');
+      expect(previewString(true)).toBe('true');
     });
 
     it('should handle number (integer) values', () => {
-      expect(previewString(42)).toEqual('42');
+      expect(previewString(42)).toBe('42');
     });
 
     it('should handle number (decimal) values', () => {
-      expect(previewString(5.6)).toEqual('5.6');
+      expect(previewString(5.6)).toBe('5.6');
     });
 
     it('should handle date objects', () => {
       const date = new Date();
-      expect(previewString(date)).toEqual(`"${date.toISOString()}"`);
+      expect(previewString(date)).toBe(`"${date.toISOString()}"`);
     });
 
     it('should handle arrays', () => {
-      expect(previewString([1, 2, 3])).toEqual('Array[3] [1,2,3]');
+      expect(previewString([1, 2, 3])).toBe('Array[3] [1,2,3]');
     });
 
     it('should handle regular objects', () => {
       const obj = { a: 1, b: 'hello' };
-      expect(previewString(obj)).toEqual('Object {"a":1,"b":"hello"}');
+      expect(previewString(obj)).toBe('Object {"a":1,"b":"hello"}');
     });
 
     it('should handle function values', () => {
-      expect(previewString(() => {})).toEqual('Function');
+      expect(previewString(() => {})).toBe('Function');
     });
 
     it('should truncate when limit is exceeded', () => {
       const obj = { a: 1, b: 'hello'.repeat(50) };
-      expect(previewString(obj, 20)).toEqual('Object {"a":1,"b":"…');
+      expect(previewString(obj, 20)).toBe('Object {"a":1,"b":"…');
     });
 
     it('should default limit to 80 characters', () => {
@@ -56,19 +56,19 @@ describe('Util', () => {
         obj[`key_${i}`] = `val_${i}`;
       }
       const preview = previewString(obj);
-      expect(preview.length).toBe(80);
+      expect(preview).toHaveLength(80);
       expect(preview.endsWith('…')).toBe(true);
     });
 
     it('should truncate string values in objects when stringsLimit is exceeded', () => {
       const obj = { a: 1, b: 'hello'.repeat(50) };
-      expect(previewString(obj, 200, 10)).toEqual(
+      expect(previewString(obj, 200, 10)).toBe(
         'Object {"a":1,"b":"hellohello…"}'
       );
     });
 
     it('should truncate string values in arrays when stringsLimit is exceeded', () => {
-      expect(previewString(['longstring'.repeat(10)], 200, 10)).toEqual(
+      expect(previewString(['longstring'.repeat(10)], 200, 10)).toBe(
         'Array[1] ["longstring…"]'
       );
     });

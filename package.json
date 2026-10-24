@@ -59,6 +59,7 @@
     "@angular/cli": "^22.2.3",
     "@angular/compiler-cli": "^22.2.3",
     "@eslint/js": "^10.0.1",
+    "@vitest/eslint-plugin": "^1.6.28",
     "angular-eslint": "22.6.0",
     "cpy-cli": "^7.0.0",
     "eslint": "^10.12.0",

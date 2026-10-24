@@ -99,7 +99,7 @@ describe('NgxJsonTreeviewComponent', () => {
       NgxJsonTreeviewNodeHarness.with({ key: 'data' })
     );
     const value = await node.getValue();
-    expect(value.length).toBe(80);
+    expect(value).toHaveLength(80);
     expect(value.endsWith('…')).toBe(true);
   });
 
@@ -120,7 +120,7 @@ describe('NgxJsonTreeviewComponent', () => {
       NgxJsonTreeviewNodeHarness.with({ key: 'inner' })
     );
     const value = await node.getValue();
-    expect(value.length).toBe(30);
+    expect(value).toHaveLength(30);
     expect(value.endsWith('…')).toBe(true);
   });
 
