@@ -2,6 +2,7 @@
   <span>ngx-json-treeview</span>
   <span class="spacer"></span>
   <button
+    type="button"
     mat-icon-button
     [matMenuTriggerFor]="themeMenu"
     aria-label="Select theme">
@@ -20,15 +21,21 @@
     </mat-icon>
   </button>
   <mat-menu #themeMenu="matMenu">
-    <button mat-menu-item (click)="themeService.setTheme('light')">
+    <button
+      type="button"
+      mat-menu-item
+      (click)="themeService.setTheme('light')">
       <mat-icon>light_mode</mat-icon>
       <span>Light</span>
     </button>
-    <button mat-menu-item (click)="themeService.setTheme('dark')">
+    <button type="button" mat-menu-item (click)="themeService.setTheme('dark')">
       <mat-icon>dark_mode</mat-icon>
       <span>Dark</span>
     </button>
-    <button mat-menu-item (click)="themeService.setTheme('system')">
+    <button
+      type="button"
+      mat-menu-item
+      (click)="themeService.setTheme('system')">
       <mat-icon>brightness_auto</mat-icon>
       <span>System</span>
     </button>
@@ -38,6 +45,7 @@
   <div class="clickable-container">
     <div class="json-container">
       <button
+        type="button"
         class="action-button"
         mat-icon-button
         (click)="toggleExpansion()"
