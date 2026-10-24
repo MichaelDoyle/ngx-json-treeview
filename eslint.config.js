@@ -59,6 +59,10 @@ module.exports = defineConfig([
       angular.configs.templateAccessibility,
     ],
     rules: {
+      '@angular-eslint/template/prefer-contextual-for-variables': 'error',
+      '@angular-eslint/template/no-any': 'error',
+      '@angular-eslint/template/prefer-class-binding': 'error',
+      '@angular-eslint/template/prefer-style-binding': 'error',
       '@angular-eslint/template/attributes-order': 'error',
       '@angular-eslint/template/no-interpolation-in-attributes': 'error',
       '@angular-eslint/template/prefer-self-closing-tags': 'error',
