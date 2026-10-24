@@ -36,6 +36,7 @@
       <div
         [class]="'segment segment-type-' + segment.type"
         role="treeitem"
+        [attr.aria-selected]="false"
         [attr.aria-expanded]="expandable ? segment.expanded : undefined"
         [attr.aria-level]="_currentDepth() + 1"
         [attr.aria-setsize]="len"
