@@ -139,7 +139,7 @@ export class NgxJsonTreeviewComponent {
    */
   protected readonly _currentDepth = input<number>(0);
 
-  private internalValueClickHandlers = computed<ValueClickHandler[]>(() => {
+  private readonly internalValueClickHandlers = computed<ValueClickHandler[]>(() => {
     const handlers: ValueClickHandler[] = [];
     const legacyIsClickableFn = this.isClickableValue();
 

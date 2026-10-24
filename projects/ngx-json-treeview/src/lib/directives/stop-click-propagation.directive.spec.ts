@@ -22,7 +22,7 @@ import { StopClickPropagationDirective } from './stop-click-propagation.directiv
   `,
 })
 class TestComponent {
-  enabled = signal(true);
+  readonly enabled = signal(true);
   parentClicked() {}
   childClicked() {}
 }

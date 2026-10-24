@@ -36,8 +36,8 @@ import { ThemeService } from './services/theme.service';
 export class AppComponent {
   protected readonly themeService = inject(ThemeService);
 
-  currentSegment = signal<Segment | undefined>(undefined);
-  expansionDepth = signal(1);
+  readonly currentSegment = signal<Segment | undefined>(undefined);
+  readonly expansionDepth = signal(1);
 
   private baseObj = {
     string: 'Hello World',
