@@ -84,6 +84,15 @@ pnpm run lint:es
 pnpm run lint:style
 ```
 
+### Pre-commit Hooks
+
+This project uses [simple-git-hooks](https://github.com/toplenboren/simple-git-hooks) and [lint-staged](https://github.com/lint-staged/lint-staged) to automatically format and lint staged files on commit:
+
+```bash
+# Install or update git hooks manually if needed
+pnpm run prepare
+```
+
 ## Submitting Changes
 
 1.  **Create a Branch**: Create a new branch for your feature or bug fix.
