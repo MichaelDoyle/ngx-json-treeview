@@ -58,6 +58,7 @@ module.exports = defineConfig([
       angular.configs.templateAccessibility,
     ],
     rules: {
+      '@angular-eslint/template/attributes-order': 'error',
       '@angular-eslint/template/no-interpolation-in-attributes': 'error',
       '@angular-eslint/template/prefer-self-closing-tags': 'error',
       '@angular-eslint/template/prefer-at-empty': 'error',
