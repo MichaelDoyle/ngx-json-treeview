@@ -9,9 +9,9 @@
         type="button"
         class="segment-primitive"
         [class.clickable]="isClickablePrimitive()"
-        (click)="onPrimitiveClick($event)"
         [ngxJtStopClickPropagation]="stopClickPropagation()"
-        [disabled]="!isClickablePrimitive()">
+        [disabled]="!isClickablePrimitive()"
+        (click)="onPrimitiveClick($event)">
         {{ asString() }}
       </button>
     </div>
@@ -34,8 +34,8 @@
       @let nodeId = id + '-node-label-' + _currentDepth() + '-' + i;
 
       <div
-        [class]="'segment segment-type-' + segment.type"
         role="treeitem"
+        [class]="'segment segment-type-' + segment.type"
         [attr.aria-selected]="false"
         [attr.aria-expanded]="expandable ? segment.expanded : undefined"
         [attr.aria-level]="_currentDepth() + 1"
@@ -44,13 +44,13 @@
         [attr.aria-labelledby]="nodeId">
         <div class="segment-main">
           <button
-            [id]="nodeId"
             type="button"
+            [id]="nodeId"
             [class.expandable]="expandable"
             [class.expanded]="segment.expanded"
-            (click)="toggle(segment)"
             [ngxJtStopClickPropagation]="stopClickPropagation()"
-            [disabled]="!expandable">
+            [disabled]="!expandable"
+            (click)="toggle(segment)">
             @if (expandable) {
               <div class="toggler"></div>
             }
@@ -78,9 +78,9 @@
                 [class.segment-label]="expandable"
                 [class.segment-value]="!expandable"
                 [class.clickable]="clickableValue"
-                (click)="onValueClickHandler(segment, $event)"
                 [ngxJtStopClickPropagation]="stopClickPropagation()"
-                [disabled]="!clickableValue">
+                [disabled]="!clickableValue"
+                (click)="onValueClickHandler(segment, $event)">
                 {{ segment.description }}
               </button>
               <span class="punctuation">{{ needsComma ? ',' : '' }}</span>
@@ -102,9 +102,9 @@
               [valueClickHandlers]="valueClickHandlers()"
               [isClickableValue]="isClickableValue()"
               [stopClickPropagation]="stopClickPropagation()"
-              (onValueClick)="onValueClick.emit($event)"
               [_parent]="segment"
-              [_currentDepth]="_currentDepth() + 1" />
+              [_currentDepth]="_currentDepth() + 1"
+              (onValueClick)="onValueClick.emit($event)" />
             <span class="punctuation">
               {{ closingBrace }}{{ needsComma ? ',' : '' }}
             </span>

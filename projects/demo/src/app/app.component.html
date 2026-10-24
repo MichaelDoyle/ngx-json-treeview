@@ -4,8 +4,8 @@
   <button
     type="button"
     mat-icon-button
-    [matMenuTriggerFor]="themeMenu"
-    aria-label="Select theme">
+    aria-label="Select theme"
+    [matMenuTriggerFor]="themeMenu">
     <mat-icon>
       @switch (themeService.theme()) {
         @case ('dark') {
@@ -48,8 +48,8 @@
         type="button"
         class="action-button"
         mat-icon-button
-        (click)="toggleExpansion()"
-        [matTooltip]="expansionDepth() === -1 ? 'Collapse all' : 'Expand all'">
+        [matTooltip]="expansionDepth() === -1 ? 'Collapse all' : 'Expand all'"
+        (click)="toggleExpansion()">
         @if (expansionDepth() === -1) {
           <mat-icon>collapse_all</mat-icon>
         } @else {
