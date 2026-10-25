@@ -36,6 +36,21 @@ export function previewString(obj: any, limit = 80, stringsLimit = 10) {
       result += `"${obj.toISOString()}"`;
     } else if (obj instanceof RegExp) {
       result += obj.toString();
+    } else if (obj instanceof Map) {
+      result += `Map(${obj.size}) {`;
+      for (const [k, v] of obj.entries()) {
+        if (result.length >= limit) {
+          break;
+        }
+        result += previewString(k, limit - result.length, stringsLimit);
+        result += ' => ';
+        result += previewString(v, limit - result.length, stringsLimit);
+        result += ',';
+      }
+      if (result.endsWith(',')) {
+        result = result.slice(0, -1);
+      }
+      result += '}';
     } else if (Array.isArray(obj)) {
       result += `Array[${obj.length}] [`;
       for (const key in obj) {
@@ -119,6 +134,14 @@ export function decycle(object: any): any {
         value.forEach(function (element, i) {
           nu[i] = derez(element, path + '[' + i + ']');
         });
+      } else if (value instanceof Map) {
+        nu = new Map();
+        value.forEach(function (val, key) {
+          nu.set(
+            key,
+            derez(val, path + '[' + JSON.stringify(String(key)) + ']')
+          );
+        });
       } else {
         nu = {};
         Object.keys(value).forEach(function (name) {
@@ -150,6 +173,18 @@ export function isExpandableSegment(segment: Segment): boolean {
 
   return (
     (segment.type === 'object' && Object.keys(segment.value).length > 0) ||
-    (segment.type === 'array' && segment.value.length > 0)
+    (segment.type === 'array' && segment.value.length > 0) ||
+    (segment.type === 'map' && segment.value.size > 0)
   );
+}
+
+/**
+ * Determines whether a segment represents a collection or container description
+ * that should receive label styling (e.g. expandable containers and empty Maps).
+ *
+ * @param segment The segment to evaluate.
+ * @returns `true` if the segment represents a collection/container, `false` otherwise.
+ */
+export function isCollectionSegment(segment: Segment): boolean {
+  return isExpandableSegment(segment) || segment?.type === 'map';
 }

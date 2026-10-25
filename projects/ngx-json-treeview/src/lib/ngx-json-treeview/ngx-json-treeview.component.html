@@ -23,6 +23,7 @@
       @let needsComma = !$last;
       @let expandable = isExpandable(segment);
       @let empty = isEmpty(segment);
+      @let collection = isCollection(segment);
       @let openingBrace = openingBraceForSegment(segment);
       @let closingBrace = closingBraceForSegment(segment);
       @let clickableValue = isClickable(segment);
@@ -70,8 +71,8 @@
             <span class="segment-preview-container">
               <button
                 type="button"
-                [class.segment-label]="expandable"
-                [class.segment-value]="!expandable"
+                [class.segment-label]="collection"
+                [class.segment-value]="!collection"
                 [class.clickable]="clickableValue"
                 [ngxJtStopClickPropagation]="stopClickPropagation()"
                 [disabled]="!clickableValue"

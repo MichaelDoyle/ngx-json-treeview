@@ -1,5 +1,10 @@
 import { type Segment } from '../types';
-import { decycle, isExpandableSegment, previewString } from '../util';
+import {
+  decycle,
+  isCollectionSegment,
+  isExpandableSegment,
+  previewString,
+} from '../util';
 
 describe('Util', () => {
   describe('previewString', () => {
@@ -63,6 +68,18 @@ describe('Util', () => {
 
     it('should handle RegExp values', () => {
       expect(previewString(/abc/gi)).toBe('/abc/gi');
+    });
+
+    it('should handle Map values', () => {
+      const map = new Map<string, any>([
+        ['a', 1],
+        ['b', 'hello'],
+      ]);
+      expect(previewString(map)).toBe('Map(2) {"a" => 1,"b" => "hello"}');
+    });
+
+    it('should handle empty Map values', () => {
+      expect(previewString(new Map())).toBe('Map(0) {}');
     });
 
     it('should return ellipsis when limit is <= 0', () => {
@@ -193,80 +210,171 @@ describe('Util', () => {
         second: { name: 'shared', back: { $ref: '$' } },
       });
     });
+
+    it('should preserve Map instances without converting them to empty objects', () => {
+      const map = new Map([['k', 'v']]);
+      const decycled = decycle({ map });
+      expect(decycled.map instanceof Map).toBe(true);
+      expect(decycled.map.get('k')).toBe('v');
+    });
+
+    it('should handle circular references inside Maps', () => {
+      const map = new Map<string, any>();
+      map.set('self', map);
+      const decycled = decycle(map);
+      expect(decycled instanceof Map).toBe(true);
+      expect(decycled.get('self')).toEqual({ $ref: '$' });
+    });
   });
 
   describe('isExpandableSegment', () => {
-    it('should return true for a non-empty object segment', () => {
-      const segment: Segment = {
-        key: 'a',
-        value: { x: 1 },
-        type: 'object',
-        description: '',
-        expanded: false,
-        path: 'a',
-      };
-      expect(isExpandableSegment(segment)).toBe(true);
+    it.each([
+      {
+        description: 'a non-empty object',
+        expected: true,
+        segment: { key: 'a', value: { x: 1 }, type: 'object' } as Segment,
+      },
+      {
+        description: 'an empty object',
+        expected: false,
+        segment: { key: 'a', value: {}, type: 'object' } as Segment,
+      },
+      {
+        description: 'a non-empty array',
+        expected: true,
+        segment: { key: 'b', value: [1], type: 'array' } as Segment,
+      },
+      {
+        description: 'an empty array',
+        expected: false,
+        segment: { key: 'b', value: [], type: 'array' } as Segment,
+      },
+      {
+        description: 'a non-empty map',
+        expected: true,
+        segment: {
+          key: 'm',
+          value: new Map([['k', 'v']]),
+          type: 'map',
+        } as Segment,
+      },
+      {
+        description: 'an empty map',
+        expected: false,
+        segment: { key: 'm', value: new Map(), type: 'map' } as Segment,
+      },
+      {
+        description: 'a primitive string',
+        expected: false,
+        segment: { key: 'c', value: 'test', type: 'string' } as Segment,
+      },
+      {
+        description: 'a null segment value',
+        expected: false,
+        segment: { key: 'd', value: null, type: 'null' } as Segment,
+      },
+      {
+        description: 'a null segment',
+        expected: false,
+        segment: null as any,
+      },
+      {
+        description: 'an undefined segment',
+        expected: false,
+        segment: undefined as any,
+      },
+    ])('should return $expected for $description', ({ segment, expected }) => {
+      expect(isExpandableSegment(segment)).toBe(expected);
     });
+  });
 
-    it('should return true for a non-empty array segment', () => {
-      const segment: Segment = {
-        key: 'b',
-        value: [1],
-        type: 'array',
-        description: '',
-        expanded: false,
-        path: 'b',
-      };
-      expect(isExpandableSegment(segment)).toBe(true);
-    });
-
-    it('should return false for an empty object segment', () => {
-      const segment: Segment = {
-        key: 'a',
-        value: {},
-        type: 'object',
-        description: '',
-        expanded: false,
-        path: 'a',
-      };
-      expect(isExpandableSegment(segment)).toBe(false);
-    });
-
-    it('should return false for an empty array segment', () => {
-      const segment: Segment = {
-        key: 'b',
-        value: [],
-        type: 'array',
-        description: '',
-        expanded: false,
-        path: 'b',
-      };
-      expect(isExpandableSegment(segment)).toBe(false);
-    });
-
-    it('should return false for a primitive segment', () => {
-      const segment: Segment = {
-        key: 'c',
-        value: 'test',
-        type: 'string',
-        description: '',
-        expanded: false,
-        path: 'c',
-      };
-      expect(isExpandableSegment(segment)).toBe(false);
-    });
-
-    it('should return false for null or undefined segment value', () => {
-      const nullSegment: Segment = {
-        key: 'd',
-        value: null,
-        type: 'null',
-        description: '',
-        expanded: false,
-        path: 'd',
-      };
-      expect(isExpandableSegment(nullSegment)).toBe(false);
-      expect(isExpandableSegment(null as any)).toBe(false);
+  describe('isCollectionSegment', () => {
+    it.each([
+      {
+        description: 'an expandable object',
+        expected: true,
+        segment: { key: 'a', value: { x: 1 }, type: 'object' } as Segment,
+      },
+      {
+        description: 'an expandable array',
+        expected: true,
+        segment: { key: 'b', value: [1], type: 'array' } as Segment,
+      },
+      {
+        description: 'a non-empty map',
+        expected: true,
+        segment: {
+          key: 'm',
+          value: new Map([['k', 'v']]),
+          type: 'map',
+        } as Segment,
+      },
+      {
+        description: 'an empty map',
+        expected: true,
+        segment: { key: 'm', value: new Map(), type: 'map' } as Segment,
+      },
+      {
+        description: 'an empty object',
+        expected: false,
+        segment: { key: 'a', value: {}, type: 'object' } as Segment,
+      },
+      {
+        description: 'an empty array',
+        expected: false,
+        segment: { key: 'b', value: [], type: 'array' } as Segment,
+      },
+      {
+        description: 'a string primitive',
+        expected: false,
+        segment: { key: 'str', value: 'hello', type: 'string' } as Segment,
+      },
+      {
+        description: 'a number primitive',
+        expected: false,
+        segment: { key: 'num', value: 42, type: 'number' } as Segment,
+      },
+      {
+        description: 'a bigint primitive',
+        expected: false,
+        segment: { key: 'bi', value: 123n, type: 'bigint' } as Segment,
+      },
+      {
+        description: 'a boolean primitive',
+        expected: false,
+        segment: { key: 'bool', value: true, type: 'boolean' } as Segment,
+      },
+      {
+        description: 'a symbol primitive',
+        expected: false,
+        segment: {
+          key: 'sym',
+          value: Symbol('foo'),
+          type: 'symbol',
+        } as Segment,
+      },
+      {
+        description: 'a regexp primitive',
+        expected: false,
+        segment: { key: 're', value: /abc/, type: 'regexp' } as Segment,
+      },
+      {
+        description: 'a null segment value',
+        expected: false,
+        segment: { key: 'n', value: null, type: 'null' } as Segment,
+      },
+      {
+        description: 'a null segment',
+        expected: false,
+        segment: null as any,
+      },
+      {
+        description: 'an undefined segment',
+        expected: false,
+        segment: undefined as any,
+      },
+    ])('should return $expected for $description', ({ segment, expected }) => {
+      expect(isCollectionSegment(segment)).toBe(expected);
     });
   });
 });

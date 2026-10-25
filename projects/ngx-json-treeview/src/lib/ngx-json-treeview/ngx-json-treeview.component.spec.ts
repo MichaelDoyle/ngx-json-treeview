@@ -313,6 +313,28 @@ describe('NgxJsonTreeviewComponent', () => {
       );
       expect(button.textContent.trim()).toBe('/^[a-z]+$/i');
     });
+
+    it('should render a root Map with entries as an expandable object', async () => {
+      const map = new Map([
+        ['keyA', 1],
+        ['keyB', 2],
+      ]);
+      const { loader } = await setupTest({ json: map });
+
+      const nodeA = await loader.getHarness(
+        NgxJsonTreeviewNodeHarness.with({ key: 'keyA' })
+      );
+      expect(await nodeA.getValue()).toBe('1');
+    });
+
+    it('should render a root empty Map as Map(0) {}', async () => {
+      const { fixture } = await setupTest({ json: new Map() });
+
+      const button = fixture.nativeElement.querySelector(
+        '.segment-type-map button.segment-primitive'
+      );
+      expect(button.textContent.trim()).toBe('Map(0) {}');
+    });
   });
 
   describe('additional JS value types within objects', () => {
@@ -386,6 +408,53 @@ describe('NgxJsonTreeviewComponent', () => {
         );
         expect(await node.getType()).toBe('regexp');
         expect(await node.getValue()).toBe('/foo\\d+/gi');
+      });
+    });
+
+    describe('Map', () => {
+      it('should classify and format a collapsed Map with entries', async () => {
+        const { loader } = await setupTest({
+          depth: 0,
+          json: { val: new Map([['alpha', 10]]) },
+        });
+
+        const node = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'val' })
+        );
+        expect(await node.getType()).toBe('map');
+        expect(await node.getValue()).toBe('Map(1) {"alpha" => 10}');
+        expect(await node.isExpandable()).toBe(true);
+      });
+
+      it('should expand Map entries as key-value pairs', async () => {
+        const { loader } = await setupTest({
+          depth: 1,
+          json: { val: new Map([['alpha', 10]]) },
+        });
+
+        const childNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'alpha' })
+        );
+        expect(await childNode.getValue()).toBe('10');
+      });
+
+      it('should format an empty Map as Map(0) {} with segment-label styling', async () => {
+        const { fixture, loader } = await setupTest({
+          depth: 1,
+          json: { val: new Map() },
+        });
+
+        const node = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'val' })
+        );
+        expect(await node.getType()).toBe('map');
+        expect(await node.getValue()).toBe('Map(0) {}');
+        expect(await node.isExpandable()).toBe(false);
+
+        const button = fixture.nativeElement.querySelector(
+          '.segment-type-map button.segment-label'
+        );
+        expect(button).not.toBeNull();
       });
     });
   });

@@ -31,6 +31,11 @@ function createBaseObj() {
     undefined: undefined,
     date: new Date(),
     regexp: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/g,
+    map: new Map<string, string | number>([
+      ['key1', 'value1'],
+      ['key2', 42],
+    ]),
+    emptyMap: new Map(),
     array: ['apple', 'banana', 'cherry', 123, false, { foo: 'bar' }],
     emptyArray: [],
     emptyObject: {},
@@ -112,6 +117,9 @@ export class AppComponent {
             val instanceof RegExp
           ) {
             return val.toString();
+          }
+          if (val instanceof Map) {
+            return Object.fromEntries(val);
           }
           return val;
         },
