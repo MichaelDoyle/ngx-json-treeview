@@ -43,6 +43,7 @@ export class AppComponent {
     string: 'Hello World',
     stringPre: 'Hello\nWorld\n\tAnother line',
     number: 1234567890,
+    bigint: 9007199254740993n,
     boolean: true,
     url: 'http://www.google.com',
     null: null,
@@ -84,13 +85,30 @@ export class AppComponent {
     },
   ];
 
-  protected stringify(obj: unknown) {
-    if (typeof obj === 'function') {
-      return '' + obj;
-    } else if (typeof obj === 'string') {
-      return obj;
+  protected stringify(value: unknown): string {
+    if (typeof value === 'string') {
+      return value;
     }
-    return JSON.stringify(obj, null, 2);
+    if (typeof value === 'function') {
+      return value.toString();
+    }
+    if (typeof value === 'bigint') {
+      return `${value}n`;
+    }
+    try {
+      return JSON.stringify(
+        value,
+        (_key, val) => {
+          if (typeof val === 'bigint') {
+            return `${val}n`;
+          }
+          return val;
+        },
+        2
+      );
+    } catch {
+      return String(value);
+    }
   }
 
   protected toggleExpansion() {

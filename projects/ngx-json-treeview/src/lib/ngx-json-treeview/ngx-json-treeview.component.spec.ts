@@ -286,5 +286,45 @@ describe('NgxJsonTreeviewComponent', () => {
       );
       expect(button.textContent.trim()).toBe('"2026-10-21T00:00:00.000Z"');
     });
+
+    it('should render a root bigint as its formatted value with n suffix', async () => {
+      const { fixture } = await setupTest({ json: 9007199254740993n });
+
+      const button = fixture.nativeElement.querySelector(
+        'button.segment-primitive'
+      );
+      expect(button.textContent.trim()).toBe('9007199254740993n');
+    });
+  });
+
+  describe('additional JS value types within objects', () => {
+    describe('bigint', () => {
+      it('should classify and format a bigint value with n suffix', async () => {
+        const { loader } = await setupTest({
+          depth: 1,
+          json: { val: 12345678901234567890n },
+        });
+
+        const node = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'val' })
+        );
+        expect(await node.getType()).toBe('bigint');
+        expect(await node.getValue()).toBe('12345678901234567890n');
+      });
+
+      it('should not log an error when parsing a bigint value', async () => {
+        const errorSpy = vi
+          .spyOn(console, 'error')
+          .mockImplementation(() => {});
+
+        await setupTest({
+          depth: 1,
+          json: { val: 100n },
+        });
+
+        expect(errorSpy).not.toHaveBeenCalled();
+        errorSpy.mockRestore();
+      });
+    });
   });
 });

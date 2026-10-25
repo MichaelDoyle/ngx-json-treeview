@@ -1,6 +1,7 @@
 $type-colors: (
   string: var(--ngx-json-string, #0451a5),
   number: var(--ngx-json-number, #098658),
+  bigint: var(--ngx-json-bigint, var(--ngx-json-number, #098658)),
   boolean: var(--ngx-json-boolean, #a31515),
   date: var(--ngx-json-date, #05668d),
   function: var(--ngx-json-function, #656e77),

@@ -197,10 +197,19 @@ export class NgxJsonTreeviewComponent {
     } else return '}';
   });
 
-  // JSON.stringify returns undefined for undefined, functions and symbols.
-  protected readonly asString = computed<string>(() =>
-    (JSON.stringify(this.json(), null, 2) ?? String(this.json())).trim()
-  );
+  // JSON.stringify returns undefined for undefined, functions and symbols,
+  // and throws a TypeError for BigInt.
+  protected readonly asString = computed<string>(() => {
+    const val = this.json();
+    if (typeof val === 'bigint') {
+      return `${val}n`;
+    }
+    try {
+      return (JSON.stringify(val, null, 2) ?? String(val)).trim();
+    } catch {
+      return String(val).trim();
+    }
+  });
 
   // An empty object or array (not a Date, which has no keys either) shows as
   // {} or [] rather than as a primitive value.
@@ -383,6 +392,10 @@ export class NgxJsonTreeviewComponent {
       case 'undefined':
         segment.type = 'undefined';
         segment.description = 'undefined';
+        break;
+      case 'bigint':
+        segment.type = 'bigint';
+        segment.description = `${segment.value}n`;
         break;
       case 'object':
         if (segment.value === null) {

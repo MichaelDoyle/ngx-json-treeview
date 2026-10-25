@@ -45,6 +45,18 @@ describe('Util', () => {
       expect(previewString(() => {})).toBe('Function');
     });
 
+    it('should handle bigint values', () => {
+      expect(previewString(123n)).toBe('123n');
+    });
+
+    it('should handle negative bigint values', () => {
+      expect(previewString(-42n)).toBe('-42n');
+    });
+
+    it('should return ellipsis when limit is <= 0', () => {
+      expect(previewString('hello', 0)).toBe('…');
+    });
+
     it('should truncate when limit is exceeded', () => {
       const obj = { a: 1, b: 'hello'.repeat(50) };
       expect(previewString(obj, 20)).toBe('Object {"a":1,"b":"…');
