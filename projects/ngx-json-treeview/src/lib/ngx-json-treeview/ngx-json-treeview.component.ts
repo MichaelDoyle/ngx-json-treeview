@@ -177,6 +177,8 @@ export class NgxJsonTreeviewComponent {
       return 'regexp';
     } else if (val instanceof Map) {
       return 'map';
+    } else if (val instanceof Set) {
+      return 'set';
     } else return typeof val;
   });
 
@@ -188,6 +190,11 @@ export class NgxJsonTreeviewComponent {
     if (json instanceof Map) {
       return Array.from(json.entries()).map(([key, val]) =>
         this.parseKeyValue(String(key), val)
+      );
+    }
+    if (json instanceof Set) {
+      return Array.from(json.values()).map((val, index) =>
+        this.parseKeyValue(String(index), val)
       );
     }
     if (typeof json === 'object' && json != null) {
@@ -203,13 +210,13 @@ export class NgxJsonTreeviewComponent {
   );
 
   protected readonly openingBrace = computed<string>(() => {
-    if (this.rootType() === 'array') {
+    if (this.rootType() === 'array' || this.rootType() === 'set') {
       return '[';
     } else return '{';
   });
 
   protected readonly closingBrace = computed<string>(() => {
-    if (this.rootType() === 'array') {
+    if (this.rootType() === 'array' || this.rootType() === 'set') {
       return ']';
     } else return '}';
   });
@@ -227,7 +234,7 @@ export class NgxJsonTreeviewComponent {
     if (val instanceof RegExp) {
       return val.toString();
     }
-    if (val instanceof Map) {
+    if (val instanceof Map || val instanceof Set) {
       return previewString(val, this.maxPreviewLength());
     }
     try {
@@ -270,7 +277,7 @@ export class NgxJsonTreeviewComponent {
   });
 
   protected readonly isArrayElement = computed<boolean>(
-    () => this.rootType() === 'array'
+    () => this.rootType() === 'array' || this.rootType() === 'set'
   );
 
   /**
@@ -354,7 +361,7 @@ export class NgxJsonTreeviewComponent {
   }
 
   protected openingBraceForSegment(segment: Segment) {
-    if (segment.type === 'array') {
+    if (segment.type === 'array' || segment.type === 'set') {
       return '[';
     } else if (segment.type === 'object' || segment.type === 'map') {
       return '{';
@@ -364,7 +371,7 @@ export class NgxJsonTreeviewComponent {
   }
 
   protected closingBraceForSegment(segment: Segment) {
-    if (segment.type === 'array') {
+    if (segment.type === 'array' || segment.type === 'set') {
       return ']';
     } else if (segment.type === 'object' || segment.type === 'map') {
       return '}';
@@ -378,7 +385,7 @@ export class NgxJsonTreeviewComponent {
     let path: string;
 
     if (parent) {
-      if (parent.type === 'array') {
+      if (parent.type === 'array' || parent.type === 'set') {
         path = `${parent.path}[${key}]`;
       } else {
         path = `${parent.path}.${key}`;
@@ -447,6 +454,12 @@ export class NgxJsonTreeviewComponent {
           segment.description = segment.value.toString();
         } else if (segment.value instanceof Map) {
           segment.type = 'map';
+          segment.description = previewString(
+            segment.value,
+            this.maxPreviewLength()
+          );
+        } else if (segment.value instanceof Set) {
+          segment.type = 'set';
           segment.description = previewString(
             segment.value,
             this.maxPreviewLength()

@@ -36,6 +36,8 @@ function createBaseObj() {
       ['key2', 42],
     ]),
     emptyMap: new Map(),
+    set: new Set(['apple', 'banana', 'cherry']),
+    emptySet: new Set(),
     array: ['apple', 'banana', 'cherry', 123, false, { foo: 'bar' }],
     emptyArray: [],
     emptyObject: {},
@@ -120,6 +122,9 @@ export class AppComponent {
           }
           if (val instanceof Map) {
             return Object.fromEntries(val);
+          }
+          if (val instanceof Set) {
+            return Array.from(val);
           }
           return val;
         },

@@ -51,6 +51,19 @@ export function previewString(obj: any, limit = 80, stringsLimit = 10) {
         result = result.slice(0, -1);
       }
       result += '}';
+    } else if (obj instanceof Set) {
+      result += `Set(${obj.size}) [`;
+      for (const item of obj.values()) {
+        if (result.length >= limit) {
+          break;
+        }
+        result += previewString(item, limit - result.length, stringsLimit);
+        result += ',';
+      }
+      if (result.endsWith(',')) {
+        result = result.slice(0, -1);
+      }
+      result += ']';
     } else if (Array.isArray(obj)) {
       result += `Array[${obj.length}] [`;
       for (const key in obj) {
@@ -142,6 +155,13 @@ export function decycle(object: any): any {
             derez(val, path + '[' + JSON.stringify(String(key)) + ']')
           );
         });
+      } else if (value instanceof Set) {
+        nu = new Set();
+        let i = 0;
+        value.forEach(function (val) {
+          nu.add(derez(val, path + '[' + i + ']'));
+          i++;
+        });
       } else {
         nu = {};
         Object.keys(value).forEach(function (name) {
@@ -174,17 +194,22 @@ export function isExpandableSegment(segment: Segment): boolean {
   return (
     (segment.type === 'object' && Object.keys(segment.value).length > 0) ||
     (segment.type === 'array' && segment.value.length > 0) ||
-    (segment.type === 'map' && segment.value.size > 0)
+    (segment.type === 'map' && segment.value.size > 0) ||
+    (segment.type === 'set' && segment.value.size > 0)
   );
 }
 
 /**
  * Determines whether a segment represents a collection or container description
- * that should receive label styling (e.g. expandable containers and empty Maps).
+ * that should receive label styling (e.g. expandable containers, empty Maps, and empty Sets).
  *
  * @param segment The segment to evaluate.
  * @returns `true` if the segment represents a collection/container, `false` otherwise.
  */
 export function isCollectionSegment(segment: Segment): boolean {
-  return isExpandableSegment(segment) || segment?.type === 'map';
+  return (
+    isExpandableSegment(segment) ||
+    segment?.type === 'map' ||
+    segment?.type === 'set'
+  );
 }

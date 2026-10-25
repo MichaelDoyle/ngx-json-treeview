@@ -335,6 +335,25 @@ describe('NgxJsonTreeviewComponent', () => {
       );
       expect(button.textContent.trim()).toBe('Map(0) {}');
     });
+
+    it('should render a root Set with values as an ordered array', async () => {
+      const set = new Set(['itemA', 'itemB']);
+      const { loader } = await setupTest({ json: set });
+
+      const item0 = await loader.getHarness(
+        NgxJsonTreeviewNodeHarness.with({ key: '0' })
+      );
+      expect(await item0.getValue()).toBe('"itemA"');
+    });
+
+    it('should render a root empty Set as Set(0) []', async () => {
+      const { fixture } = await setupTest({ json: new Set() });
+
+      const button = fixture.nativeElement.querySelector(
+        '.segment-type-set button.segment-primitive'
+      );
+      expect(button.textContent.trim()).toBe('Set(0) []');
+    });
   });
 
   describe('additional JS value types within objects', () => {
@@ -453,6 +472,58 @@ describe('NgxJsonTreeviewComponent', () => {
 
         const button = fixture.nativeElement.querySelector(
           '.segment-type-map button.segment-label'
+        );
+        expect(button).not.toBeNull();
+      });
+    });
+
+    describe('Set', () => {
+      it('should classify and format a collapsed Set with values', async () => {
+        const { loader } = await setupTest({
+          depth: 0,
+          json: { val: new Set([100, 200]) },
+        });
+
+        const node = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'val' })
+        );
+        expect(await node.getType()).toBe('set');
+        expect(await node.getValue()).toBe('Set(2) [100,200]');
+        expect(await node.isExpandable()).toBe(true);
+      });
+
+      it('should expand Set values as ordered array elements', async () => {
+        const { loader } = await setupTest({
+          depth: 1,
+          json: { val: new Set(['apple', 'banana']) },
+        });
+
+        const item0 = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: '0' })
+        );
+        expect(await item0.getValue()).toBe('"apple"');
+
+        const item1 = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: '1' })
+        );
+        expect(await item1.getValue()).toBe('"banana"');
+      });
+
+      it('should format an empty Set as Set(0) [] with segment-label styling', async () => {
+        const { fixture, loader } = await setupTest({
+          depth: 1,
+          json: { val: new Set() },
+        });
+
+        const node = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'val' })
+        );
+        expect(await node.getType()).toBe('set');
+        expect(await node.getValue()).toBe('Set(0) []');
+        expect(await node.isExpandable()).toBe(false);
+
+        const button = fixture.nativeElement.querySelector(
+          '.segment-type-set button.segment-label'
         );
         expect(button).not.toBeNull();
       });

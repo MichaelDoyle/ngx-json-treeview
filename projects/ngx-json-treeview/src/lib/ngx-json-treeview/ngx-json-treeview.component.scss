@@ -66,7 +66,8 @@ $type-colors: (
 
   .segment-type-object > .segment-main,
   .segment-type-array > .segment-main,
-  .segment-type-map > .segment-main {
+  .segment-type-map > .segment-main,
+  .segment-type-set > .segment-main {
     align-items: baseline;
     display: flex;
     max-width: 100%;
@@ -177,7 +178,8 @@ $type-colors: (
     padding: 0;
   }
 
-  .segment-type-map > .segment-primitive {
+  .segment-type-map > .segment-primitive,
+  .segment-type-set > .segment-primitive {
     color: var(--ngx-json-label, #656e77);
     font-style: italic;
   }

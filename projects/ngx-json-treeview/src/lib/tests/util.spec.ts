@@ -82,6 +82,15 @@ describe('Util', () => {
       expect(previewString(new Map())).toBe('Map(0) {}');
     });
 
+    it('should handle Set values', () => {
+      const set = new Set([1, 'foo', true]);
+      expect(previewString(set)).toBe('Set(3) [1,"foo",true]');
+    });
+
+    it('should handle empty Set values', () => {
+      expect(previewString(new Set())).toBe('Set(0) []');
+    });
+
     it('should return ellipsis when limit is <= 0', () => {
       expect(previewString('hello', 0)).toBe('…');
     });
@@ -225,6 +234,22 @@ describe('Util', () => {
       expect(decycled instanceof Map).toBe(true);
       expect(decycled.get('self')).toEqual({ $ref: '$' });
     });
+
+    it('should preserve Set instances without converting them to empty objects', () => {
+      const set = new Set([1, 2]);
+      const decycled = decycle({ set });
+      expect(decycled.set instanceof Set).toBe(true);
+      expect(decycled.set.has(1)).toBe(true);
+      expect(decycled.set.has(2)).toBe(true);
+    });
+
+    it('should handle circular references inside Sets', () => {
+      const set = new Set<any>();
+      set.add(set);
+      const decycled = decycle(set);
+      expect(decycled instanceof Set).toBe(true);
+      expect(Array.from(decycled)[0]).toEqual({ $ref: '$' });
+    });
   });
 
   describe('isExpandableSegment', () => {
@@ -262,6 +287,16 @@ describe('Util', () => {
         description: 'an empty map',
         expected: false,
         segment: { key: 'm', value: new Map(), type: 'map' } as Segment,
+      },
+      {
+        description: 'a non-empty set',
+        expected: true,
+        segment: { key: 's', value: new Set([1]), type: 'set' } as Segment,
+      },
+      {
+        description: 'an empty set',
+        expected: false,
+        segment: { key: 's', value: new Set(), type: 'set' } as Segment,
       },
       {
         description: 'a primitive string',
@@ -313,6 +348,16 @@ describe('Util', () => {
         description: 'an empty map',
         expected: true,
         segment: { key: 'm', value: new Map(), type: 'map' } as Segment,
+      },
+      {
+        description: 'a non-empty set',
+        expected: true,
+        segment: { key: 's', value: new Set([1]), type: 'set' } as Segment,
+      },
+      {
+        description: 'an empty set',
+        expected: true,
+        segment: { key: 's', value: new Set(), type: 'set' } as Segment,
       },
       {
         description: 'an empty object',
