@@ -204,6 +204,9 @@ export class NgxJsonTreeviewComponent {
     if (typeof val === 'bigint') {
       return `${val}n`;
     }
+    if (typeof val === 'symbol') {
+      return val.toString();
+    }
     try {
       return (JSON.stringify(val, null, 2) ?? String(val)).trim();
     } catch {
@@ -371,7 +374,7 @@ export class NgxJsonTreeviewComponent {
       key: key,
       value: value,
       type: undefined,
-      description: '' + value,
+      description: String(value),
       expanded: this.expandedSegments().get(path) ?? this.isExpanded(),
     };
 
@@ -396,6 +399,10 @@ export class NgxJsonTreeviewComponent {
       case 'bigint':
         segment.type = 'bigint';
         segment.description = `${segment.value}n`;
+        break;
+      case 'symbol':
+        segment.type = 'symbol';
+        segment.description = segment.value.toString();
         break;
       case 'object':
         if (segment.value === null) {

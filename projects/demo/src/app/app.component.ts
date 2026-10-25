@@ -18,6 +18,24 @@ import {
 } from 'ngx-json-treeview';
 import { ThemeService } from './services/theme.service';
 
+function createBaseObj() {
+  return {
+    string: 'Hello World',
+    stringPre: 'Hello\nWorld\n\tAnother line',
+    number: 1234567890,
+    bigint: 9007199254740993n,
+    symbol: Symbol('demoSymbol'),
+    boolean: true,
+    url: 'http://www.google.com',
+    null: null,
+    undefined: undefined,
+    date: new Date(),
+    array: ['apple', 'banana', 'cherry', 123, false, { foo: 'bar' }],
+    emptyArray: [],
+    emptyObject: {},
+  };
+}
+
 @Component({
   selector: 'app-root',
   imports: [
@@ -39,30 +57,15 @@ export class AppComponent {
   protected readonly currentSegment = signal<Segment | undefined>(undefined);
   protected readonly expansionDepth = signal(1);
 
-  private baseObj = {
-    string: 'Hello World',
-    stringPre: 'Hello\nWorld\n\tAnother line',
-    number: 1234567890,
-    bigint: 9007199254740993n,
-    boolean: true,
-    url: 'http://www.google.com',
-    null: null,
-    undefined: undefined,
-    date: new Date(),
-    array: ['apple', 'banana', 'cherry', 123, false, { foo: 'bar' }],
-    emptyArray: [],
-    emptyObject: {},
-  };
-
   protected json = {
-    ...structuredClone(this.baseObj),
+    ...createBaseObj(),
     nested: {
-      ...structuredClone(this.baseObj),
+      ...createBaseObj(),
       function: () => {
         return 'foo';
       },
       deeplyNested: {
-        ...structuredClone(this.baseObj),
+        ...createBaseObj(),
         function: () => {
           return 'bar';
         },
@@ -89,7 +92,7 @@ export class AppComponent {
     if (typeof value === 'string') {
       return value;
     }
-    if (typeof value === 'function') {
+    if (typeof value === 'function' || typeof value === 'symbol') {
       return value.toString();
     }
     if (typeof value === 'bigint') {
@@ -101,6 +104,9 @@ export class AppComponent {
         (_key, val) => {
           if (typeof val === 'bigint') {
             return `${val}n`;
+          }
+          if (typeof val === 'symbol' || typeof val === 'function') {
+            return val.toString();
           }
           return val;
         },

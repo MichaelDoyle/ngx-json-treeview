@@ -29,6 +29,8 @@ export function previewString(obj: any, limit = 80, stringsLimit = 10) {
     result += `${obj}`;
   } else if (typeof obj === 'bigint') {
     result += `${obj}n`;
+  } else if (typeof obj === 'symbol') {
+    result += obj.toString();
   } else if (typeof obj === 'object') {
     if (obj instanceof Date) {
       result += `"${obj.toISOString()}"`;

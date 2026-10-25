@@ -295,6 +295,15 @@ describe('NgxJsonTreeviewComponent', () => {
       );
       expect(button.textContent.trim()).toBe('9007199254740993n');
     });
+
+    it('should render a root symbol as its string representation', async () => {
+      const { fixture } = await setupTest({ json: Symbol('rootSym') });
+
+      const button = fixture.nativeElement.querySelector(
+        'button.segment-primitive'
+      );
+      expect(button.textContent.trim()).toBe('Symbol(rootSym)');
+    });
   });
 
   describe('additional JS value types within objects', () => {
@@ -320,6 +329,35 @@ describe('NgxJsonTreeviewComponent', () => {
         await setupTest({
           depth: 1,
           json: { val: 100n },
+        });
+
+        expect(errorSpy).not.toHaveBeenCalled();
+        errorSpy.mockRestore();
+      });
+    });
+
+    describe('symbol', () => {
+      it('should classify and format a symbol value', async () => {
+        const { loader } = await setupTest({
+          depth: 1,
+          json: { val: Symbol('foo') },
+        });
+
+        const node = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'val' })
+        );
+        expect(await node.getType()).toBe('symbol');
+        expect(await node.getValue()).toBe('Symbol(foo)');
+      });
+
+      it('should not log an error when parsing a symbol value', async () => {
+        const errorSpy = vi
+          .spyOn(console, 'error')
+          .mockImplementation(() => {});
+
+        await setupTest({
+          depth: 1,
+          json: { val: Symbol('test') },
         });
 
         expect(errorSpy).not.toHaveBeenCalled();

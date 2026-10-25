@@ -53,6 +53,14 @@ describe('Util', () => {
       expect(previewString(-42n)).toBe('-42n');
     });
 
+    it('should handle symbol values', () => {
+      expect(previewString(Symbol('foo'))).toBe('Symbol(foo)');
+    });
+
+    it('should handle empty symbol values', () => {
+      expect(previewString(Symbol())).toBe('Symbol()');
+    });
+
     it('should return ellipsis when limit is <= 0', () => {
       expect(previewString('hello', 0)).toBe('…');
     });
