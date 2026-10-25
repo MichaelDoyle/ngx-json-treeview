@@ -2,7 +2,10 @@ import {
   type BaseHarnessFilters,
   ComponentHarness,
   HarnessPredicate,
+  type TestKey,
 } from '@angular/cdk/testing';
+
+export { TestKey } from '@angular/cdk/testing';
 
 export interface NgxJsonTreeviewNodeHarnessFilters extends BaseHarnessFilters {
   key?: string | RegExp;
@@ -95,6 +98,30 @@ export class NgxJsonTreeviewNodeHarness extends ComponentHarness {
     return classes?.includes('expandable') ?? false;
   }
 
+  /** Whether the node is currently focused. */
+  async isFocused(): Promise<boolean> {
+    const host = await this.host();
+    return host.isFocused();
+  }
+
+  /** Gets the tabindex attribute of the node. */
+  async getTabIndex(): Promise<string | null> {
+    const host = await this.host();
+    return host.getAttribute('tabindex');
+  }
+
+  /** Focuses the node. */
+  async focus(): Promise<void> {
+    const host = await this.host();
+    await host.focus();
+  }
+
+  /** Blurs the node. */
+  async blur(): Promise<void> {
+    const host = await this.host();
+    await host.blur();
+  }
+
   /** Expands the node if it is collapsed. */
   async expand(): Promise<void> {
     if ((await this.isExpandable()) && !(await this.isExpanded())) {
@@ -121,6 +148,12 @@ export class NgxJsonTreeviewNodeHarness extends ComponentHarness {
     if (valueEl) {
       await valueEl.click();
     }
+  }
+
+  /** Sends keyboard keys to the node. */
+  async sendKeys(...keys: (string | TestKey)[]): Promise<void> {
+    const host = await this.host();
+    await host.sendKeys(...keys);
   }
 
   /** Gets the child treeview harness, if expanded. */
@@ -151,5 +184,16 @@ export class NgxJsonTreeviewHarness extends ComponentHarness {
     filter: NgxJsonTreeviewNodeHarnessFilters
   ): Promise<NgxJsonTreeviewNodeHarness> {
     return this.locatorFor(NgxJsonTreeviewNodeHarness.with(filter))();
+  }
+
+  /** Gets the currently focused node, if any. */
+  async getFocusedNode(): Promise<NgxJsonTreeviewNodeHarness | null> {
+    const nodes = await this.getNodes();
+    for (const node of nodes) {
+      if (await node.isFocused()) {
+        return node;
+      }
+    }
+    return null;
   }
 }
