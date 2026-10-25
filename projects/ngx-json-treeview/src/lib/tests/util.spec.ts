@@ -61,6 +61,10 @@ describe('Util', () => {
       expect(previewString(Symbol())).toBe('Symbol()');
     });
 
+    it('should handle RegExp values', () => {
+      expect(previewString(/abc/gi)).toBe('/abc/gi');
+    });
+
     it('should return ellipsis when limit is <= 0', () => {
       expect(previewString('hello', 0)).toBe('…');
     });

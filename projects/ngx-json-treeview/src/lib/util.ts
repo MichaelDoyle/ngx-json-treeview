@@ -34,6 +34,8 @@ export function previewString(obj: any, limit = 80, stringsLimit = 10) {
   } else if (typeof obj === 'object') {
     if (obj instanceof Date) {
       result += `"${obj.toISOString()}"`;
+    } else if (obj instanceof RegExp) {
+      result += obj.toString();
     } else if (Array.isArray(obj)) {
       result += `Array[${obj.length}] [`;
       for (const key in obj) {

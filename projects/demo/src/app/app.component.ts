@@ -30,6 +30,7 @@ function createBaseObj() {
     null: null,
     undefined: undefined,
     date: new Date(),
+    regexp: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/g,
     array: ['apple', 'banana', 'cherry', 123, false, { foo: 'bar' }],
     emptyArray: [],
     emptyObject: {},
@@ -105,7 +106,11 @@ export class AppComponent {
           if (typeof val === 'bigint') {
             return `${val}n`;
           }
-          if (typeof val === 'symbol' || typeof val === 'function') {
+          if (
+            typeof val === 'symbol' ||
+            typeof val === 'function' ||
+            val instanceof RegExp
+          ) {
             return val.toString();
           }
           return val;

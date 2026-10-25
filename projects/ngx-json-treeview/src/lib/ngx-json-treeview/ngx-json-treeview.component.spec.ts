@@ -304,6 +304,15 @@ describe('NgxJsonTreeviewComponent', () => {
       );
       expect(button.textContent.trim()).toBe('Symbol(rootSym)');
     });
+
+    it('should render a root RegExp as its pattern string', async () => {
+      const { fixture } = await setupTest({ json: /^[a-z]+$/i });
+
+      const button = fixture.nativeElement.querySelector(
+        'button.segment-primitive'
+      );
+      expect(button.textContent.trim()).toBe('/^[a-z]+$/i');
+    });
   });
 
   describe('additional JS value types within objects', () => {
@@ -362,6 +371,21 @@ describe('NgxJsonTreeviewComponent', () => {
 
         expect(errorSpy).not.toHaveBeenCalled();
         errorSpy.mockRestore();
+      });
+    });
+
+    describe('RegExp', () => {
+      it('should classify and format a RegExp value', async () => {
+        const { loader } = await setupTest({
+          depth: 1,
+          json: { val: /foo\d+/gi },
+        });
+
+        const node = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'val' })
+        );
+        expect(await node.getType()).toBe('regexp');
+        expect(await node.getValue()).toBe('/foo\\d+/gi');
       });
     });
   });

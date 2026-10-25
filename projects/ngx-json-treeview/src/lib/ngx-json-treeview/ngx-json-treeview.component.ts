@@ -161,11 +161,14 @@ export class NgxJsonTreeviewComponent {
   );
 
   private readonly rootType = computed<string>(() => {
-    if (this.json() === null) {
+    const val = this.json();
+    if (val === null) {
       return 'null';
-    } else if (Array.isArray(this.json())) {
+    } else if (Array.isArray(val)) {
       return 'array';
-    } else return typeof this.json();
+    } else if (val instanceof RegExp) {
+      return 'regexp';
+    } else return typeof val;
   });
 
   protected readonly segments = computed<Segment[]>(() => {
@@ -205,6 +208,9 @@ export class NgxJsonTreeviewComponent {
       return `${val}n`;
     }
     if (typeof val === 'symbol') {
+      return val.toString();
+    }
+    if (val instanceof RegExp) {
       return val.toString();
     }
     try {
@@ -417,6 +423,9 @@ export class NgxJsonTreeviewComponent {
         } else if (segment.value instanceof Date) {
           segment.type = 'date';
           segment.description = `"${segment.value.toISOString()}"`;
+        } else if (segment.value instanceof RegExp) {
+          segment.type = 'regexp';
+          segment.description = segment.value.toString();
         } else {
           segment.type = 'object';
           segment.description = previewString(
