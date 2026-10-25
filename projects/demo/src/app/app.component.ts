@@ -19,6 +19,10 @@ import {
 import { ThemeService } from './services/theme.service';
 
 function createBaseObj() {
+  const sampleError = new Error('Failed to fetch resource');
+  (sampleError as unknown as Record<string, unknown>)['code'] = 'ERR_NETWORK';
+  (sampleError as unknown as Record<string, unknown>)['statusCode'] = 503;
+
   return {
     string: 'Hello World',
     stringPre: 'Hello\nWorld\n\tAnother line',
@@ -31,6 +35,7 @@ function createBaseObj() {
     undefined: undefined,
     date: new Date(),
     regexp: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/g,
+    error: sampleError,
     map: new Map<string, string | number>([
       ['key1', 'value1'],
       ['key2', 42],
@@ -87,9 +92,7 @@ export class AppComponent {
   protected clickHandlers: ValueClickHandler[] = [
     ...VALUE_CLICK_HANDLERS,
     {
-      canHandle: (segment: Segment) => {
-        return ['object', 'array', 'string'].includes(segment.type ?? '');
-      },
+      canHandle: () => true,
       handler: (segment: Segment) => {
         this.currentSegment.set(segment);
       },
@@ -105,6 +108,9 @@ export class AppComponent {
     }
     if (typeof value === 'bigint') {
       return `${value}n`;
+    }
+    if (value === undefined) {
+      return 'undefined';
     }
     try {
       return JSON.stringify(
@@ -125,6 +131,14 @@ export class AppComponent {
           }
           if (val instanceof Set) {
             return Array.from(val);
+          }
+          if (val instanceof Error) {
+            return {
+              ...val,
+              name: val.name,
+              message: val.message,
+              ...(val.stack !== undefined ? { stack: val.stack } : {}),
+            };
           }
           return val;
         },

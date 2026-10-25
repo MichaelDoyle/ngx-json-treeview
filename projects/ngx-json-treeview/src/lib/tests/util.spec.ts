@@ -70,6 +70,12 @@ describe('Util', () => {
       expect(previewString(/abc/gi)).toBe('/abc/gi');
     });
 
+    it('should handle Error values', () => {
+      expect(previewString(new Error('something failed'))).toBe(
+        'Error: something failed'
+      );
+    });
+
     it('should handle Map values', () => {
       const map = new Map<string, any>([
         ['a', 1],
@@ -220,19 +226,29 @@ describe('Util', () => {
       });
     });
 
+    it('should preserve Error instances without converting them to empty objects', () => {
+      const err = new Error('test error');
+      const decycled = decycle({ err });
+      expect(decycled.err instanceof Error).toBe(true);
+      expect(decycled.err.message).toBe('test error');
+      expect(decycled.err.name).toBe('Error');
+    });
+
+    it('should handle circular references inside Errors', () => {
+      const err = new Error('test cycle');
+      (err as unknown as Record<string, unknown>)['self'] = err;
+      const decycled = decycle(err);
+      expect(decycled instanceof Error).toBe(true);
+      expect((decycled as unknown as Record<string, unknown>)['self']).toEqual({
+        $ref: '$',
+      });
+    });
+
     it('should preserve Map instances without converting them to empty objects', () => {
       const map = new Map([['k', 'v']]);
       const decycled = decycle({ map });
       expect(decycled.map instanceof Map).toBe(true);
       expect(decycled.map.get('k')).toBe('v');
-    });
-
-    it('should handle circular references inside Maps', () => {
-      const map = new Map<string, any>();
-      map.set('self', map);
-      const decycled = decycle(map);
-      expect(decycled instanceof Map).toBe(true);
-      expect(decycled.get('self')).toEqual({ $ref: '$' });
     });
 
     it('should preserve Set instances without converting them to empty objects', () => {
@@ -241,6 +257,14 @@ describe('Util', () => {
       expect(decycled.set instanceof Set).toBe(true);
       expect(decycled.set.has(1)).toBe(true);
       expect(decycled.set.has(2)).toBe(true);
+    });
+
+    it('should handle circular references inside Maps', () => {
+      const map = new Map<string, any>();
+      map.set('self', map);
+      const decycled = decycle(map);
+      expect(decycled instanceof Map).toBe(true);
+      expect(decycled.get('self')).toEqual({ $ref: '$' });
     });
 
     it('should handle circular references inside Sets', () => {
@@ -299,6 +323,15 @@ describe('Util', () => {
         segment: { key: 's', value: new Set(), type: 'set' } as Segment,
       },
       {
+        description: 'an error',
+        expected: true,
+        segment: {
+          key: 'err',
+          value: new Error('something went wrong'),
+          type: 'error',
+        } as Segment,
+      },
+      {
         description: 'a primitive string',
         expected: false,
         segment: { key: 'c', value: 'test', type: 'string' } as Segment,
@@ -334,6 +367,15 @@ describe('Util', () => {
         description: 'an expandable array',
         expected: true,
         segment: { key: 'b', value: [1], type: 'array' } as Segment,
+      },
+      {
+        description: 'an expandable error',
+        expected: true,
+        segment: {
+          key: 'err',
+          value: new Error('something went wrong'),
+          type: 'error',
+        } as Segment,
       },
       {
         description: 'a non-empty map',

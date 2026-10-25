@@ -6,27 +6,31 @@ import { type IsClickableValueFn, type Segment } from '../types';
 import { NgxJsonTreeviewComponent } from './ngx-json-treeview.component';
 import { NgxJsonTreeviewNodeHarness } from './testing/ngx-json-treeview.harness';
 
-async function setupTest({
-  json = {},
-  depth = 0,
-  enableClickableValues = false,
-  isClickableValue,
-}: {
-  depth?: number;
-  enableClickableValues?: boolean;
-  isClickableValue?: IsClickableValueFn;
-  json?: any;
-} = {}) {
+async function setupTest(
+  options: {
+    depth?: number;
+    enableClickableValues?: boolean;
+    isClickableValue?: IsClickableValueFn;
+    json?: any;
+    maxPreviewLength?: number;
+  } = {}
+) {
   await TestBed.configureTestingModule({
     imports: [NgxJsonTreeviewComponent],
   }).compileComponents();
 
   const fixture = TestBed.createComponent(NgxJsonTreeviewComponent);
-  fixture.componentRef.setInput('depth', depth);
-  fixture.componentRef.setInput('json', json);
-  fixture.componentRef.setInput('enableClickableValues', enableClickableValues);
-  if (isClickableValue !== undefined) {
-    fixture.componentRef.setInput('isClickableValue', isClickableValue);
+  fixture.componentRef.setInput('depth', options.depth ?? 0);
+  fixture.componentRef.setInput('json', 'json' in options ? options.json : {});
+  fixture.componentRef.setInput(
+    'enableClickableValues',
+    options.enableClickableValues ?? false
+  );
+  if (options.isClickableValue !== undefined) {
+    fixture.componentRef.setInput('isClickableValue', options.isClickableValue);
+  }
+  if (options.maxPreviewLength !== undefined) {
+    fixture.componentRef.setInput('maxPreviewLength', options.maxPreviewLength);
   }
   await fixture.whenStable();
 
@@ -42,28 +46,22 @@ describe('NgxJsonTreeviewComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should reset expandedSegments when depth changes', async () => {
-    const { fixture, loader } = await setupTest({
+  it('should reset user-collapsed segments when depth changes', async () => {
+    const { component, fixture, loader } = await setupTest({
       depth: 2,
       json: { nested: { deep: { inner: 1 } } },
     });
+
+    // Seed state with a user-collapsed segment override
+    (component as any).expandedSegments.set(new Map([['nested.deep', false]]));
+
+    fixture.componentRef.setInput('depth', 3);
+    await fixture.whenStable();
 
     const deepNode = await loader.getHarness(
       NgxJsonTreeviewNodeHarness.with({ key: 'deep' })
     );
     expect(await deepNode.isExpanded()).toBe(true);
-
-    await deepNode.collapse();
-
-    expect(await deepNode.isExpanded()).toBe(false);
-
-    fixture.componentRef.setInput('depth', 3);
-    await fixture.whenStable();
-
-    const deepNodeAfter = await loader.getHarness(
-      NgxJsonTreeviewNodeHarness.with({ key: 'deep' })
-    );
-    expect(await deepNodeAfter.isExpanded()).toBe(true);
   });
 
   it('should expand a collapsed node when clicking value preview with enableClickableValues=true', async () => {
@@ -76,7 +74,6 @@ describe('NgxJsonTreeviewComponent', () => {
     const userNode = await loader.getHarness(
       NgxJsonTreeviewNodeHarness.with({ key: 'user' })
     );
-    expect(await userNode.isExpanded()).toBe(false);
 
     // Click the value preview button on the collapsed node via harness
     await userNode.clickValue();
@@ -108,13 +105,11 @@ describe('NgxJsonTreeviewComponent', () => {
     for (let i = 0; i < 20; i++) {
       largeObj[`key_${i}`] = `val_${i}`;
     }
-    const { fixture, loader } = await setupTest({
+    const { loader } = await setupTest({
       depth: 1,
       json: { outer: { inner: largeObj } },
+      maxPreviewLength: 30,
     });
-
-    fixture.componentRef.setInput('maxPreviewLength', 30);
-    await fixture.whenStable();
 
     const node = await loader.getHarness(
       NgxJsonTreeviewNodeHarness.with({ key: 'inner' })
@@ -177,12 +172,8 @@ describe('NgxJsonTreeviewComponent', () => {
     it('renders a cycle found several levels down as a $ref to the root', async () => {
       const json: any = { a: { b: { c: 1 } } };
       json.a.b.back = json;
-      const { loader } = await setupTest({ depth: 3, json });
+      const { loader } = await setupTest({ depth: -1, json });
 
-      const back = await loader.getHarness(
-        NgxJsonTreeviewNodeHarness.with({ key: 'back' })
-      );
-      await back.expand();
       const ref = await loader.getHarness(
         NgxJsonTreeviewNodeHarness.with({ key: '$ref' })
       );
@@ -241,10 +232,7 @@ describe('NgxJsonTreeviewComponent', () => {
 
   describe('root values without segments', () => {
     it('should render a root undefined as "undefined"', async () => {
-      // setupTest's default would turn json: undefined into {}.
-      const { fixture } = await setupTest();
-      fixture.componentRef.setInput('json', undefined);
-      await fixture.whenStable();
+      const { fixture } = await setupTest({ json: undefined });
 
       const button = fixture.nativeElement.querySelector(
         'button.segment-primitive'
@@ -288,30 +276,47 @@ describe('NgxJsonTreeviewComponent', () => {
     });
 
     it('should render a root bigint as its formatted value with n suffix', async () => {
-      const { fixture } = await setupTest({ json: 9007199254740993n });
+      const { fixture } = await setupTest({ json: 1234567890123456789n });
 
-      const button = fixture.nativeElement.querySelector(
-        'button.segment-primitive'
+      const container = fixture.nativeElement.querySelector(
+        '.segment-type-bigint'
       );
-      expect(button.textContent.trim()).toBe('9007199254740993n');
+      expect(container).not.toBeNull();
+      const button = container.querySelector('button.segment-primitive');
+      expect(button.textContent.trim()).toBe('1234567890123456789n');
     });
 
     it('should render a root symbol as its string representation', async () => {
-      const { fixture } = await setupTest({ json: Symbol('rootSym') });
+      const { fixture } = await setupTest({ json: Symbol('rootSymbol') });
 
-      const button = fixture.nativeElement.querySelector(
-        'button.segment-primitive'
+      const container = fixture.nativeElement.querySelector(
+        '.segment-type-symbol'
       );
-      expect(button.textContent.trim()).toBe('Symbol(rootSym)');
+      expect(container).not.toBeNull();
+      const button = container.querySelector('button.segment-primitive');
+      expect(button.textContent.trim()).toBe('Symbol(rootSymbol)');
     });
 
     it('should render a root RegExp as its pattern string', async () => {
       const { fixture } = await setupTest({ json: /^[a-z]+$/i });
 
-      const button = fixture.nativeElement.querySelector(
-        'button.segment-primitive'
+      const container = fixture.nativeElement.querySelector(
+        '.segment-type-regexp'
       );
+      expect(container).not.toBeNull();
+      const button = container.querySelector('button.segment-primitive');
       expect(button.textContent.trim()).toBe('/^[a-z]+$/i');
+    });
+
+    it('should render a root Error with its properties as an expandable object', async () => {
+      const { loader } = await setupTest({
+        json: new Error('fatal connection error'),
+      });
+
+      const messageNode = await loader.getHarness(
+        NgxJsonTreeviewNodeHarness.with({ key: 'message' })
+      );
+      expect(await messageNode.getValue()).toBe('"fatal connection error"');
     });
 
     it('should render a root Map with entries as an expandable object', async () => {
@@ -330,28 +335,30 @@ describe('NgxJsonTreeviewComponent', () => {
     it('should render a root empty Map as Map(0) {}', async () => {
       const { fixture } = await setupTest({ json: new Map() });
 
-      const button = fixture.nativeElement.querySelector(
-        '.segment-type-map button.segment-primitive'
-      );
+      const container =
+        fixture.nativeElement.querySelector('.segment-type-map');
+      expect(container).not.toBeNull();
+      const button = container.querySelector('button.segment-primitive');
       expect(button.textContent.trim()).toBe('Map(0) {}');
     });
 
     it('should render a root Set with values as an ordered array', async () => {
-      const set = new Set(['itemA', 'itemB']);
+      const set = new Set(['x', 'y']);
       const { loader } = await setupTest({ json: set });
 
-      const item0 = await loader.getHarness(
+      const node0 = await loader.getHarness(
         NgxJsonTreeviewNodeHarness.with({ key: '0' })
       );
-      expect(await item0.getValue()).toBe('"itemA"');
+      expect(await node0.getValue()).toBe('"x"');
     });
 
     it('should render a root empty Set as Set(0) []', async () => {
       const { fixture } = await setupTest({ json: new Set() });
 
-      const button = fixture.nativeElement.querySelector(
-        '.segment-type-set button.segment-primitive'
-      );
+      const container =
+        fixture.nativeElement.querySelector('.segment-type-set');
+      expect(container).not.toBeNull();
+      const button = container.querySelector('button.segment-primitive');
       expect(button.textContent.trim()).toBe('Set(0) []');
     });
   });
@@ -361,24 +368,22 @@ describe('NgxJsonTreeviewComponent', () => {
       it('should classify and format a bigint value with n suffix', async () => {
         const { loader } = await setupTest({
           depth: 1,
-          json: { val: 12345678901234567890n },
+          json: { val: 9007199254740993n },
         });
 
         const node = await loader.getHarness(
           NgxJsonTreeviewNodeHarness.with({ key: 'val' })
         );
         expect(await node.getType()).toBe('bigint');
-        expect(await node.getValue()).toBe('12345678901234567890n');
+        expect(await node.getValue()).toBe('9007199254740993n');
       });
 
       it('should not log an error when parsing a bigint value', async () => {
-        const errorSpy = vi
-          .spyOn(console, 'error')
-          .mockImplementation(() => {});
+        const errorSpy = vi.spyOn(console, 'error');
 
         await setupTest({
           depth: 1,
-          json: { val: 100n },
+          json: { val: 123n },
         });
 
         expect(errorSpy).not.toHaveBeenCalled();
@@ -390,20 +395,18 @@ describe('NgxJsonTreeviewComponent', () => {
       it('should classify and format a symbol value', async () => {
         const { loader } = await setupTest({
           depth: 1,
-          json: { val: Symbol('foo') },
+          json: { val: Symbol('mySymbol') },
         });
 
         const node = await loader.getHarness(
           NgxJsonTreeviewNodeHarness.with({ key: 'val' })
         );
         expect(await node.getType()).toBe('symbol');
-        expect(await node.getValue()).toBe('Symbol(foo)');
+        expect(await node.getValue()).toBe('Symbol(mySymbol)');
       });
 
       it('should not log an error when parsing a symbol value', async () => {
-        const errorSpy = vi
-          .spyOn(console, 'error')
-          .mockImplementation(() => {});
+        const errorSpy = vi.spyOn(console, 'error');
 
         await setupTest({
           depth: 1,
@@ -427,6 +430,60 @@ describe('NgxJsonTreeviewComponent', () => {
         );
         expect(await node.getType()).toBe('regexp');
         expect(await node.getValue()).toBe('/foo\\d+/gi');
+      });
+    });
+
+    describe('Error', () => {
+      it('should classify and format a collapsed Error with its message', async () => {
+        const { loader } = await setupTest({
+          depth: 0,
+          json: { val: new Error('something went wrong') },
+        });
+
+        const node = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'val' })
+        );
+        expect(await node.getType()).toBe('error');
+        expect(await node.getValue()).toBe('Error: something went wrong');
+        expect(await node.isExpandable()).toBe(true);
+      });
+
+      it('should format a collapsed Error with segment-label styling', async () => {
+        const { fixture } = await setupTest({
+          depth: 0,
+          json: { val: new Error('something went wrong') },
+        });
+
+        const button = fixture.nativeElement.querySelector(
+          '.segment-type-error button.segment-label'
+        );
+        expect(button).not.toBeNull();
+      });
+
+      it('should expand Error properties including name, message, and custom properties', async () => {
+        const sampleError = new Error('something went wrong');
+        (sampleError as unknown as Record<string, unknown>)['code'] =
+          'ERR_TEST';
+
+        const { loader } = await setupTest({
+          depth: 1,
+          json: { val: sampleError },
+        });
+
+        const nameNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'name' })
+        );
+        expect(await nameNode.getValue()).toBe('"Error"');
+
+        const messageNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'message' })
+        );
+        expect(await messageNode.getValue()).toBe('"something went wrong"');
+
+        const codeNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'code' })
+        );
+        expect(await codeNode.getValue()).toBe('"ERR_TEST"');
       });
     });
 

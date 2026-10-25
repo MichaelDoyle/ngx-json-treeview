@@ -11,6 +11,10 @@ import { type Segment } from './types';
  * @returns A preview string representation of the object.
  */
 export function previewString(obj: any, limit = 80, stringsLimit = 10) {
+  if (limit <= 0) {
+    return '…';
+  }
+
   let result = '';
 
   if (obj === null) {
@@ -35,6 +39,8 @@ export function previewString(obj: any, limit = 80, stringsLimit = 10) {
     if (obj instanceof Date) {
       result += `"${obj.toISOString()}"`;
     } else if (obj instanceof RegExp) {
+      result += obj.toString();
+    } else if (obj instanceof Error) {
       result += obj.toString();
     } else if (obj instanceof Map) {
       result += `Map(${obj.size}) {`;
@@ -162,6 +168,21 @@ export function decycle(object: any): any {
           nu.add(derez(val, path + '[' + i + ']'));
           i++;
         });
+      } else if (value instanceof Error) {
+        nu = Object.create(Object.getPrototypeOf(value));
+        nu.name = derez(value.name, path + '["name"]');
+        nu.message = derez(value.message, path + '["message"]');
+        if (value.stack !== undefined) {
+          nu.stack = derez(value.stack, path + '["stack"]');
+        }
+        Object.keys(value).forEach(function (name) {
+          if (name !== 'name' && name !== 'message' && name !== 'stack') {
+            nu[name] = derez(
+              (value as unknown as Record<string, unknown>)[name],
+              path + '[' + JSON.stringify(name) + ']'
+            );
+          }
+        });
       } else {
         nu = {};
         Object.keys(value).forEach(function (name) {
@@ -181,7 +202,7 @@ export function decycle(object: any): any {
 
 /**
  * Determines whether a segment represents an expandable node
- * (i.e. a non-empty object or array).
+ * (i.e. a non-empty object, array, map, or set).
  *
  * @param segment The segment to evaluate.
  * @returns `true` if the segment is expandable, `false` otherwise.
@@ -195,7 +216,8 @@ export function isExpandableSegment(segment: Segment): boolean {
     (segment.type === 'object' && Object.keys(segment.value).length > 0) ||
     (segment.type === 'array' && segment.value.length > 0) ||
     (segment.type === 'map' && segment.value.size > 0) ||
-    (segment.type === 'set' && segment.value.size > 0)
+    (segment.type === 'set' && segment.value.size > 0) ||
+    segment.type === 'error'
   );
 }
 

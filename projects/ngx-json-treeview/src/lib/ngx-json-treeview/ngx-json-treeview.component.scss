@@ -67,7 +67,8 @@ $type-colors: (
   .segment-type-object > .segment-main,
   .segment-type-array > .segment-main,
   .segment-type-map > .segment-main,
-  .segment-type-set > .segment-main {
+  .segment-type-set > .segment-main,
+  .segment-type-error > .segment-main {
     align-items: baseline;
     display: flex;
     max-width: 100%;
