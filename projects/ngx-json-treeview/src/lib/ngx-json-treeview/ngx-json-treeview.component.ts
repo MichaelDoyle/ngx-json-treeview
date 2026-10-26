@@ -201,8 +201,14 @@ export class NgxJsonTreeviewComponent {
     }
     if (json instanceof Error) {
       const keys: string[] = ['name', 'message'];
+      if (
+        'cause' in json &&
+        (json as unknown as { cause?: unknown }).cause !== undefined
+      ) {
+        keys.push('cause');
+      }
       const customKeys = Object.keys(json).filter(
-        (k) => k !== 'name' && k !== 'message' && k !== 'stack'
+        (k) => k !== 'name' && k !== 'message' && k !== 'stack' && k !== 'cause'
       );
       keys.push(...customKeys);
       if (json.stack !== undefined) {

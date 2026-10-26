@@ -244,6 +244,26 @@ describe('Util', () => {
       });
     });
 
+    it('should preserve Error cause and handle circular references in cause', () => {
+      const innerErr = new Error('inner failure');
+      const err = new Error('outer failure', { cause: innerErr });
+      const decycled = decycle(err);
+      expect(decycled instanceof Error).toBe(true);
+      expect(decycled.cause instanceof Error).toBe(true);
+      expect((decycled.cause as Error).message).toBe('inner failure');
+
+      // Circular cause test: err.cause = err
+      const circularErr = new Error('circular error');
+      (circularErr as unknown as { cause: unknown }).cause = circularErr;
+      const decycledCircular = decycle(circularErr);
+      expect(decycledCircular instanceof Error).toBe(true);
+      expect((decycledCircular as unknown as { cause: unknown }).cause).toEqual(
+        {
+          $ref: '$',
+        }
+      );
+    });
+
     it('should preserve Map instances without converting them to empty objects', () => {
       const map = new Map([['k', 'v']]);
       const decycled = decycle({ map });

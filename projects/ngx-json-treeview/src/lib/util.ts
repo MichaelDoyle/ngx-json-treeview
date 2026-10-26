@@ -172,11 +172,25 @@ export function decycle(object: any): any {
         nu = Object.create(Object.getPrototypeOf(value));
         nu.name = derez(value.name, path + '["name"]');
         nu.message = derez(value.message, path + '["message"]');
+        if (
+          'cause' in value &&
+          (value as unknown as { cause?: unknown }).cause !== undefined
+        ) {
+          nu.cause = derez(
+            (value as unknown as { cause?: unknown }).cause,
+            path + '["cause"]'
+          );
+        }
         if (value.stack !== undefined) {
           nu.stack = derez(value.stack, path + '["stack"]');
         }
         Object.keys(value).forEach(function (name) {
-          if (name !== 'name' && name !== 'message' && name !== 'stack') {
+          if (
+            name !== 'name' &&
+            name !== 'message' &&
+            name !== 'stack' &&
+            name !== 'cause'
+          ) {
             nu[name] = derez(
               (value as unknown as Record<string, unknown>)[name],
               path + '[' + JSON.stringify(name) + ']'

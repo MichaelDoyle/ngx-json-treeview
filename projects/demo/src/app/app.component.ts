@@ -19,7 +19,9 @@ import {
 import { ThemeService } from './services/theme.service';
 
 function createBaseObj() {
-  const sampleError = new Error('Failed to fetch resource');
+  const sampleError = new Error('Failed to fetch resource', {
+    cause: new Error('Network timeout'),
+  });
   (sampleError as unknown as Record<string, unknown>)['code'] = 'ERR_NETWORK';
   (sampleError as unknown as Record<string, unknown>)['statusCode'] = 503;
 
@@ -137,6 +139,9 @@ export class AppComponent {
               ...val,
               name: val.name,
               message: val.message,
+              ...('cause' in val && val.cause !== undefined
+                ? { cause: val.cause }
+                : {}),
               ...(val.stack !== undefined ? { stack: val.stack } : {}),
             };
           }
