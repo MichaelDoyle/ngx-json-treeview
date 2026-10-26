@@ -19,7 +19,7 @@
     @if (_currentDepth() === 0) {
       <span class="punctuation">{{ openingBrace() }}</span>
     }
-    @for (segment of segments(); track segment.key) {
+    @for (segment of segments(); track $index) {
       @let needsComma = !$last;
       @let expandable = isExpandable(segment);
       @let empty = isEmpty(segment);

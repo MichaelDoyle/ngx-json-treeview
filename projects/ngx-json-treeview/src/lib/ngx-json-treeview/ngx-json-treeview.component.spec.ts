@@ -485,6 +485,24 @@ describe('NgxJsonTreeviewComponent', () => {
         );
         expect(await codeNode.getValue()).toBe('"ERR_TEST"');
       });
+
+      it('should expand Error cause when present', async () => {
+        const sampleError = new Error('outer error', {
+          cause: new Error('inner cause'),
+        });
+
+        const { loader } = await setupTest({
+          depth: 1,
+          json: { val: sampleError },
+        });
+
+        const causeNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'cause' })
+        );
+        expect(await causeNode.getType()).toBe('error');
+        expect(await causeNode.getValue()).toBe('Error: inner cause');
+        expect(await causeNode.isExpandable()).toBe(true);
+      });
     });
 
     describe('Map', () => {
@@ -531,6 +549,23 @@ describe('NgxJsonTreeviewComponent', () => {
           '.segment-type-map button.segment-label'
         );
         expect(button).not.toBeNull();
+      });
+
+      it('should render Map with colliding stringified keys without tracking errors', async () => {
+        const collidingMap = new Map<unknown, unknown>([
+          ['1', 'stringOne'],
+          [1, 'numericOne'],
+          [{ id: 1 }, 'objOne'],
+          [{ id: 2 }, 'objTwo'],
+        ]);
+
+        const { loader } = await setupTest({
+          depth: 1,
+          json: { val: collidingMap },
+        });
+
+        const nodes = await loader.getAllHarnesses(NgxJsonTreeviewNodeHarness);
+        expect(nodes.length).toBeGreaterThanOrEqual(4);
       });
     });
 
