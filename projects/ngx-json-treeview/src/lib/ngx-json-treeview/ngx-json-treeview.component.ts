@@ -167,12 +167,12 @@ export class NgxJsonTreeviewComponent {
    */
   protected readonly _treeState = input<TreeViewState>();
 
-  private readonly internalTreeState = signal<TreeViewState>({
+  private readonly defaultTreeState: TreeViewState = {
     activePath: signal<string | null>(null),
-  });
+  };
 
   protected readonly treeState = computed<TreeViewState>(() => {
-    return this._treeState() ?? this.internalTreeState();
+    return this._treeState() ?? this.defaultTreeState;
   });
 
   private readonly internalValueClickHandlers = computed<ValueClickHandler[]>(
@@ -613,6 +613,9 @@ export class NgxJsonTreeviewComponent {
     if (currentActive && currentActive !== item) {
       currentActive.setAttribute('tabindex', '-1');
     }
+    // Synchronously mutate tabindex on the target element before calling .focus()
+    // to prevent any timing gap in zoneless ChangeDetectionStrategy.OnPush,
+    // where the activePath signal update triggers change detection asynchronously.
     item.setAttribute('tabindex', '0');
     const path = item.getAttribute('data-path');
     if (path) {

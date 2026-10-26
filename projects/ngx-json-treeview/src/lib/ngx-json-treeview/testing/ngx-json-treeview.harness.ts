@@ -110,6 +110,12 @@ export class NgxJsonTreeviewNodeHarness extends ComponentHarness {
     return host.getAttribute('tabindex');
   }
 
+  /** Gets the aria-labelledby attribute of the node. */
+  async getAriaLabelledBy(): Promise<string | null> {
+    const host = await this.host();
+    return host.getAttribute('aria-labelledby');
+  }
+
   /** Focuses the node. */
   async focus(): Promise<void> {
     const host = await this.host();
@@ -186,9 +192,9 @@ export class NgxJsonTreeviewHarness extends ComponentHarness {
     return this.locatorFor(NgxJsonTreeviewNodeHarness.with(filter))();
   }
 
-  /** Gets the currently focused node, if any. */
+  /** Gets the currently focused node across all depths of this tree view, if any. */
   async getFocusedNode(): Promise<NgxJsonTreeviewNodeHarness | null> {
-    const nodes = await this.getNodes();
+    const nodes = await this.locatorForAll(NgxJsonTreeviewNodeHarness)();
     for (const node of nodes) {
       if (await node.isFocused()) {
         return node;

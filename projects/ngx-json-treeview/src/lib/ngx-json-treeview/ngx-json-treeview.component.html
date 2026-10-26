@@ -28,6 +28,7 @@
       @let closingBrace = closingBraceForSegment(segment);
       @let clickableValue = isClickable(segment);
       @let nodeId = id + '-node-label-' + _currentDepth() + '-' + $index;
+      @let valueId = id + '-node-val-' + _currentDepth() + '-' + $index;
       @let isFocused =
         treeState().activePath() === segment.path ||
         (!treeState().activePath() && _currentDepth() === 0 && $first);
@@ -36,7 +37,7 @@
         role="treeitem"
         [class]="'segment segment-type-' + segment.type"
         [attr.aria-expanded]="expandable ? segment.expanded : undefined"
-        [attr.aria-labelledby]="nodeId"
+        [attr.aria-labelledby]="expandable ? nodeId : nodeId + ' ' + valueId"
         [attr.aria-level]="_currentDepth() + 1"
         [attr.aria-posinset]="$index + 1"
         [attr.aria-selected]="false"
@@ -69,7 +70,7 @@
             >:</span
           >
           @if (empty) {
-            <span class="punctuation"
+            <span class="punctuation" [id]="valueId"
               >{{ openingBrace }}{{ closingBrace
               }}{{ needsComma ? ',' : '' }}</span
             >
@@ -82,6 +83,7 @@
                 [class.segment-label]="collection"
                 [class.segment-value]="!collection"
                 [disabled]="!clickableValue"
+                [id]="valueId"
                 [ngxJtStopClickPropagation]="stopClickPropagation()"
                 (click)="onValueClickHandler(segment, $event)">
                 {{ segment.description }}

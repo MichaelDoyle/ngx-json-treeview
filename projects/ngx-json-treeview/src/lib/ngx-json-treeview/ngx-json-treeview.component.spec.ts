@@ -5,6 +5,7 @@ import { vi } from 'vitest';
 import { type IsClickableValueFn, type Segment } from '../types';
 import { NgxJsonTreeviewComponent } from './ngx-json-treeview.component';
 import {
+  NgxJsonTreeviewHarness,
   NgxJsonTreeviewNodeHarness,
   TestKey,
 } from './testing/ngx-json-treeview.harness';
@@ -671,6 +672,75 @@ describe('NgxJsonTreeviewComponent', () => {
       });
     });
 
+    describe('aria-labelledby accessible name computation', () => {
+      it('should reference only the key label for expandable nodes', async () => {
+        const { fixture, loader } = await setupTest({
+          depth: 0,
+          json: sampleTree,
+        });
+
+        const userNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'user' })
+        );
+        const labelledBy = await userNode.getAriaLabelledBy();
+        expect(labelledBy).toBeTruthy();
+        expect(labelledBy).not.toContain(' ');
+        expect(labelledBy).toContain('-node-label-');
+
+        const labelEl = fixture.nativeElement.querySelector(`#${labelledBy}`);
+        expect(labelEl).not.toBeNull();
+        expect(labelEl.textContent.trim()).toBe('"user"');
+      });
+
+      it('should reference both the key label and value for leaf nodes', async () => {
+        const { fixture, loader } = await setupTest({
+          depth: 0,
+          json: sampleTree,
+        });
+
+        const activeNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'active' })
+        );
+        const labelledBy = await activeNode.getAriaLabelledBy();
+        expect(labelledBy).toBeTruthy();
+
+        const ids = labelledBy!.split(' ');
+        expect(ids).toHaveLength(2);
+        expect(ids[0]).toContain('-node-label-');
+        expect(ids[1]).toContain('-node-val-');
+
+        const keyEl = fixture.nativeElement.querySelector(`#${ids[0]}`);
+        const valEl = fixture.nativeElement.querySelector(`#${ids[1]}`);
+        expect(keyEl).not.toBeNull();
+        expect(valEl).not.toBeNull();
+        expect(keyEl.textContent.trim()).toBe('"active"');
+        expect(valEl.textContent.trim()).toBe('true');
+      });
+
+      it('should reference both key and value for empty containers', async () => {
+        const { fixture, loader } = await setupTest({
+          depth: 0,
+          json: { emptyList: [] },
+        });
+
+        const emptyNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'emptyList' })
+        );
+        const labelledBy = await emptyNode.getAriaLabelledBy();
+        expect(labelledBy).toBeTruthy();
+
+        const ids = labelledBy!.split(' ');
+        expect(ids).toHaveLength(2);
+
+        const keyEl = fixture.nativeElement.querySelector(`#${ids[0]}`);
+        const valEl = fixture.nativeElement.querySelector(`#${ids[1]}`);
+        expect(keyEl).not.toBeNull();
+        expect(valEl).not.toBeNull();
+        expect(keyEl.textContent.trim()).toBe('"emptyList"');
+        expect(valEl.textContent.trim()).toBe('[]');
+      });
+    });
+
     describe('ArrowDown navigation', () => {
       it('should move focus to the next visible node', async () => {
         const { fixture, loader } = await setupTest({
@@ -1008,6 +1078,50 @@ describe('NgxJsonTreeviewComponent', () => {
 
         expect(await settingsNode.getTabIndex()).toBe('0');
         expect(await userNode.getTabIndex()).toBe('-1');
+      });
+    });
+
+    describe('getFocusedNode search across tree depths', () => {
+      it('should find focused node at top level', async () => {
+        const { fixture, loader } = await setupTest({
+          depth: 0,
+          json: sampleTree,
+        });
+
+        const treeHarness = await TestbedHarnessEnvironment.harnessForFixture(
+          fixture,
+          NgxJsonTreeviewHarness
+        );
+        const userNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'user' })
+        );
+        await userNode.focus();
+
+        const focusedNode = await treeHarness.getFocusedNode();
+        expect(focusedNode).not.toBeNull();
+        expect(await focusedNode!.getKey()).toBe('user');
+      });
+
+      it('should find focused node across nested descendant depths', async () => {
+        const { fixture, loader } = await setupTest({
+          depth: 2,
+          json: sampleTree,
+        });
+
+        const treeHarness = await TestbedHarnessEnvironment.harnessForFixture(
+          fixture,
+          NgxJsonTreeviewHarness
+        );
+        const nameNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'name' })
+        );
+        await nameNode.focus();
+        await fixture.whenStable();
+
+        const focusedNode = await treeHarness.getFocusedNode();
+        expect(focusedNode).not.toBeNull();
+        expect(await focusedNode!.getKey()).toBe('name');
+        expect(await focusedNode!.getValue()).toBe('"Alice"');
       });
     });
   });
