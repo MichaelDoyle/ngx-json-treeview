@@ -92,13 +92,13 @@ export class AppComponent {
   };
 
   protected clickHandlers: ValueClickHandler[] = [
-    ...VALUE_CLICK_HANDLERS,
     {
       canHandle: () => true,
       handler: (segment: Segment) => {
         this.currentSegment.set(segment);
       },
     },
+    ...VALUE_CLICK_HANDLERS,
   ];
 
   protected stringify(value: unknown): string {

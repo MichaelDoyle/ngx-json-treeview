@@ -1,12 +1,14 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   computed,
   effect,
   inject,
   input,
   output,
   signal,
+  type WritableSignal,
 } from '@angular/core';
 import { StopClickPropagationDirective } from '../directives/stop-click-propagation.directive';
 import { VALUE_CLICK_HANDLERS } from '../handlers';
@@ -23,6 +25,10 @@ import {
   previewString,
 } from '../util';
 
+interface TreeViewState {
+  activePath: WritableSignal<string | null>;
+}
+
 /**
  * Renders JSON data in an expandable and collapsible tree structure.
  * Allows users to navigate complex data hierarchies visually.
@@ -33,9 +39,15 @@ import {
   templateUrl: './ngx-json-treeview.component.html',
   styleUrls: ['./ngx-json-treeview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(keydown)': 'onKeyDown($event)',
+    '(focusin)': 'onFocusIn($event)',
+    '(click)': 'onTreeClick($event)',
+  },
 })
 export class NgxJsonTreeviewComponent {
   private readonly idGenerator = inject(ID_GENERATOR);
+  private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   protected readonly id = this.idGenerator.next();
 
   /**
@@ -147,6 +159,21 @@ export class NgxJsonTreeviewComponent {
    * @internal
    */
   protected readonly _currentDepth = input<number>(0);
+
+  /**
+   * *Internal* state shared across recursive tree instances for keyboard
+   * navigation and roving tabindex.
+   * @internal
+   */
+  protected readonly _treeState = input<TreeViewState>();
+
+  private readonly defaultTreeState: TreeViewState = {
+    activePath: signal<string | null>(null),
+  };
+
+  protected readonly treeState = computed<TreeViewState>(() => {
+    return this._treeState() ?? this.defaultTreeState;
+  });
 
   private readonly internalValueClickHandlers = computed<ValueClickHandler[]>(
     () => {
@@ -317,7 +344,11 @@ export class NgxJsonTreeviewComponent {
     effect(() => {
       this.depth();
       this.expanded();
+      this.json();
       this.expandedSegments.set(new Map());
+      if (this._currentDepth() === 0) {
+        this.treeState().activePath.set(null);
+      }
     });
   }
 
@@ -326,6 +357,7 @@ export class NgxJsonTreeviewComponent {
    */
   public toggle(segment: Segment) {
     if (this.isExpandable(segment)) {
+      this.treeState().activePath.set(segment.path);
       this.expandedSegments.update((map) => {
         const newMap = new Map(map);
         newMap.set(segment.path, !segment.expanded);
@@ -371,6 +403,7 @@ export class NgxJsonTreeviewComponent {
   }
 
   protected onValueClickHandler(segment: Segment, event?: MouseEvent) {
+    this.treeState().activePath.set(segment.path);
     for (const handler of this.internalValueClickHandlers()) {
       try {
         if (handler.canHandle(segment)) {
@@ -383,6 +416,163 @@ export class NgxJsonTreeviewComponent {
         }
       } catch {
         // in case of any error, continue to the next handler
+      }
+    }
+  }
+
+  protected onKeyDown(event: KeyboardEvent): void {
+    if (this._currentDepth() !== 0) {
+      return;
+    }
+
+    const key = event.key;
+    if (
+      ![
+        'ArrowDown',
+        'ArrowUp',
+        'ArrowLeft',
+        'ArrowRight',
+        'Home',
+        'End',
+        'Enter',
+        ' ',
+      ].includes(key)
+    ) {
+      return;
+    }
+
+    const rootEl = this.elementRef.nativeElement;
+    const target = event.target as HTMLElement;
+    let currentItem = target.closest<HTMLElement>('[role="treeitem"]');
+
+    if (!currentItem || !rootEl.contains(currentItem)) {
+      currentItem =
+        rootEl.querySelector<HTMLElement>('[role="treeitem"][tabindex="0"]') ??
+        rootEl.querySelector<HTMLElement>('[role="treeitem"]');
+      if (!currentItem) {
+        return;
+      }
+    }
+
+    const items = Array.from(
+      rootEl.querySelectorAll<HTMLElement>('[role="treeitem"]')
+    );
+    const currentIndex = items.indexOf(currentItem);
+    if (currentIndex === -1) {
+      return;
+    }
+
+    switch (key) {
+      case 'ArrowDown': {
+        event.preventDefault();
+        if (currentIndex < items.length - 1) {
+          this.focusTreeItem(items[currentIndex + 1]);
+        }
+        break;
+      }
+      case 'ArrowUp': {
+        event.preventDefault();
+        if (currentIndex > 0) {
+          this.focusTreeItem(items[currentIndex - 1]);
+        }
+        break;
+      }
+      case 'Home': {
+        event.preventDefault();
+        if (items.length > 0) {
+          this.focusTreeItem(items[0]);
+        }
+        break;
+      }
+      case 'End': {
+        event.preventDefault();
+        if (items.length > 0) {
+          this.focusTreeItem(items[items.length - 1]);
+        }
+        break;
+      }
+      case 'ArrowRight': {
+        event.preventDefault();
+        const ariaExpanded = currentItem.getAttribute('aria-expanded');
+        if (ariaExpanded === 'false') {
+          const toggleBtn = currentItem.querySelector<HTMLButtonElement>(
+            ':scope > .segment-main > button.expandable'
+          );
+          toggleBtn?.click();
+        } else if (ariaExpanded === 'true') {
+          const firstChild = currentItem.querySelector<HTMLElement>(
+            ':scope > .children [role="treeitem"]'
+          );
+          if (firstChild) {
+            this.focusTreeItem(firstChild);
+          }
+        }
+        break;
+      }
+      case 'ArrowLeft': {
+        event.preventDefault();
+        const ariaExpanded = currentItem.getAttribute('aria-expanded');
+        if (ariaExpanded === 'true') {
+          const toggleBtn = currentItem.querySelector<HTMLButtonElement>(
+            ':scope > .segment-main > button.expandable'
+          );
+          toggleBtn?.click();
+        } else {
+          const parentItem =
+            currentItem.parentElement?.closest<HTMLElement>(
+              '[role="treeitem"]'
+            );
+          if (parentItem && rootEl.contains(parentItem)) {
+            this.focusTreeItem(parentItem);
+          }
+        }
+        break;
+      }
+      case 'Enter':
+      case ' ': {
+        event.preventDefault();
+        const toggleBtn = currentItem.querySelector<HTMLButtonElement>(
+          ':scope > .segment-main > button.expandable'
+        );
+        if (toggleBtn) {
+          toggleBtn.click();
+        } else {
+          const valueBtn = currentItem.querySelector<HTMLButtonElement>(
+            ':scope > .segment-main button.clickable'
+          );
+          if (valueBtn && !valueBtn.disabled) {
+            valueBtn.click();
+          }
+        }
+        break;
+      }
+    }
+  }
+
+  protected onFocusIn(event: FocusEvent): void {
+    if (this._currentDepth() !== 0) {
+      return;
+    }
+    const target = event.target as HTMLElement;
+    const item = target.closest<HTMLElement>('[role="treeitem"]');
+    if (item && this.elementRef.nativeElement.contains(item)) {
+      const path = item.getAttribute('data-path');
+      if (path && this.treeState().activePath() !== path) {
+        this.treeState().activePath.set(path);
+      }
+    }
+  }
+
+  protected onTreeClick(event: MouseEvent): void {
+    if (this._currentDepth() !== 0) {
+      return;
+    }
+    const target = event.target as HTMLElement;
+    const item = target.closest<HTMLElement>('[role="treeitem"]');
+    if (item && this.elementRef.nativeElement.contains(item)) {
+      const path = item.getAttribute('data-path');
+      if (path && this.treeState().activePath() !== path) {
+        this.treeState().activePath.set(path);
       }
     }
   }
@@ -413,6 +603,25 @@ export class NgxJsonTreeviewComponent {
     }
 
     return undefined;
+  }
+
+  private focusTreeItem(item: HTMLElement): void {
+    const rootEl = this.elementRef.nativeElement;
+    const currentActive = rootEl.querySelector<HTMLElement>(
+      '[role="treeitem"][tabindex="0"]'
+    );
+    if (currentActive && currentActive !== item) {
+      currentActive.setAttribute('tabindex', '-1');
+    }
+    // Synchronously mutate tabindex on the target element before calling .focus()
+    // to prevent any timing gap in zoneless ChangeDetectionStrategy.OnPush,
+    // where the activePath signal update triggers change detection asynchronously.
+    item.setAttribute('tabindex', '0');
+    const path = item.getAttribute('data-path');
+    if (path) {
+      this.treeState().activePath.set(path);
+    }
+    item.focus();
   }
 
   private getPath(key: string): string {

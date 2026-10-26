@@ -9,8 +9,8 @@
         type="button"
         class="segment-primitive"
         [class.clickable]="isClickablePrimitive()"
-        [ngxJtStopClickPropagation]="stopClickPropagation()"
         [disabled]="!isClickablePrimitive()"
+        [ngxJtStopClickPropagation]="stopClickPropagation()"
         (click)="onPrimitiveClick($event)">
         {{ asString() }}
       </button>
@@ -28,24 +28,31 @@
       @let closingBrace = closingBraceForSegment(segment);
       @let clickableValue = isClickable(segment);
       @let nodeId = id + '-node-label-' + _currentDepth() + '-' + $index;
+      @let valueId = id + '-node-val-' + _currentDepth() + '-' + $index;
+      @let isFocused =
+        treeState().activePath() === segment.path ||
+        (!treeState().activePath() && _currentDepth() === 0 && $first);
 
       <div
         role="treeitem"
         [class]="'segment segment-type-' + segment.type"
-        [attr.aria-selected]="false"
         [attr.aria-expanded]="expandable ? segment.expanded : undefined"
+        [attr.aria-labelledby]="expandable ? nodeId : nodeId + ' ' + valueId"
         [attr.aria-level]="_currentDepth() + 1"
-        [attr.aria-setsize]="$count"
         [attr.aria-posinset]="$index + 1"
-        [attr.aria-labelledby]="nodeId">
+        [attr.aria-selected]="false"
+        [attr.aria-setsize]="$count"
+        [attr.data-path]="segment.path"
+        [attr.tabindex]="isFocused ? 0 : -1">
         <div class="segment-main">
           <button
             type="button"
-            [id]="nodeId"
+            tabindex="-1"
             [class.expandable]="expandable"
             [class.expanded]="segment.expanded"
-            [ngxJtStopClickPropagation]="stopClickPropagation()"
             [disabled]="!expandable"
+            [id]="nodeId"
+            [ngxJtStopClickPropagation]="stopClickPropagation()"
             (click)="toggle(segment)">
             @if (expandable) {
               <div class="toggler"></div>
@@ -58,12 +65,12 @@
           </button>
           <span
             class="segment-colon"
-            [class.segment-label]="isArrayElement()"
             [class.punctuation]="!isArrayElement()"
+            [class.segment-label]="isArrayElement()"
             >:</span
           >
           @if (empty) {
-            <span class="punctuation"
+            <span class="punctuation" [id]="valueId"
               >{{ openingBrace }}{{ closingBrace
               }}{{ needsComma ? ',' : '' }}</span
             >
@@ -71,11 +78,13 @@
             <span class="segment-preview-container">
               <button
                 type="button"
+                tabindex="-1"
+                [class.clickable]="clickableValue"
                 [class.segment-label]="collection"
                 [class.segment-value]="!collection"
-                [class.clickable]="clickableValue"
-                [ngxJtStopClickPropagation]="stopClickPropagation()"
                 [disabled]="!clickableValue"
+                [id]="valueId"
+                [ngxJtStopClickPropagation]="stopClickPropagation()"
                 (click)="onValueClickHandler(segment, $event)">
                 {{ segment.description }}
               </button>
@@ -90,16 +99,17 @@
         @if (expandable && segment.expanded) {
           <div class="children" role="group">
             <ngx-json-treeview
-              [json]="segment.value"
-              [expanded]="expanded()"
-              [depth]="depth()"
-              [maxPreviewLength]="maxPreviewLength()"
-              [enableClickableValues]="enableClickableValues()"
-              [valueClickHandlers]="valueClickHandlers()"
-              [isClickableValue]="isClickableValue()"
-              [stopClickPropagation]="stopClickPropagation()"
-              [_parent]="segment"
               [_currentDepth]="_currentDepth() + 1"
+              [_parent]="segment"
+              [_treeState]="treeState()"
+              [depth]="depth()"
+              [enableClickableValues]="enableClickableValues()"
+              [expanded]="expanded()"
+              [isClickableValue]="isClickableValue()"
+              [json]="segment.value"
+              [maxPreviewLength]="maxPreviewLength()"
+              [stopClickPropagation]="stopClickPropagation()"
+              [valueClickHandlers]="valueClickHandlers()"
               (onValueClick)="onValueClick.emit($event)" />
             <span class="punctuation">
               {{ closingBrace }}{{ needsComma ? ',' : '' }}

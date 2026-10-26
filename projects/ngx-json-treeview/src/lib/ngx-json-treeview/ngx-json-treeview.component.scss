@@ -19,7 +19,13 @@ $type-colors: (
 
   .segment {
     margin: 1px 1px 1px 12px;
+    outline: none;
     padding: 2px;
+
+    &:focus-visible > .segment-main {
+      outline: 1px solid var(--ngx-json-focus-color, #005fcc);
+      outline-offset: 1px;
+    }
 
     .segment-main {
       margin: 1px 1px 1px 12px;

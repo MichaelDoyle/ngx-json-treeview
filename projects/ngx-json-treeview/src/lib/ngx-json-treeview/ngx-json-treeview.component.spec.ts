@@ -1,13 +1,19 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { vi } from 'vitest';
 import { type IsClickableValueFn, type Segment } from '../types';
 import { NgxJsonTreeviewComponent } from './ngx-json-treeview.component';
-import { NgxJsonTreeviewNodeHarness } from './testing/ngx-json-treeview.harness';
+import {
+  NgxJsonTreeviewHarness,
+  NgxJsonTreeviewNodeHarness,
+  TestKey,
+} from './testing/ngx-json-treeview.harness';
 
 async function setupTest(
   options: {
+    activePath?: string;
     depth?: number;
     enableClickableValues?: boolean;
     isClickableValue?: IsClickableValueFn;
@@ -32,7 +38,19 @@ async function setupTest(
   if (options.maxPreviewLength !== undefined) {
     fixture.componentRef.setInput('maxPreviewLength', options.maxPreviewLength);
   }
+  if (options.activePath !== undefined) {
+    fixture.componentRef.setInput('_treeState', {
+      activePath: signal(options.activePath),
+    });
+  }
   await fixture.whenStable();
+
+  if (options.activePath !== undefined) {
+    const activeEl = fixture.nativeElement.querySelector(
+      `[data-path="${options.activePath}"]`
+    );
+    activeEl?.focus();
+  }
 
   const component = fixture.componentInstance;
   const loader = TestbedHarnessEnvironment.loader(fixture);
@@ -618,6 +636,458 @@ describe('NgxJsonTreeviewComponent', () => {
           '.segment-type-set button.segment-label'
         );
         expect(button).not.toBeNull();
+      });
+    });
+  });
+
+  describe('keyboard navigation (WAI-ARIA tree pattern)', () => {
+    const sampleTree = {
+      user: {
+        profile: {
+          name: 'Alice',
+        },
+        settings: {
+          theme: 'dark',
+        },
+      },
+      active: true,
+      count: 42,
+    };
+
+    describe('roving tabindex initialization', () => {
+      it('should set tabindex="0" on the first visible node', async () => {
+        const { loader } = await setupTest({
+          depth: 0,
+          json: sampleTree,
+        });
+
+        const userNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'user' })
+        );
+
+        expect(await userNode.getTabIndex()).toBe('0');
+      });
+
+      it('should set tabindex="-1" on non-first visible nodes', async () => {
+        const { loader } = await setupTest({
+          depth: 0,
+          json: sampleTree,
+        });
+
+        const activeNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'active' })
+        );
+        const countNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'count' })
+        );
+
+        expect(await activeNode.getTabIndex()).toBe('-1');
+        expect(await countNode.getTabIndex()).toBe('-1');
+      });
+    });
+
+    describe('aria-labelledby accessible name computation', () => {
+      it('should reference only the key label for expandable nodes', async () => {
+        const { fixture, loader } = await setupTest({
+          depth: 0,
+          json: sampleTree,
+        });
+
+        const userNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'user' })
+        );
+        const labelledBy = await userNode.getAriaLabelledBy();
+        expect(labelledBy).toBeTruthy();
+        expect(labelledBy).not.toContain(' ');
+        expect(labelledBy).toContain('-node-label-');
+
+        const labelEl = fixture.nativeElement.querySelector(`#${labelledBy}`);
+        expect(labelEl).not.toBeNull();
+        expect(labelEl.textContent.trim()).toBe('"user"');
+      });
+
+      it('should reference both the key label and value for leaf nodes', async () => {
+        const { fixture, loader } = await setupTest({
+          depth: 0,
+          json: sampleTree,
+        });
+
+        const activeNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'active' })
+        );
+        const labelledBy = await activeNode.getAriaLabelledBy();
+        expect(labelledBy).toBeTruthy();
+
+        const ids = labelledBy!.split(' ');
+        expect(ids).toHaveLength(2);
+        expect(ids[0]).toContain('-node-label-');
+        expect(ids[1]).toContain('-node-val-');
+
+        const keyEl = fixture.nativeElement.querySelector(`#${ids[0]}`);
+        const valEl = fixture.nativeElement.querySelector(`#${ids[1]}`);
+        expect(keyEl).not.toBeNull();
+        expect(valEl).not.toBeNull();
+        expect(keyEl.textContent.trim()).toBe('"active"');
+        expect(valEl.textContent.trim()).toBe('true');
+      });
+
+      it('should reference both key and value for empty containers', async () => {
+        const { fixture, loader } = await setupTest({
+          depth: 0,
+          json: { emptyList: [] },
+        });
+
+        const emptyNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'emptyList' })
+        );
+        const labelledBy = await emptyNode.getAriaLabelledBy();
+        expect(labelledBy).toBeTruthy();
+
+        const ids = labelledBy!.split(' ');
+        expect(ids).toHaveLength(2);
+
+        const keyEl = fixture.nativeElement.querySelector(`#${ids[0]}`);
+        const valEl = fixture.nativeElement.querySelector(`#${ids[1]}`);
+        expect(keyEl).not.toBeNull();
+        expect(valEl).not.toBeNull();
+        expect(keyEl.textContent.trim()).toBe('"emptyList"');
+        expect(valEl.textContent.trim()).toBe('[]');
+      });
+    });
+
+    describe('ArrowDown navigation', () => {
+      it('should move focus to the next visible node', async () => {
+        const { fixture, loader } = await setupTest({
+          activePath: 'user',
+          depth: 0,
+          json: sampleTree,
+        });
+
+        const userNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'user' })
+        );
+        await userNode.sendKeys(TestKey.DOWN_ARROW);
+        await fixture.whenStable();
+
+        const activeNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'active' })
+        );
+        expect(await activeNode.isFocused()).toBe(true);
+      });
+
+      it('should keep focus on the last node when pressed on the last visible node', async () => {
+        const { fixture, loader } = await setupTest({
+          activePath: 'count',
+          depth: 0,
+          json: sampleTree,
+        });
+
+        const countNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'count' })
+        );
+        await countNode.sendKeys(TestKey.DOWN_ARROW);
+        await fixture.whenStable();
+
+        expect(await countNode.isFocused()).toBe(true);
+      });
+    });
+
+    describe('ArrowUp navigation', () => {
+      it('should move focus to the previous visible node', async () => {
+        const { fixture, loader } = await setupTest({
+          activePath: 'active',
+          depth: 0,
+          json: sampleTree,
+        });
+
+        const activeNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'active' })
+        );
+        await activeNode.sendKeys(TestKey.UP_ARROW);
+        await fixture.whenStable();
+
+        const userNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'user' })
+        );
+        expect(await userNode.isFocused()).toBe(true);
+      });
+
+      it('should keep focus on the first node when pressed on the first visible node', async () => {
+        const { fixture, loader } = await setupTest({
+          activePath: 'user',
+          depth: 0,
+          json: sampleTree,
+        });
+
+        const userNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'user' })
+        );
+        await userNode.sendKeys(TestKey.UP_ARROW);
+        await fixture.whenStable();
+
+        expect(await userNode.isFocused()).toBe(true);
+      });
+    });
+
+    describe('ArrowRight navigation', () => {
+      it('should expand a closed node without moving focus', async () => {
+        const { fixture, loader } = await setupTest({
+          activePath: 'user',
+          depth: 0,
+          json: sampleTree,
+        });
+
+        const userNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'user' })
+        );
+        await userNode.sendKeys(TestKey.RIGHT_ARROW);
+        await fixture.whenStable();
+
+        expect(await userNode.isExpanded()).toBe(true);
+      });
+
+      it('should move focus to the first child node when pressed on an open node', async () => {
+        const { fixture, loader } = await setupTest({
+          activePath: 'user',
+          depth: 1,
+          json: sampleTree,
+        });
+
+        const userNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'user' })
+        );
+        await userNode.sendKeys(TestKey.RIGHT_ARROW);
+        await fixture.whenStable();
+
+        const profileNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'profile' })
+        );
+        expect(await profileNode.isFocused()).toBe(true);
+      });
+
+      it('should do nothing when pressed on a leaf node', async () => {
+        const { fixture, loader } = await setupTest({
+          activePath: 'active',
+          depth: 0,
+          json: sampleTree,
+        });
+
+        const activeNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'active' })
+        );
+        await activeNode.sendKeys(TestKey.RIGHT_ARROW);
+        await fixture.whenStable();
+
+        expect(await activeNode.isFocused()).toBe(true);
+      });
+    });
+
+    describe('ArrowLeft navigation', () => {
+      it('should collapse an open node without moving focus', async () => {
+        const { fixture, loader } = await setupTest({
+          activePath: 'user',
+          depth: 1,
+          json: sampleTree,
+        });
+
+        const userNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'user' })
+        );
+        await userNode.sendKeys(TestKey.LEFT_ARROW);
+        await fixture.whenStable();
+
+        expect(await userNode.isExpanded()).toBe(false);
+      });
+
+      it('should move focus to the parent node when pressed on a child node', async () => {
+        const { fixture, loader } = await setupTest({
+          activePath: 'user.profile',
+          depth: 1,
+          json: sampleTree,
+        });
+
+        const profileNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'profile' })
+        );
+        await profileNode.sendKeys(TestKey.LEFT_ARROW);
+        await fixture.whenStable();
+
+        const userNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'user' })
+        );
+        expect(await userNode.isFocused()).toBe(true);
+      });
+
+      it('should do nothing when pressed on a root-level closed node', async () => {
+        const { fixture, loader } = await setupTest({
+          activePath: 'user',
+          depth: 0,
+          json: sampleTree,
+        });
+
+        const userNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'user' })
+        );
+        await userNode.sendKeys(TestKey.LEFT_ARROW);
+        await fixture.whenStable();
+
+        expect(await userNode.isFocused()).toBe(true);
+      });
+    });
+
+    describe('Home and End navigation', () => {
+      it('should move focus to the first visible node when Home is pressed', async () => {
+        const { fixture, loader } = await setupTest({
+          activePath: 'count',
+          depth: 0,
+          json: sampleTree,
+        });
+
+        const countNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'count' })
+        );
+        await countNode.sendKeys(TestKey.HOME);
+        await fixture.whenStable();
+
+        const userNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'user' })
+        );
+        expect(await userNode.isFocused()).toBe(true);
+      });
+
+      it('should move focus to the last visible node when End is pressed', async () => {
+        const { fixture, loader } = await setupTest({
+          activePath: 'user',
+          depth: 0,
+          json: sampleTree,
+        });
+
+        const userNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'user' })
+        );
+        await userNode.sendKeys(TestKey.END);
+        await fixture.whenStable();
+
+        const countNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'count' })
+        );
+        expect(await countNode.isFocused()).toBe(true);
+      });
+    });
+
+    describe('Enter and Space activation', () => {
+      it('should expand a closed node when Enter is pressed', async () => {
+        const { fixture, loader } = await setupTest({
+          activePath: 'user',
+          depth: 0,
+          json: sampleTree,
+        });
+
+        const userNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'user' })
+        );
+        await userNode.sendKeys(TestKey.ENTER);
+        await fixture.whenStable();
+
+        expect(await userNode.isExpanded()).toBe(true);
+      });
+
+      it('should collapse an open node when Space is pressed', async () => {
+        const { fixture, loader } = await setupTest({
+          activePath: 'user',
+          depth: 1,
+          json: sampleTree,
+        });
+
+        const userNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'user' })
+        );
+        await userNode.sendKeys(' ');
+        await fixture.whenStable();
+
+        expect(await userNode.isExpanded()).toBe(false);
+      });
+
+      it('should trigger clickable value when Enter is pressed on a clickable leaf node', async () => {
+        const { component, fixture, loader } = await setupTest({
+          activePath: 'active',
+          depth: 0,
+          enableClickableValues: true,
+          isClickableValue: (segment) => segment.key === 'active',
+          json: sampleTree,
+        });
+
+        const emittedSegments: Segment[] = [];
+        component.onValueClick.subscribe((segment) => {
+          emittedSegments.push(segment);
+        });
+
+        const activeNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'active' })
+        );
+        await activeNode.sendKeys(TestKey.ENTER);
+        await fixture.whenStable();
+
+        expect(emittedSegments).toHaveLength(1);
+        expect(emittedSegments[0].key).toBe('active');
+      });
+    });
+
+    describe('pointer interaction synchronization', () => {
+      it('should update roving tabindex to the clicked node and set -1 on previous node', async () => {
+        const { fixture, loader } = await setupTest({
+          activePath: 'user',
+          depth: 1,
+          json: sampleTree,
+        });
+
+        const settingsNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'settings' })
+        );
+        await settingsNode.toggle();
+        await fixture.whenStable();
+
+        const userNode = await loader.getHarness(
+          NgxJsonTreeviewNodeHarness.with({ key: 'user' })
+        );
+        expect(await settingsNode.getTabIndex()).toBe('0');
+        expect(await userNode.getTabIndex()).toBe('-1');
+      });
+    });
+
+    describe('getFocusedNode search across tree depths', () => {
+      it('should find focused node at top level', async () => {
+        const { fixture } = await setupTest({
+          activePath: 'user',
+          depth: 0,
+          json: sampleTree,
+        });
+
+        const treeHarness = await TestbedHarnessEnvironment.harnessForFixture(
+          fixture,
+          NgxJsonTreeviewHarness
+        );
+        const focusedNode = await treeHarness.getFocusedNode();
+
+        expect(focusedNode).not.toBeNull();
+        expect(await focusedNode!.getKey()).toBe('user');
+      });
+
+      it('should find focused node across nested descendant depths', async () => {
+        const { fixture } = await setupTest({
+          activePath: 'user.profile.name',
+          depth: 2,
+          json: sampleTree,
+        });
+
+        const treeHarness = await TestbedHarnessEnvironment.harnessForFixture(
+          fixture,
+          NgxJsonTreeviewHarness
+        );
+        const focusedNode = await treeHarness.getFocusedNode();
+
+        expect(focusedNode).not.toBeNull();
+        expect(await focusedNode!.getKey()).toBe('name');
       });
     });
   });
