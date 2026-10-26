@@ -11,4 +11,4 @@ export {
 export * from './lib/ngx-json-treeview/ngx-json-treeview.component';
 export * from './lib/ngx-json-treeview/testing/ngx-json-treeview.harness';
 export * from './lib/types';
-export { isExpandableSegment } from './lib/util';
+export { isCollectionSegment, isExpandableSegment } from './lib/util';

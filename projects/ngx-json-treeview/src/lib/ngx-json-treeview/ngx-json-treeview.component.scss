@@ -1,8 +1,11 @@
 $type-colors: (
   string: var(--ngx-json-string, #0451a5),
   number: var(--ngx-json-number, #098658),
+  bigint: var(--ngx-json-bigint, var(--ngx-json-number, #098658)),
   boolean: var(--ngx-json-boolean, #a31515),
   date: var(--ngx-json-date, #05668d),
+  regexp: var(--ngx-json-regexp, var(--ngx-json-boolean, #a31515)),
+  symbol: var(--ngx-json-symbol, var(--ngx-json-function, #656e77)),
   function: var(--ngx-json-function, #656e77),
   'null': var(--ngx-json-null, #fff),
   undefined: var(--ngx-json-undefined, #fff),
@@ -62,7 +65,10 @@ $type-colors: (
   }
 
   .segment-type-object > .segment-main,
-  .segment-type-array > .segment-main {
+  .segment-type-array > .segment-main,
+  .segment-type-map > .segment-main,
+  .segment-type-set > .segment-main,
+  .segment-type-error > .segment-main {
     align-items: baseline;
     display: flex;
     max-width: 100%;
@@ -171,6 +177,12 @@ $type-colors: (
   .segment-primitive {
     margin: 0;
     padding: 0;
+  }
+
+  .segment-type-map > .segment-primitive,
+  .segment-type-set > .segment-primitive {
+    color: var(--ngx-json-label, #656e77);
+    font-style: italic;
   }
 
   // special cases that need highlighting

@@ -16,7 +16,12 @@ import {
   type Segment,
   type ValueClickHandler,
 } from '../types';
-import { decycle, isExpandableSegment, previewString } from '../util';
+import {
+  decycle,
+  isCollectionSegment,
+  isExpandableSegment,
+  previewString,
+} from '../util';
 
 /**
  * Renders JSON data in an expandable and collapsible tree structure.
@@ -161,11 +166,22 @@ export class NgxJsonTreeviewComponent {
   );
 
   private readonly rootType = computed<string>(() => {
-    if (this.json() === null) {
+    const val = this.json();
+    if (val === null) {
       return 'null';
-    } else if (Array.isArray(this.json())) {
+    } else if (Array.isArray(val)) {
       return 'array';
-    } else return typeof this.json();
+    } else if (val instanceof Date) {
+      return 'date';
+    } else if (val instanceof RegExp) {
+      return 'regexp';
+    } else if (val instanceof Error) {
+      return 'error';
+    } else if (val instanceof Map) {
+      return 'map';
+    } else if (val instanceof Set) {
+      return 'set';
+    } else return typeof val;
   });
 
   protected readonly segments = computed<Segment[]>(() => {
@@ -173,6 +189,38 @@ export class NgxJsonTreeviewComponent {
     // subtree of that copy, which has no cycles left to break.
     const json =
       this._currentDepth() === 0 ? decycle(this.json()) : this.json();
+    if (json instanceof Map) {
+      return Array.from(json.entries()).map(([key, val]) =>
+        this.parseKeyValue(String(key), val)
+      );
+    }
+    if (json instanceof Set) {
+      return Array.from(json.values()).map((val, index) =>
+        this.parseKeyValue(String(index), val)
+      );
+    }
+    if (json instanceof Error) {
+      const keys: string[] = ['name', 'message'];
+      if (
+        'cause' in json &&
+        (json as unknown as { cause?: unknown }).cause !== undefined
+      ) {
+        keys.push('cause');
+      }
+      const customKeys = Object.keys(json).filter(
+        (k) => k !== 'name' && k !== 'message' && k !== 'stack' && k !== 'cause'
+      );
+      keys.push(...customKeys);
+      if (json.stack !== undefined) {
+        keys.push('stack');
+      }
+      return keys.map((key) =>
+        this.parseKeyValue(
+          key,
+          (json as unknown as Record<string, unknown>)[key]
+        )
+      );
+    }
     if (typeof json === 'object' && json != null) {
       return Object.keys(json).map((key) => this.parseKeyValue(key, json[key]));
     }
@@ -186,29 +234,48 @@ export class NgxJsonTreeviewComponent {
   );
 
   protected readonly openingBrace = computed<string>(() => {
-    if (this.rootType() === 'array') {
+    if (this.rootType() === 'array' || this.rootType() === 'set') {
       return '[';
     } else return '{';
   });
 
   protected readonly closingBrace = computed<string>(() => {
-    if (this.rootType() === 'array') {
+    if (this.rootType() === 'array' || this.rootType() === 'set') {
       return ']';
     } else return '}';
   });
 
-  // JSON.stringify returns undefined for undefined, functions and symbols.
-  protected readonly asString = computed<string>(() =>
-    (JSON.stringify(this.json(), null, 2) ?? String(this.json())).trim()
-  );
+  // JSON.stringify returns undefined for undefined, functions and symbols,
+  // and throws a TypeError for BigInt.
+  protected readonly asString = computed<string>(() => {
+    const val = this.json();
+    if (typeof val === 'bigint') {
+      return `${val}n`;
+    }
+    if (typeof val === 'symbol') {
+      return val.toString();
+    }
+    if (val instanceof RegExp || val instanceof Error) {
+      return val.toString();
+    }
+    if (val instanceof Map || val instanceof Set) {
+      return previewString(val, this.maxPreviewLength());
+    }
+    if (val instanceof Date) {
+      return `"${val.toISOString()}"`;
+    }
+    try {
+      return (JSON.stringify(val, null, 2) ?? String(val)).trim();
+    } catch {
+      return String(val).trim();
+    }
+  });
 
-  // An empty object or array (not a Date, which has no keys either) shows as
-  // {} or [] rather than as a primitive value.
+  // An empty object or array shows as {} or [] rather than as a primitive value.
   protected readonly isEmptyContainer = computed<boolean>(
     () =>
       this.segments().length === 0 &&
-      (this.rootType() === 'array' ||
-        (this.rootType() === 'object' && !(this.json() instanceof Date)))
+      (this.rootType() === 'array' || this.rootType() === 'object')
   );
 
   protected readonly primitiveSegmentClass = computed<string>(() => {
@@ -237,7 +304,7 @@ export class NgxJsonTreeviewComponent {
   });
 
   protected readonly isArrayElement = computed<boolean>(
-    () => this.rootType() === 'array'
+    () => this.rootType() === 'array' || this.rootType() === 'set'
   );
 
   /**
@@ -269,6 +336,10 @@ export class NgxJsonTreeviewComponent {
 
   protected isExpandable(segment: Segment) {
     return isExpandableSegment(segment);
+  }
+
+  protected isCollection(segment: Segment): boolean {
+    return isCollectionSegment(segment);
   }
 
   protected isEmpty(segment: Segment) {
@@ -317,9 +388,13 @@ export class NgxJsonTreeviewComponent {
   }
 
   protected openingBraceForSegment(segment: Segment) {
-    if (segment.type === 'array') {
+    if (segment.type === 'array' || segment.type === 'set') {
       return '[';
-    } else if (segment.type === 'object') {
+    } else if (
+      segment.type === 'object' ||
+      segment.type === 'map' ||
+      segment.type === 'error'
+    ) {
       return '{';
     }
 
@@ -327,9 +402,13 @@ export class NgxJsonTreeviewComponent {
   }
 
   protected closingBraceForSegment(segment: Segment) {
-    if (segment.type === 'array') {
+    if (segment.type === 'array' || segment.type === 'set') {
       return ']';
-    } else if (segment.type === 'object') {
+    } else if (
+      segment.type === 'object' ||
+      segment.type === 'map' ||
+      segment.type === 'error'
+    ) {
       return '}';
     }
 
@@ -341,7 +420,7 @@ export class NgxJsonTreeviewComponent {
     let path: string;
 
     if (parent) {
-      if (parent.type === 'array') {
+      if (parent.type === 'array' || parent.type === 'set') {
         path = `${parent.path}[${key}]`;
       } else {
         path = `${parent.path}.${key}`;
@@ -362,7 +441,7 @@ export class NgxJsonTreeviewComponent {
       key: key,
       value: value,
       type: undefined,
-      description: '' + value,
+      description: String(value),
       expanded: this.expandedSegments().get(path) ?? this.isExpanded(),
     };
 
@@ -384,6 +463,14 @@ export class NgxJsonTreeviewComponent {
         segment.type = 'undefined';
         segment.description = 'undefined';
         break;
+      case 'bigint':
+        segment.type = 'bigint';
+        segment.description = `${segment.value}n`;
+        break;
+      case 'symbol':
+        segment.type = 'symbol';
+        segment.description = segment.value.toString();
+        break;
       case 'object':
         if (segment.value === null) {
           segment.type = 'null';
@@ -397,6 +484,24 @@ export class NgxJsonTreeviewComponent {
         } else if (segment.value instanceof Date) {
           segment.type = 'date';
           segment.description = `"${segment.value.toISOString()}"`;
+        } else if (segment.value instanceof RegExp) {
+          segment.type = 'regexp';
+          segment.description = segment.value.toString();
+        } else if (segment.value instanceof Error) {
+          segment.type = 'error';
+          segment.description = segment.value.toString();
+        } else if (segment.value instanceof Map) {
+          segment.type = 'map';
+          segment.description = previewString(
+            segment.value,
+            this.maxPreviewLength()
+          );
+        } else if (segment.value instanceof Set) {
+          segment.type = 'set';
+          segment.description = previewString(
+            segment.value,
+            this.maxPreviewLength()
+          );
         } else {
           segment.type = 'object';
           segment.description = previewString(
