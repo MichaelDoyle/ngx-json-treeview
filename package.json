@@ -68,7 +68,7 @@
     "jsdom": "^31.0.0",
     "lint-staged": "^17.6.0",
     "ng-packagr": "^22.2.6",
-    "prettier": "^3.9.10",
+    "prettier": "^3.10.1",
     "prettier-plugin-css-order": "^2.2.0",
     "prettier-plugin-organize-imports": "^4.3.0",
     "simple-git-hooks": "^2.14.0",
